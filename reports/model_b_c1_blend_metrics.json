@@ -1,0 +1,48 @@
+{
+  "experiment": "Model B + Model C1 Probability Ensemble",
+  "best_alpha_c1_weight": 0.855,
+  "model_b_weight": 0.145,
+  "auc_pr": 0.5786110686551057,
+  "roc_auc": 0.8920335640856081,
+  "optimal_threshold": 0.9,
+  "f1_score": 0.5534246575342465,
+  "precision": 0.7671730515191546,
+  "recall": 0.43283025899012484,
+  "specificity": 0.9946675339802887,
+  "accuracy": 0.9727496074896784,
+  "confusion_matrix": {
+    "tp": 2323,
+    "fp": 705,
+    "fn": 3044,
+    "tn": 131504
+  },
+  "pairwise_vs_model_b": {
+    "delta_auc_pr": 0.02428977982291236,
+    "rel_lift_auc_pr_pct": 4.381895538250827,
+    "delta_roc_auc": 0.016053522530527498,
+    "delta_f1": 0.012971987783089833
+  },
+  "pairwise_vs_model_c1": {
+    "delta_auc_pr": 0.002027983319204396,
+    "rel_lift_auc_pr_pct": 0.3517243864382441,
+    "delta_roc_auc": 0.000726660685289704,
+    "delta_f1": 0.0030434258626922395
+  },
+  "pairwise_vs_previous_b_c_ensemble": {
+    "prev_auc_pr": 0.5764,
+    "delta_auc_pr": 0.0022110686551056746
+  },
+  "complementarity": {
+    "pearson_correlation": 0.8318407714358845,
+    "spearman_correlation": 0.831116224903714,
+    "disagreement_rate": 0.007588532883642495,
+    "defects_both_caught": 2096,
+    "defects_only_b_caught": 65,
+    "defects_only_c1_caught": 250,
+    "defects_both_missed": 2956,
+    "total_unique_defects_caught": 2411,
+    "false_positives_both": 276,
+    "false_positives_only_b": 193,
+    "false_positives_only_c1": 536
+  }
+}
