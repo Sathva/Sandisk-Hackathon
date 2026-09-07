@@ -1,0 +1,109 @@
+{
+  "model_name": "Model B-Without-Spatial (Parametric + Block)",
+  "timestamp": "2026-09-07 18:45:36",
+  "random_seed": 42,
+  "timing": {
+    "training_time_seconds": 114.73,
+    "inference_time_seconds": 0.359,
+    "inference_throughput_dies_per_sec": 383214.5,
+    "best_iteration": 1000
+  },
+  "dataset_statistics": {
+    "dev_train_wafers": 640,
+    "dev_train_total_dies": 734137,
+    "dev_train_eligible_dies": 651337,
+    "dev_train_positives": 24063,
+    "dev_train_negatives": 627274,
+    "dev_train_positive_rate_pct": 3.6944,
+    "scale_pos_weight": 26.067988,
+    "dev_val_wafers": 160,
+    "dev_val_total_dies": 154360,
+    "dev_val_eligible_dies": 137576,
+    "dev_val_positives": 5367,
+    "dev_val_negatives": 132209,
+    "dev_val_positive_rate_pct": 3.9011,
+    "no_skill_auc_pr_baseline": 0.039
+  },
+  "evaluation_default_threshold_05": {
+    "threshold": 0.5,
+    "auc_pr": 0.551735546490036,
+    "roc_auc": 0.8750061923441077,
+    "accuracy": 0.9187430947258243,
+    "precision": 0.26541814659347757,
+    "recall": 0.6126327557294577,
+    "f1": 0.3703745423824275,
+    "pass_precision": 0.9833929769626482,
+    "pass_recall": 0.93116958754699,
+    "pass_f1": 0.9565690353811427,
+    "tp": 3288,
+    "fp": 9100,
+    "fn": 2079,
+    "tn": 123109,
+    "confusion_matrix": [
+      [
+        123109,
+        9100
+      ],
+      [
+        2079,
+        3288
+      ]
+    ]
+  },
+  "evaluation_tuned_threshold": {
+    "optimal_threshold": 0.8078,
+    "threshold": 0.8077889447236182,
+    "auc_pr": 0.551735546490036,
+    "roc_auc": 0.8750061923441077,
+    "accuracy": 0.9727714136186544,
+    "precision": 0.7933405718422005,
+    "recall": 0.40842183715297187,
+    "f1": 0.5392373923739238,
+    "pass_precision": 0.9764488587895827,
+    "pass_recall": 0.9956810807131133,
+    "pass_f1": 0.9859711933848149,
+    "tp": 2192,
+    "fp": 571,
+    "fn": 3175,
+    "tn": 131638,
+    "confusion_matrix": [
+      [
+        131638,
+        571
+      ],
+      [
+        3175,
+        2192
+      ]
+    ]
+  },
+  "feature_group_attribution": [
+    {
+      "group": "parametric",
+      "num_features": 500,
+      "total_gain": 9108744.552124023,
+      "mean_gain": 18217.48910424805,
+      "total_splits": 28818,
+      "gain_pct": 83.71124101864038
+    },
+    {
+      "group": "block",
+      "num_features": 36,
+      "total_gain": 1772404.0741348267,
+      "mean_gain": 49233.44650374519,
+      "total_splits": 1182,
+      "gain_pct": 16.288758981359614
+    }
+  ],
+  "artifacts_created": [
+    "/home/user/Vinay/san/models/model_b_no_spatial.joblib",
+    "/home/user/Vinay/san/models/model_b_no_spatial.txt",
+    "/home/user/Vinay/san/reports/model_b_no_spatial_dev_val_predictions.parquet",
+    "/home/user/Vinay/san/reports/model_b_no_spatial_features.json",
+    "/home/user/Vinay/san/reports/model_b_no_spatial_feature_importance.csv",
+    "/home/user/Vinay/san/reports/model_b_no_spatial_metrics.json",
+    "/home/user/Vinay/san/reports/model_b_no_spatial_metrics.csv",
+    "/home/user/Vinay/san/reports/model_ablation_comparison.json",
+    "/home/user/Vinay/san/reports/model_ablation_comparison.csv"
+  ]
+}

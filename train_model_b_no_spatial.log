@@ -1,0 +1,183 @@
+nohup: ignoring input
+
+=====================================================================================
+STARTING CONTROLLED ABLATION: MODEL B-WITHOUT-SPATIAL
+=====================================================================================
+Seed: 42
+Features: 536 (500 Parametric + 36 Block | 0 Spatial)
+Train Source: /home/user/Vinay/san/processed/dev_train_features.parquet
+Validation Source: /home/user/Vinay/san/processed/dev_val_features.parquet
+Predictive Task: ONLY Eligible Dies (old_label == 0)
+Target: label (0 = stayed healthy, 1 = newly failed)
+=====================================================================================
+
+--- STEP 1: LOADING DATASETS ---
+Loading dev_train_features.parquet (541 columns)...
+   Loaded 734,137 total dies in 0.93s.
+   Wafers: 640 | Total Dies: 734,137 | Eligible Dies (old_label==0): 651,337
+   Eligible Negatives (Pass): 627,274 (96.31%)
+   Eligible Positives (Newly Failed): 24,063 (3.694%)
+Loading dev_val_features.parquet (541 columns)...
+   Loaded 154,360 total dies in 0.26s.
+   Wafers: 160 | Total Dies: 154,360 | Eligible Dies (old_label==0): 137,576
+   Eligible Negatives (Pass): 132,209 (96.10%)
+   Eligible Positives (Newly Failed): 5,367 (3.901%)
+Data loading complete in 1.52s.
+
+--- STEP 2: LEAKAGE & INTEGRITY VERIFICATION CHECKS ---
+1. wafer_id leakage check: wafer_id strictly excluded from predictive features [PASSED]
+2. Spatial exclusion check: exactly 0 spatial features present in feature set [PASSED]
+3. Feature count check: exactly 536 features (500 parametric + 36 block) [PASSED]
+4. Missing value check: 0 NaNs in train, 0 NaNs in validation [PASSED]
+5. Wafer-disjoint check: 0 wafer overlap (640 train wafers, 160 dev-val wafers) [PASSED]
+6. Population check: exactly identical eligible dies as Models A & B (651,337 train / 137,576 val) [PASSED]
+
+--- STEP 3: CLASS IMBALANCE CONFIGURATION ---
+Train Negatives: 627,274 | Positives: 24,063
+Calculated scale_pos_weight: 26.067988 (identical to Models A and B)
+
+--- STEP 4: TRAINING LIGHTGBM MODEL B-WITHOUT-SPATIAL ---
+Training until validation scores don't improve for 50 rounds
+[50]	valid_0's average_precision: 0.243462	valid_0's binary_logloss: 0.4773
+[100]	valid_0's average_precision: 0.372455	valid_0's binary_logloss: 0.474834
+[150]	valid_0's average_precision: 0.44275	valid_0's binary_logloss: 0.442712
+[200]	valid_0's average_precision: 0.480431	valid_0's binary_logloss: 0.415446
+[250]	valid_0's average_precision: 0.501568	valid_0's binary_logloss: 0.393717
+[300]	valid_0's average_precision: 0.514718	valid_0's binary_logloss: 0.375618
+[350]	valid_0's average_precision: 0.523794	valid_0's binary_logloss: 0.360318
+[400]	valid_0's average_precision: 0.530123	valid_0's binary_logloss: 0.347041
+[450]	valid_0's average_precision: 0.534814	valid_0's binary_logloss: 0.335212
+[500]	valid_0's average_precision: 0.538804	valid_0's binary_logloss: 0.324886
+[550]	valid_0's average_precision: 0.541574	valid_0's binary_logloss: 0.315193
+[600]	valid_0's average_precision: 0.544	valid_0's binary_logloss: 0.306527
+[650]	valid_0's average_precision: 0.545484	valid_0's binary_logloss: 0.29837
+[700]	valid_0's average_precision: 0.547212	valid_0's binary_logloss: 0.290644
+[750]	valid_0's average_precision: 0.548401	valid_0's binary_logloss: 0.283609
+[800]	valid_0's average_precision: 0.54944	valid_0's binary_logloss: 0.276877
+[850]	valid_0's average_precision: 0.550207	valid_0's binary_logloss: 0.270631
+[900]	valid_0's average_precision: 0.551261	valid_0's binary_logloss: 0.264696
+[950]	valid_0's average_precision: 0.551125	valid_0's binary_logloss: 0.259251
+[1000]	valid_0's average_precision: 0.551736	valid_0's binary_logloss: 0.253961
+Did not meet early stopping. Best iteration is:
+[1000]	valid_0's average_precision: 0.551736	valid_0's binary_logloss: 0.253961
+Evaluated only: average_precision
+
+Training completed in 114.73s (1.91 min). Best iteration: 1000
+
+--- STEP 5: INFERENCE ON DEV_VAL ---
+Inference completed in 0.3590s (383,214.5 dies/sec, 0.0026 ms/die)
+
+--- STEP 6: EVALUATION & THRESHOLD TUNING ---
+No-skill AUC-PR baseline (positive prevalence): 0.0390 (3.901%)
+Tuning decision threshold to maximize positive-class F1...
+Optimal Threshold T*: 0.8078 (Max Dev-Val F1: 0.5392)
+
+--- STEP 7: FEATURE IMPORTANCE ANALYSIS (PARAMETRIC VS. BLOCK) ---
+
+--- STEP 8: CONTROLLED THREE-MODEL ABLATION COMPARISON ---
+
+--- STEP 9: SAVING ARTIFACTS ---
+  Saved model (joblib):        /home/user/Vinay/san/models/model_b_no_spatial.joblib (3.50 MB)
+  Saved model (txt):           /home/user/Vinay/san/models/model_b_no_spatial.txt (3.46 MB)
+  Saved predictions:           /home/user/Vinay/san/reports/model_b_no_spatial_dev_val_predictions.parquet (0.90 MB)
+  Saved features list:         /home/user/Vinay/san/reports/model_b_no_spatial_features.json
+  Saved feature importance:    /home/user/Vinay/san/reports/model_b_no_spatial_feature_importance.csv
+  Saved metrics JSON:          /home/user/Vinay/san/reports/model_b_no_spatial_metrics.json
+  Saved metrics CSV:           /home/user/Vinay/san/reports/model_b_no_spatial_metrics.csv
+  Saved ablation JSON:         /home/user/Vinay/san/reports/model_ablation_comparison.json
+  Saved ablation CSV:          /home/user/Vinay/san/reports/model_ablation_comparison.csv
+
+=====================================================================================
+MODEL B-WITHOUT-SPATIAL EVALUATION REPORT & ABLATION STUDY
+=====================================================================================
+1. Training Time:             114.73 s (1.91 min)
+2. Inference Time:            0.3590 s (383,214.5 dies/s)
+3. Best Iteration:            1000
+4. Eligible Training Dies:    651,337 (out of 734,137)
+   Eligible Validation Dies:  137,576 (out of 154,360)
+5. Positive Prevalence:       Train: 3.694% | Dev-Val: 3.901%
+   No-Skill AUC-PR Baseline:  0.0390
+6. AUC-PR (Average Prec):     0.5517
+7. Tuned F1 Score:            0.5392 (at T* = 0.8078)
+8. Precision (Fail Class):    0.7933 (at T*) | 0.2654 (at 0.5)
+9. Recall (Fail Class):       0.4084 (at T*) | 0.6126 (at 0.5)
+10. ROC-AUC:                  0.8750
+11. Overall Accuracy:         97.28%
+12. Optimal F1 Threshold:     0.8078
+13. Exact Files Created:
+    - /home/user/Vinay/san/models/model_b_no_spatial.joblib
+    - /home/user/Vinay/san/models/model_b_no_spatial.txt
+    - /home/user/Vinay/san/reports/model_b_no_spatial_dev_val_predictions.parquet
+    - /home/user/Vinay/san/reports/model_b_no_spatial_features.json
+    - /home/user/Vinay/san/reports/model_b_no_spatial_feature_importance.csv
+    - /home/user/Vinay/san/reports/model_b_no_spatial_metrics.json
+    - /home/user/Vinay/san/reports/model_b_no_spatial_metrics.csv
+    - /home/user/Vinay/san/reports/model_ablation_comparison.json
+    - /home/user/Vinay/san/reports/model_ablation_comparison.csv
+14. Warnings/Errors:          None (Clean execution)
+=====================================================================================
+
+--- THREE-MODEL ABLATION COMPARISON TABLE ---
+                                  Model  Features  AUC-PR  F1 (Tuned)  Precision  Recall  ROC-AUC Accuracy  Threshold T* Train Time  Best Iter
+         Model A (Parametric + Spatial)       519  0.4937      0.5200     0.9441  0.3589   0.8318   97.42%        0.8127     109.1s        984
+Model B-no-spatial (Parametric + Block)       536  0.5517      0.5392     0.7933  0.4084   0.8750   97.28%        0.8078     114.7s       1000
+ Model B (Parametric + Spatial + Block)       555  0.5543      0.5397     0.8266  0.4006   0.8760   97.33%        0.8176     116.9s        984
+
+--- PAIRWISE INCREMENTAL PREDICTIVE VALUE (DELTAS) ---
+                   Comparison  Delta_AUC-PR Rel_AUC-PR_Improvement  Delta_F1 Rel_F1_Improvement  Delta_Recall  Delta_Precision  Delta_ROC-AUC Delta_Accuracy
+           Model B vs Model A        0.0607                +12.29%    0.0196             +3.77%        0.0417          -0.1175         0.0442         -0.08%
+Model B-no-spatial vs Model A        0.0581                +11.76%    0.0192             +3.69%        0.0496          -0.1508         0.0433         -0.14%
+Model B vs Model B-no-spatial        0.0026                 +0.47%    0.0004             +0.08%       -0.0078           0.0333         0.0010         +0.06%
+
+--- CONFUSION MATRIX (MODEL B-NO-SPATIAL @ TUNED T* = 0.8078) ---
+                 Pred Fail   Pred Pass       Metric                    Value
+Actual Fail           2192        3175       Fail Accuracy (Rec)    0.408422
+Actual Pass            571      131638       Pass Accuracy (Rec)    0.995681
+
+--- FEATURE GROUP ATTRIBUTION (PARAMETRIC VS BLOCK) ---
+Group           Features   Total Gain         Mean Gain       Gain %     Total Splits
+----------------+------------+--------------------+-----------------+------------+-------------
+parametric      500        9108744.55         18217.49        83.71    % 28818       
+block           36         1772404.07         49233.45        16.29    % 1182        
+
+--- TOP 20 FEATURES OVERALL BY GAIN ---
+Rank  Feature                             Group        Gain            Splits  
+------+-------------------------------------+--------------+-----------------+---------
+1     max_rolling_mean_400                block        953964.60       153     
+2     max_rolling_mean_200                block        218052.63       129     
+3     block_mean                          block        208959.06       70      
+4     block_mean_top200                   block        197736.04       108     
+5     feature_312                         parametric   73881.47        114     
+6     feature_277                         parametric   64627.23        87      
+7     feature_242                         parametric   62843.09        96      
+8     feature_365                         parametric   62338.91        101     
+9     block_q75                           block        60904.04        83      
+10    feature_65                          parametric   59385.05        123     
+11    feature_223                         parametric   58315.90        91      
+12    feature_472                         parametric   58311.43        98      
+13    feature_336                         parametric   57280.12        105     
+14    feature_446                         parametric   57159.26        89      
+15    feature_163                         parametric   55947.74        92      
+16    feature_262                         parametric   55864.75        86      
+17    feature_183                         parametric   54456.77        94      
+18    feature_246                         parametric   54135.70        99      
+19    feature_295                         parametric   54036.99        107     
+20    feature_436                         parametric   51626.69        110     
+
+--- TOP 10 BLOCK FEATURES BY GAIN ---
+Rank  Feature                             Gain            Splits   Overall Rank
+------+-------------------------------------+-----------------+----------+-------------
+1     max_rolling_mean_400                953964.60       153      #1          
+2     max_rolling_mean_200                218052.63       129      #2          
+3     block_mean                          208959.06       70       #3          
+4     block_mean_top200                   197736.04       108      #4          
+5     block_q75                           60904.04        83       #9          
+6     max_rolling_mean_100                18059.13        68       #205        
+7     block_mean_top100                   12980.18        35       #251        
+8     max_rolling_mean_100_start_idx      12790.24        64       #256        
+9     block_q95                           11735.06        45       #281        
+10    block_mean_top50                    11141.59        42       #293        
+
+=====================================================================================
+ALL ABLATION ARTIFACTS AND THREE-WAY COMPARISONS SUCCESSFULLY GENERATED
+=====================================================================================

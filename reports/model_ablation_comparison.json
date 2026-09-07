@@ -1,0 +1,78 @@
+{
+  "summary": [
+    {
+      "Model": "Model A (Parametric + Spatial)",
+      "Features": 519,
+      "AUC-PR": 0.4937,
+      "F1 (Tuned)": 0.52,
+      "Precision": 0.9441,
+      "Recall": 0.3589,
+      "ROC-AUC": 0.8318,
+      "Accuracy": "97.42%",
+      "Threshold T*": 0.8127,
+      "Train Time": "109.1s",
+      "Best Iter": 984
+    },
+    {
+      "Model": "Model B-no-spatial (Parametric + Block)",
+      "Features": 536,
+      "AUC-PR": 0.5517,
+      "F1 (Tuned)": 0.5392,
+      "Precision": 0.7933,
+      "Recall": 0.4084,
+      "ROC-AUC": 0.875,
+      "Accuracy": "97.28%",
+      "Threshold T*": 0.8078,
+      "Train Time": "114.7s",
+      "Best Iter": 1000
+    },
+    {
+      "Model": "Model B (Parametric + Spatial + Block)",
+      "Features": 555,
+      "AUC-PR": 0.5543,
+      "F1 (Tuned)": 0.5397,
+      "Precision": 0.8266,
+      "Recall": 0.4006,
+      "ROC-AUC": 0.876,
+      "Accuracy": "97.33%",
+      "Threshold T*": 0.8176,
+      "Train Time": "116.9s",
+      "Best Iter": 984
+    }
+  ],
+  "pairwise_deltas": [
+    {
+      "Comparison": "Model B vs Model A",
+      "Delta_AUC-PR": 0.0607,
+      "Rel_AUC-PR_Improvement": "+12.29%",
+      "Delta_F1": 0.0196,
+      "Rel_F1_Improvement": "+3.77%",
+      "Delta_Recall": 0.0417,
+      "Delta_Precision": -0.1175,
+      "Delta_ROC-AUC": 0.0442,
+      "Delta_Accuracy": "-0.08%"
+    },
+    {
+      "Comparison": "Model B-no-spatial vs Model A",
+      "Delta_AUC-PR": 0.0581,
+      "Rel_AUC-PR_Improvement": "+11.76%",
+      "Delta_F1": 0.0192,
+      "Rel_F1_Improvement": "+3.69%",
+      "Delta_Recall": 0.0496,
+      "Delta_Precision": -0.1508,
+      "Delta_ROC-AUC": 0.0433,
+      "Delta_Accuracy": "-0.14%"
+    },
+    {
+      "Comparison": "Model B vs Model B-no-spatial",
+      "Delta_AUC-PR": 0.0026,
+      "Rel_AUC-PR_Improvement": "+0.47%",
+      "Delta_F1": 0.0004,
+      "Rel_F1_Improvement": "+0.08%",
+      "Delta_Recall": -0.0078,
+      "Delta_Precision": 0.0333,
+      "Delta_ROC-AUC": 0.001,
+      "Delta_Accuracy": "+0.06%"
+    }
+  ]
+}

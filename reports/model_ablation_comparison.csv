@@ -1,0 +1,4 @@
+Model,Features,AUC-PR,F1 (Tuned),Precision,Recall,ROC-AUC,Accuracy,Threshold T*,Train Time,Best Iter
+Model A (Parametric + Spatial),519,0.4937,0.52,0.9441,0.3589,0.8318,97.42%,0.8127,109.1s,984
+Model B-no-spatial (Parametric + Block),536,0.5517,0.5392,0.7933,0.4084,0.875,97.28%,0.8078,114.7s,1000
+Model B (Parametric + Spatial + Block),555,0.5543,0.5397,0.8266,0.4006,0.876,97.33%,0.8176,116.9s,984
