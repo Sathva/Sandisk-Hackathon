@@ -1,0 +1,32 @@
+{
+  "engine_names": [
+    "catboost",
+    "xgboost",
+    "lightgbm"
+  ],
+  "weights": {
+    "catboost": 0.49147150280674556,
+    "xgboost": 0.27101816900634484,
+    "lightgbm": 0.23751032818690962
+  },
+  "blend_space": "rank",
+  "rounds": {
+    "catboost": 1230,
+    "xgboost": 316,
+    "lightgbm": 319
+  },
+  "oof_blend_auc_pr": 0.6388362429127902,
+  "oof_threshold": 0.9777192982456141,
+  "optimal_threshold": 0.9752631578947368,
+  "val_auc_pr": 0.6320583112761511,
+  "val_roc_auc": 0.9224570807645138,
+  "val_f1": 0.5871580634084926,
+  "val_precision": 0.7611275964391692,
+  "val_recall": 0.47792062604807156,
+  "val_auc_pr_se_wafer_clustered": 0.01080441964212061,
+  "val_auc_pr_ci95": [
+    0.6109868253916817,
+    0.6522002504323594
+  ],
+  "n_features": 1280
+}
