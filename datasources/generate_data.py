@@ -19,6 +19,7 @@ Prerequisites:
 import argparse
 import os
 import sys
+import gc
 import pickle
 from pathlib import Path
 
@@ -145,7 +146,7 @@ def select_wafers(labeled_df, none_df, num_wafers, target_fail_rate, rng):
     """
     Select a mix of labeled-failure and none wafers to approximate target fail rate.
     Uses target_fail_rate to determine the proportion of failure-pattern wafers.
-    Returns list of 2D wafer map arrays.
+    Returns list of 2D wafer map arrays, wafer IDs, and provenance records.
     """
     # Failure-pattern wafers typically have ~10-20% failing dies internally.
     # To achieve an overall target_fail_rate (e.g. 3%), we need:
@@ -164,23 +165,57 @@ def select_wafers(labeled_df, none_df, num_wafers, target_fail_rate, rng):
 
     wafer_maps = []
     wafer_ids = []
+    provenance_records = []
 
     for i, idx in enumerate(failure_idx):
-        wm = labeled_df.iloc[idx]["waferMap"]
+        row = labeled_df.iloc[idx]
+        wm = row["waferMap"]
+        wid = f"W_F_{i:04d}"
         wafer_maps.append(wm)
-        wafer_ids.append(f"W_F_{i:04d}")
+        wafer_ids.append(wid)
+
+        ftype = ""
+        if isinstance(row["failureType"], np.ndarray) and len(row["failureType"]) > 0:
+            ftype = str(row["failureType"][0][0]) if len(row["failureType"][0]) > 0 else str(row["failureType"][0])
+        else:
+            ftype = str(row["failureType"]) if pd.notna(row["failureType"]) else ""
+
+        lot_name = str(row["lotName"]) if "lotName" in row and pd.notna(row["lotName"]) else ""
+        wafer_idx_val = str(row["waferIndex"]) if "waferIndex" in row and pd.notna(row["waferIndex"]) else ""
+
+        provenance_records.append({
+            "generated_wafer_id": wid,
+            "source_wm811k_index": int(labeled_df.index[idx]),
+            "source_defect_type": ftype,
+            "source_lot_name": lot_name,
+            "source_wafer_index": wafer_idx_val,
+        })
 
     for i, idx in enumerate(none_idx):
-        wm = none_df.iloc[idx]["waferMap"]
+        row = none_df.iloc[idx]
+        wm = row["waferMap"]
+        wid = f"W_N_{i:04d}"
         wafer_maps.append(wm)
-        wafer_ids.append(f"W_N_{i:04d}")
+        wafer_ids.append(wid)
+
+        lot_name = str(row["lotName"]) if "lotName" in row and pd.notna(row["lotName"]) else ""
+        wafer_idx_val = str(row["waferIndex"]) if "waferIndex" in row and pd.notna(row["waferIndex"]) else ""
+
+        provenance_records.append({
+            "generated_wafer_id": wid,
+            "source_wm811k_index": int(none_df.index[idx]),
+            "source_defect_type": "none",
+            "source_lot_name": lot_name,
+            "source_wafer_index": wafer_idx_val,
+        })
 
     # Shuffle
     order = rng.permutation(len(wafer_maps))
     wafer_maps = [wafer_maps[i] for i in order]
     wafer_ids = [wafer_ids[i] for i in order]
+    provenance_records = [provenance_records[i] for i in order]
 
-    return wafer_maps, wafer_ids
+    return wafer_maps, wafer_ids, provenance_records
 
 
 def compute_radial_map(wafer_map):
@@ -485,7 +520,7 @@ def generate_dataset(wafer_maps, wafer_ids, config, rng):
 
 
 def print_summary(df, split_name):
-    """Print dataset summary statistics."""
+    """Print dataset summary statistics memory-safely without copying block_readings."""
     n_wafers = df["wafer_id"].nunique()
     n_dies = len(df)
     n_fail = df["label"].sum()
@@ -500,13 +535,15 @@ def print_summary(df, split_name):
     print(f"  Passed:     {n_dies - n_fail:,} ({100 - fail_rate:.2f}%)")
 
     # Feature overlap: compute mean difference / pooled std for each feature
-    feature_cols = [c for c in df.columns if not c.startswith("zone_") and
-                    c not in ("wafer_id", "die_row", "die_col", "label", "neighborhood_fail_density")]
+    feature_cols = [c for c in df.columns if c.startswith("feature_")]
     if len(feature_cols) > 0:
         print(f"\n  Feature Separability (Cohen's d):")
-        pass_df = df[df["label"] == 0]
-        fail_df = df[df["label"] == 1]
-        for col in feature_cols[:5]:  # Show top 5
+        # Memory-safe: slice ONLY top 5 features + label without copying block_readings
+        top5_cols = feature_cols[:5]
+        sub_df = df[["label"] + top5_cols]
+        pass_df = sub_df[sub_df["label"] == 0]
+        fail_df = sub_df[sub_df["label"] == 1]
+        for col in top5_cols:  # Show top 5
             p_mean, p_std = pass_df[col].mean(), pass_df[col].std()
             f_mean, f_std = fail_df[col].mean(), fail_df[col].std()
             pooled_std = np.sqrt((p_std ** 2 + f_std ** 2) / 2)
@@ -516,35 +553,37 @@ def print_summary(df, split_name):
     print(f"{'=' * 50}\n")
 
 
-def save_outputs(train_df, test_df, wafer_maps_dict, config, export_csv=False):
-    """Save datasets in configured formats. Also generates a validation set (no labels)."""
-    output_dir = Path(config["output_dir"])
+def save_split_outputs(df, split_name, output_dir, formats, export_csv=False):
+    """Save a single split dataset to disk to minimize peak RAM usage."""
+    output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    formats = config.get("output_formats", ["parquet", "pkl"])
+    if split_name == "train":
+        if "parquet" in formats:
+            df.to_parquet(output_dir / "train.parquet", index=False)
+            print(f"  Saved: {output_dir}/train.parquet")
+        if "pkl" in formats:
+            df.to_pickle(output_dir / "train.pkl")
+            print(f"  Saved: {output_dir}/train.pkl")
+        if export_csv or "csv" in formats:
+            df.to_csv(output_dir / "train.csv", index=False)
+            print(f"  Saved: {output_dir}/train.csv")
 
-    # Create validation version of test (no labels — only inputs)
-    val_df = test_df.drop(columns=["label"])
-
-    if "parquet" in formats:
-        train_df.to_parquet(output_dir / "train.parquet", index=False)
-        test_df.to_parquet(output_dir / "test.parquet", index=False)
-        val_df.to_parquet(output_dir / "validation.parquet", index=False)
-        print(f"  Saved: {output_dir}/train.parquet, test.parquet, validation.parquet")
-
-    if "pkl" in formats:
-        train_df.to_pickle(output_dir / "train.pkl")
-        test_df.to_pickle(output_dir / "test.pkl")
-        val_df.to_pickle(output_dir / "validation.pkl")
-        with open(output_dir / "wafer_maps.pkl", "wb") as f:
-            pickle.dump(wafer_maps_dict, f)
-        print(f"  Saved: {output_dir}/train.pkl, test.pkl, validation.pkl, wafer_maps.pkl")
-
-    if export_csv or "csv" in formats:
-        train_df.to_csv(output_dir / "train.csv", index=False)
-        test_df.to_csv(output_dir / "test.csv", index=False)
-        val_df.to_csv(output_dir / "validation.csv", index=False)
-        print(f"  Saved: {output_dir}/train.csv, test.csv, validation.csv")
+    elif split_name == "test":
+        val_df = df.drop(columns=["label"])
+        if "parquet" in formats:
+            df.to_parquet(output_dir / "test.parquet", index=False)
+            val_df.to_parquet(output_dir / "validation.parquet", index=False)
+            print(f"  Saved: {output_dir}/test.parquet, validation.parquet")
+        if "pkl" in formats:
+            df.to_pickle(output_dir / "test.pkl")
+            val_df.to_pickle(output_dir / "validation.pkl")
+            print(f"  Saved: {output_dir}/test.pkl, validation.pkl")
+        if export_csv or "csv" in formats:
+            df.to_csv(output_dir / "test.csv", index=False)
+            val_df.to_csv(output_dir / "validation.csv", index=False)
+            print(f"  Saved: {output_dir}/test.csv, validation.csv")
+        del val_df
 
 
 def main():
@@ -578,9 +617,13 @@ def main():
 
     # Select wafers for train and test
     print(f"\nSelecting {n_train} train + {n_test} test wafers...")
-    all_maps, all_ids = select_wafers(
+    all_maps, all_ids, all_provenance = select_wafers(
         labeled_df, none_df, total_needed, config["target_fail_rate"], rng
     )
+
+    # Record train vs test split in provenance
+    for i, prov in enumerate(all_provenance):
+        prov["dataset_split"] = "train" if i < n_train else "test"
 
     train_maps = all_maps[:n_train]
     train_ids = all_ids[:n_train]
@@ -590,20 +633,42 @@ def main():
     # Store wafer maps dict for pkl output
     wafer_maps_dict: dict = {str(wid): wmap for wid, wmap in zip(all_ids, all_maps)}
 
-    # Generate features
+    output_dir = Path(config["output_dir"])
+    output_dir.mkdir(parents=True, exist_ok=True)
+    formats = config.get("output_formats", ["parquet", "pkl"])
+
+    # Generate train features
     print(f"\nGenerating train features ({n_train} wafers)...")
     train_df = generate_dataset(train_maps, train_ids, config, rng)
+    print_summary(train_df, "TRAIN")
+    print("Saving train outputs...")
+    save_split_outputs(train_df, "train", output_dir, formats, export_csv=args.csv)
 
+    # Free train memory immediately before test generation
+    del train_df
+    gc.collect()
+
+    # Generate test features
     print(f"\nGenerating test features ({n_test} wafers)...")
     test_df = generate_dataset(test_maps, test_ids, config, rng)
-
-    # Print summaries
-    print_summary(train_df, "TRAIN")
     print_summary(test_df, "TEST")
+    print("Saving test outputs...")
+    save_split_outputs(test_df, "test", output_dir, formats, export_csv=args.csv)
 
-    # Save
-    print("Saving outputs...")
-    save_outputs(train_df, test_df, wafer_maps_dict, config, export_csv=args.csv)
+    # Free test memory immediately
+    del test_df
+    gc.collect()
+
+    # Save wafer maps dict if pkl in formats
+    if "pkl" in formats:
+        with open(output_dir / "wafer_maps.pkl", "wb") as f:
+            pickle.dump(wafer_maps_dict, f)
+        print(f"  Saved: {output_dir}/wafer_maps.pkl")
+
+    # Save provenance separately
+    prov_df = pd.DataFrame(all_provenance)
+    prov_df.to_csv(output_dir / "wafer_provenance.csv", index=False)
+    print(f"  Saved: {output_dir}/wafer_provenance.csv")
 
     print("\nDone! Dataset generation complete.")
 
