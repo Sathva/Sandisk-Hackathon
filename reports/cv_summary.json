@@ -1,0 +1,93 @@
+{
+  "evaluation_protocol": "5-Fold Wafer-Grouped Cross-Validation (GroupKFold)",
+  "population": {
+    "total_eligible_dies": 788913,
+    "total_wafers": 800,
+    "total_failures": 29430,
+    "failure_rate": 0.03730449365139122,
+    "no_skill_auc_pr": 0.03730449365139122
+  },
+  "prespecified_blend": {
+    "weights": {
+      "w_c2": 0.27,
+      "w_c1": 0.63,
+      "w_b": 0.1
+    },
+    "global_oof_auc_pr": 0.5823726236393324,
+    "global_oof_roc_auc": 0.8959979117704338,
+    "optimal_threshold": 0.8816582914572865,
+    "optimal_f1": 0.5576190161478641,
+    "precision": 0.7928334273006327,
+    "recall": 0.43003737682636767,
+    "per_fold": {
+      "mean_auc_pr": 0.5823296880773777,
+      "std_auc_pr": 0.011739961449070377,
+      "min_auc_pr": 0.5668945470613366,
+      "max_auc_pr": 0.5954821422060058,
+      "mean_roc_auc": 0.896649784276238,
+      "std_roc_auc": 0.0027496664988631335,
+      "mean_f1": 0.557127012962802,
+      "std_f1": 0.008852976690240488
+    }
+  },
+  "oof_optimal_blend": {
+    "weights": {
+      "w_c2": 0.31,
+      "w_c1": 0.63,
+      "w_b": 0.06
+    },
+    "global_oof_auc_pr": 0.5824605565396135,
+    "global_oof_roc_auc": 0.8959686394835211,
+    "optimal_threshold": 0.8865829145728643,
+    "optimal_f1": 0.5577205479452055,
+    "precision": 0.7856128434702069,
+    "recall": 0.4323139653414883
+  },
+  "individual_models": {
+    "model_b": {
+      "model_name": "Model B (LightGBM)",
+      "auc_pr": 0.551025742135431,
+      "roc_auc": 0.8790383239489227,
+      "optimal_threshold": 0.8077889447236182,
+      "f1": 0.5398427467501746,
+      "precision": 0.8010296182389517,
+      "recall": 0.4071015970098539,
+      "specificity": 0.9960815449457064,
+      "accuracy": 0.9741099462171368,
+      "tp": 11981,
+      "fp": 2976,
+      "fn": 17449,
+      "tn": 756507
+    },
+    "model_c1": {
+      "model_name": "Model C1 (Triple-Branch CNN)",
+      "auc_pr": 0.579892130739171,
+      "roc_auc": 0.8939842981441868,
+      "optimal_threshold": 0.9062814070351759,
+      "f1": 0.5555234046341843,
+      "precision": 0.8052526295412015,
+      "recall": 0.4240231056744818,
+      "specificity": 0.9960262441687305,
+      "accuracy": 0.974687956720196,
+      "tp": 12479,
+      "fp": 3018,
+      "fn": 16951,
+      "tn": 756465
+    },
+    "model_c2": {
+      "model_name": "Model C2 (Multi-Scale CNN)",
+      "auc_pr": 0.5729989583551038,
+      "roc_auc": 0.8909894851844617,
+      "optimal_threshold": 0.9161306532663317,
+      "f1": 0.5513830046802565,
+      "precision": 0.7940330926978854,
+      "recall": 0.42232415902140674,
+      "specificity": 0.9957550070245154,
+      "accuracy": 0.9743634595956715,
+      "tp": 12429,
+      "fp": 3224,
+      "fn": 17001,
+      "tn": 756259
+    }
+  }
+}

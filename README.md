@@ -65,6 +65,22 @@ All models were trained on **$651,337$ eligible training dies** (640 wafers) and
 
 ---
 
+### 1.1 5-Fold Wafer-Grouped Cross-Validation (800 Wafers, 788,913 Eligible Dies)
+
+Before evaluating any final holdout data, the Grand Tri-Blend was rigorously tested under **5-fold wafer-grouped cross-validation (`GroupKFold`)** with zero wafer leakage:
+
+| Model / Configuration | OOF AUC-PR 🥇 | OOF ROC-AUC | Optimal Threshold ($T^*$) | OOF F1 🥈 | Precision | Recall | Specificity | Overall Accuracy | 5-Fold Mean ± Std AUC-PR |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Model B (LightGBM)** | 0.5510 | 0.8790 | 0.808 | 0.5398 | 80.10% | 40.71% | 99.61% | 97.41% | $0.5510 \pm 0.0107$ |
+| **Model C2 (Multi-Scale CNN)** | 0.5730 | 0.8910 | 0.916 | 0.5514 | 79.40% | 42.23% | 99.58% | 97.44% | $0.5757 \pm 0.0109$ |
+| **Model C1 (Triple-Branch CNN)** | 0.5799 | 0.8940 | 0.906 | 0.5555 | 80.53% | 42.40% | 99.60% | 97.47% | $0.5796 \pm 0.0105$ |
+| **Pre-Specified Grand Tri-Blend** *(27% C2 + 63% C1 + 10% B)* 🏆 | **0.5824** | **0.8960** | **0.882** | **0.5576** | **79.28%** | **43.00%** | **99.56%** | **97.45%** | **$0.5823 \pm 0.0105$** |
+| **OOF-Optimal Blend** *(31% C2 + 63% C1 + 6% B)* | **0.5825** | **0.8960** | **0.887** | **0.5577** | 78.56% | 43.23% | 99.54% | 97.44% | $0.5825 \pm 0.0105$ |
+
+*Detailed report: [`reports/CV_ENSEMBLE_EVALUATION.md`](file:///home/user/Vinay/san/reports/CV_ENSEMBLE_EVALUATION.md)*
+
+---
+
 ### 2. Pairwise Incremental Predictive Value (Deltas & Improvements)
 
 | Pairwise Comparison | Research Question Answered | $\Delta$ AUC-PR | Rel. AUC-PR | $\Delta$ F1 | Rel. F1 | $\Delta$ Recall | $\Delta$ Precision | $\Delta$ ROC-AUC |
