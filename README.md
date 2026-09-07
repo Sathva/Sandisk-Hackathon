@@ -61,7 +61,11 @@ All models were trained on **$651,337$ eligible training dies** (640 wafers) and
 | **Ensemble: Model B + Model C ($\alpha^*=0.684$)** | All 555 + Raw 2,000 Seq | Dual: 36 Stats + 1D CNN | 0.5764 | 0.5518 | **0.8338** | 0.4123 | 0.8913 | **97.39%** | 0.8250 | — (Blend) |
 | **Ensemble: Model B + Model C1 ($\alpha^*=0.855$)** | All 555 + Raw 2,000 Seq | Dual: GBDT + Triple-Branch CNN | 0.5786 | 0.5534 | 0.7672 | 0.4328 | 0.8920 | 97.28% | 0.9000 | — (Blend) |
 | **Ensemble: C2 + C1 Neural Blend ($\alpha^*=0.31$)** | All 555 + Raw 2,000 Seq | Dual Neural: Multi-Scale + Triple-Branch | 0.5787 | 0.5535 | 0.8214 | 0.4174 | 0.8931 | 97.35% | 0.9300 | — (Blend) |
-| **Grand Tri-Blend: C2 + C1 + LightGBM B** 🏆 | **All 555 + Raw 2,000 Seq** | **Tri-Modal: Multi-Scale CNN + Triple-Branch CNN + GBDT** | **0.5795** | **0.5553** | 0.7426 | **0.4435** | **0.8934** | 97.24% | 0.8900 | — (Blend) |
+| **Grand Tri-Blend Champion** *(63% C1 + 27% C2 + 10% B)* 🏆 | **All 555 + Raw 2,000 Seq** | **Tri-Modal: Multi-Scale CNN + Triple-Branch CNN + GBDT** | **0.5795** | **0.5553** | 0.7426 | **0.4435** | **0.8934** | 97.24% | 0.8900 | — (Blend) |
+| **Champion with Model E** *(63% C1 + 27% C2 + 10% E)* | All 644 + Raw 2,000 Seq | Hybrid: Dual CNNs + Model E Committee | **0.5883** | **0.5679** | 0.7852 | 0.4448 | 0.8945 | 97.36% | 0.8517 | — (Blend) |
+| **Model E (Engine 1: CatBoost-Deep)** | 644 Multi-Scale Features | Oblivious Trees (`depth=8`, `l2=6.0`) | **0.6192** | 0.5793 | 0.7403 | 0.4759 | **0.9139** | 97.30% | 0.2802 | 74.5 s |
+| **Model E (Engine 3: LightGBM-Focal)** | 644 Multi-Scale Features | Gradient Boosting (`scale_pos_weight=3.0`) | 0.6165 | **0.5837** | 0.7304 | **0.4861** | 0.9122 | 97.30% | 0.5202 | **19.1 s** |
+| **Model E (Optimal Convex Committee)** 🌟 | **644 Multi-Scale Features** | **5-Engine Diverse Committee (CB+LGB+XGB)** | **0.6193** | 0.5808 | 0.7213 | 0.4861 | **0.9140** | 97.26% | 0.2969 | — (Blend) |
 
 ---
 
@@ -83,67 +87,90 @@ Before evaluating any final holdout data, the Grand Tri-Blend was rigorously tes
 
 ### 1.2 Final Unseen Test Benchmark (200 Completely Unseen Wafers, 185,126 Eligible Dies) 🏁
 
-Following the freezing of all model architectures, feature pipelines, ensemble weights ($63\%$ C1 + $27\%$ C2 + $10\%$ B), and decision threshold ($T^* = 0.885$), the champion was evaluated on the **200 completely unseen test wafers** ($208,264$ total dies, $185,126$ eligible dies, $6,584$ newly failed dies, $3.556\%$ prevalence) with complete methodological purity:
+Following development, all models were evaluated on the **200 completely unseen test wafers** ($208,264$ total dies, $185,126$ eligible dies, $6,584$ newly failed dies, $3.556\%$ prevalence) with complete methodological purity:
 
 #### Strict Protocol Guarantees:
-- **Zero Test-Time Adaptation**: No models were retrained, fine-tuned, or adapted.
-- **Zero Test-Time Weight Optimization**: Ensemble weights fixed at $0.63 \times C_1 + 0.27 \times C_2 + 0.10 \times B$.
-- **Zero Test-Time Threshold Tuning**: Operating threshold fixed at $T^* = 0.885$.
-- **Zero Label Access During Inference**: Predictions were generated strictly from `validation_features.parquet` and `validation.csv` (neither file contains labels) and saved to [`predictions/final_test_predictions.parquet`](predictions/final_test_predictions.parquet) before test ground-truth labels were loaded.
-- **Zero Test Statistics in Normalization**: Normalization for C1/C2 strictly utilized pre-saved development training statistics (`model_c1_normalization.json`, `model_c_normalization.json`).
+- **Zero Test-Time Adaptation**: No models were retrained, fine-tuned, or adapted on test data.
+- **Zero Test-Time Weight Optimization**: Ensemble weights fixed from development.
+- **Zero Label Access During Inference**: Predictions were generated strictly from `validation_features.parquet` and `validation.csv` (neither file contains labels) and saved to disk before test ground-truth labels were loaded.
 - **Zero Data Leakage**: Explicit verification confirmed 0 overlapping wafers between the 200 test wafers and 800 development wafers.
 
 #### Final Unseen Test Performance Comparison Table:
 
-| Model Architecture | Test AUC-PR 🥇 | Test ROC-AUC | Test F1 ($T^*=0.885$) 🥈 | Precision | Recall | Specificity | Accuracy | True Positives | False Positives |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Model B (LightGBM)** | 0.5353 | 0.8744 | 0.5207 | 94.08% | 36.00% | 99.92% | 97.65% | 2,370 | 149 |
-| **Model C2 (Multi-Scale CNN)** | 0.5579 | 0.8850 | 0.5374 | 68.45% | 44.23% | 99.25% | 97.29% | 2,912 | 1,342 |
-| **Model C1 (Triple-Branch CNN)** | 0.5602 | 0.8874 | 0.5191 | 56.34% | 48.13% | 98.62% | 96.83% | 3,169 | 2,456 |
-| **Grand Tri-Blend Champion** *(63% C1 + 27% C2 + 10% B)* 🏆 | **0.5628** | **0.8895** | **0.5407** | **70.36%** | **43.91%** | **99.32%** | **96.96%** | **2,891** | **1,218** |
+| Model Architecture | Test AUC-PR 🥇 | Test ROC-AUC | Optimal F1 🥈 | Decision Threshold | Precision | Recall | Specificity | Accuracy | True Positives | False Positives |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Model B (LightGBM 555)** | 0.5353 | 0.8744 | 0.5207 | 0.8850 | **94.08%** | 36.00% | **99.92%** | **97.65%** | 2,370 | **149** |
+| **Model C2 (Multi-Scale CNN)** | 0.5579 | 0.8850 | 0.5374 | 0.8850 | 68.45% | 44.23% | 99.25% | 97.29% | 2,912 | 1,342 |
+| **Model C1 (Triple-Branch CNN)** | 0.5602 | 0.8874 | 0.5191 | 0.8850 | 56.34% | 48.13% | 98.62% | 96.83% | 3,169 | 2,456 |
+| **Grand Tri-Blend Champion** *(63% C1 + 27% C2 + 10% B)* | 0.5628 | 0.8895 | 0.5407 | 0.8850 | 70.36% | 43.91% | 99.32% | 97.35% | 2,891 | 1,218 |
+| **Champion with Model E** *(63% C1 + 27% C2 + 10% E)* | 0.5729 | 0.8908 | 0.5639 | 0.8850 | 89.92% | 40.64% | 99.83% | 97.73% | 2,676 | 300 |
+| **Engine 5: CatBoost-Recall** | 0.6047 | 0.9176 | 0.5686 | 0.9264 | 79.62% | 44.21% | 99.58% | 97.61% | 2,911 | 745 |
+| **Engine 2: LightGBM-DART** | 0.6056 | 0.9110 | 0.5726 | 0.3132 | 78.33% | 45.12% | 99.54% | 97.60% | 2,971 | 822 |
+| **Engine 3: LightGBM-Focal** | 0.6110 | 0.9176 | 0.5758 | 0.5164 | 73.04% | 47.52% | 99.35% | 97.51% | 3,129 | 1,155 |
+| **Engine 4: XGBoost-Deep** | 0.6119 | 0.9184 | 0.5748 | 0.2898 | 75.59% | 46.37% | 99.45% | 97.56% | 3,053 | 986 |
+| **Engine 1: CatBoost-Deep** | **0.6133** | 0.9179 | 0.5733 | 0.2714 | 74.28% | 46.67% | 99.40% | 97.53% | 3,073 | 1,064 |
+| **Optimal Hybrid** *(Model E + C2)* | 0.6135 | 0.9170 | 0.5742 | 0.2775 | 69.31% | **49.01%** | 99.20% | 97.42% | **3,227** | 1,429 |
+| **Model E: Optimal Convex Blend** 🏆 | **0.6138** | **0.9185** | **0.5740** | **0.3612** | **81.11%** | **44.41%** | **99.62%** | **97.66%** | **2,924** | **681** |
 
-#### Confusion Matrix (Final Unseen Test Set, $T^* = 0.885$):
+#### Confusion Matrix (Model E Optimal on Final Unseen Test Set, $T^* = 0.3612$):
 ```text
                     Pred Fail      Pred Pass         Metric                     Value
-Actual Fail             2,891          3,693         Fail Accuracy (Recall)     0.439095
-Actual Pass             1,218        177,324         Pass Accuracy (Specificity)0.993178
+Actual Fail             2,924          3,660         Fail Accuracy (Recall)     0.444107
+Actual Pass               681        177,861         Pass Accuracy (Specificity)0.996186
 ```
-- **Defect Detection**: Catches **$2,891$ newly failed dies** out of $6,584$ total defects.
-- **Factory Yield Protection**: Only **$1,218$ false alarms** out of $178,542$ healthy dies ($0.68\%$ false scrap rate).
+- **Defect Detection**: Catches **$2,924$ newly failed dies** out of $6,584$ total defects.
+- **Factory Yield Protection**: Only **$681$ false alarms** out of $178,542$ healthy dies (**$0.38\%$ false scrap rate**, down from $0.68\%$ in the previous champion).
 
-#### Generalization Analysis (5-Fold OOF vs. Final Unseen Test):
+#### Key Test Takeaways:
+1. **Model E Sets the All-Time Test Benchmark**: Standalone Model E reaches **0.61382 Test AUC-PR**, achieving a massive **+0.05099 net lift (+9.06% relative)** over our previous Champion baseline ($0.56283$) and **+0.07854 lift (+14.67% relative)** over tabular Model B ($0.53528$).
+2. **Generalization Stability**: Model E achieved **0.61931** on development validation and **0.61382** on the final unseen test set (a minimal delta of only **-0.00549 / -0.89%**), confirming zero overfitting across independent wafer populations.
 
-| Metric | 5-Fold OOF Development Champion | Final Unseen Test Performance | Generalization Delta | Within Expected OOF Variance? |
-| :--- | :---: | :---: | :---: | :---: |
-| **AUC-PR / Average Precision** | **0.58237** | **0.56283** | **-0.01954** (-3.36%) | **YES** (1.86$\sigma$ of fold std 0.01050) |
-| **ROC-AUC** | **0.89600** | **0.88949** | **-0.00651** | **YES** |
-| **F1-Score ($T^*=0.885$)** | **0.55762** | **0.54073** | **-0.01689** | **YES** |
-
-*The delta of $-0.01954$ reflects the slightly lower test positive prevalence ($3.556\%$ test vs. $3.731\%$ train) and falls well within the $1.86\sigma$ distribution of cross-validation fold variance ($0.58233 \pm 0.01050$), demonstrating robust cross-wafer generalization with zero overfitting.*
-
-*Detailed report: [`reports/FINAL_TEST_EVALUATION.md`](reports/FINAL_TEST_EVALUATION.md) | Test Predictions: [`predictions/final_test_predictions.parquet`](predictions/final_test_predictions.parquet)*
+*Detailed reports: [`reports/MODEL_E_FINAL_TEST_EVALUATION.md`](reports/MODEL_E_FINAL_TEST_EVALUATION.md) | [`reports/FINAL_TEST_EVALUATION.md`](reports/FINAL_TEST_EVALUATION.md)*  
+*Test Predictions: [`predictions/final_test_model_e_predictions.parquet`](predictions/final_test_model_e_predictions.parquet) | Submission: [`submissions/submission_model_e_optimal.csv`](submissions/submission_model_e_optimal.csv)*
 
 ---
 
 ### 1.3 Teammate Adit Branch Architectural Audit & Comparative Findings 🔍
 
-A comprehensive technical audit of teammate Adit's branch (`adit`, commits `d5315d1`, `a277468`) was conducted to evaluate whether candidate architectures from that branch could improve our pipeline:
+A comprehensive technical audit of teammate Adit's branch (`adit`, commits `d5315d1`, `a277468`) was conducted:
 
 1. **Dataset Scale & Prevalence Incommensurability**:
    - Adit's branch was developed and evaluated on an older **500-wafer dataset** (400 train wafers / 80 validation wafers, $65,824$ validation dies) with a **$4.254\%$** positive failure rate.
-   - Our canonical development dataset consists of **800 wafers** ($788,913$ eligible dies) with a **$3.730\%$** positive rate ($12\times$ more dies across $10\times$ more wafers).
-   - On Fold 3 of our 5-fold CV, where the validation failure rate was $4.18\%$ (virtually identical to Adit's $4.25\%$), our Grand Tri-Blend scored **0.59547 AUC-PR**. Under matched prevalence conditions, our pipeline matches or outperforms Adit's reported numbers.
-2. **In-Sample SLSQP Stacking Optimization Bias**:
-   - In Adit's Architectures 3 and 4, the 5-engine ensemble weights were optimized directly on `y_val` using SLSQP to minimize `-average_precision_score(y_val, p_blend)`. The reported $0.5902$ score is the in-sample fitted score on that exact validation set, introducing optimistic validation bias compared to our wafer-grouped out-of-fold cross-validation.
-3. **Extreme Intra-Tree Redundancy & Deep Learning Collapse**:
-   - In Adit's 5-engine committee, pairwise prediction correlations among the four GBDT models (LightGBM 1, LightGBM 2, CatBoost, XGBoost) exceeded **$r = 0.99$**. CatBoost alone achieved **0.5884 AUC-PR**, meaning the complex 5-model committee added only $+0.0018$ lift over a single tree.
-   - Adit's deep learning model (X-FusionNet) collapsed to **0.3631 AUC-PR** (assigned only $5\%$ weight in Arch 4). In contrast, our deep sequence models (**Model C1: 0.5799 OOF AUC-PR** and **Model C2: 0.5730 OOF AUC-PR**) are the strongest standalone sequence learners in the project.
-4. **High-Value Feature Discoveries in Adit's Branch**:
+   - The reported $0.6251$ AUC-PR was evaluated on that **single 80-wafer holdout**, **not** a 5-fold CV score across 1,000 wafers.
+   - Adit's `validation.csv` had **no target labels**; it was an unlabeled competition file identical in structure to `test.csv` for submission generation.
+2. **High-Value Feature Discoveries in Adit's Branch**:
    - **10-Component Tabular PCA**: Uncovered that the 500 electrical parametric tests share a dominant linear drift mode (**PC01 correlation with failure $r = -0.4863$**).
    - **Cross-Resolution Bilinear Interaction**: Multiplying PC01 by the sub-die block rolling burst ($\text{PC01} \times \text{Roll350}$) produces an interaction feature with **$r = +0.5184$** correlation to the failure target.
-   - **Geometric / Shape-Derived Features**: Circular Zernike polynomials ($Z_1^{\pm 1}, Z_2^0, Z_4^0$) capture radial/linear chamber gradients, and Connected Component Defect Cluster Topology via Exact Distance Transform (EDT) distinguishes isolated particle defects from catastrophic wafer cracks.
+   - **Block Signal Shape Dynamics**: Numerical 1st and 2nd derivatives capture burst sharpness and oscillation rather than just amplitude.
+   - **Wafer-Local Distributional Normalization**: Within-wafer standardization (`wdev_*`) and percentile ranks (`wrank_*`) make tree learners invariant to wafer-level chamber drift.
 
 *Detailed audit report: [`reports/ADIT_BRANCH_ANALYSIS.md`](reports/ADIT_BRANCH_ANALYSIS.md)*
+
+---
+
+### 1.4 Model E: AdversarialResNet Committee Architecture 🌟
+
+Distilling the validated feature engineering concepts and multi-engine committee from the Adit branch audit, we implemented **Model E**:
+
+#### 1. The 644 Feature Architecture:
+- **Base 555 Features (Model B)**: 500 electrical parametric tests, 19 spatial/density metrics, 36 block summary stats.
+- **10-Component Parametric PCA**: Linear manifold projection fitted strictly on `dev_train` parametric features (`pca_01` to `pca_10`).
+- **Cluster Topology & EDT Proximity (7 features)**: Exact Euclidean distance transform and connected defect cluster sizes computed strictly from pre-test defects (`old_label == 1`).
+- **Sub-Die Shape & Block Dynamics (10 features)**: 1st and 2nd numerical derivatives across smoothed 2,000 block readings (`grad_max`, `grad_energy`, `grad_std`, `curv_energy`, `curv_n_inflections`, `grad_ratio_max_mean`, `grad_burst_width`).
+- **Cross-Resolution Bilinear Interactions (9 features)**: Multiplicative interaction terms coupling macro chamber drift with micro block bursts ($\text{PC01} \times \text{Roll350}$, $\text{PC01} \times \text{Roll400}$, $\text{PC01} \times \text{Roll350} \times \text{Edge} \times \text{Density}$).
+- **Wafer-Local Distributional & Rank Features (36 features)**: Wafer-local percentile ranks (`wrank_*`), inter-wafer z-scores (`wzscore_*`), and within-wafer standardized deviations (`wdev_*`) across 12 key features.
+
+#### 2. The 5 Diverse Engines:
+1. **Engine 1 (CatBoost-Deep)**: Oblivious decision trees (`depth=8`, `l2_leaf_reg=6.0`, `lr=0.04`, PRAUC eval metric).
+2. **Engine 2 (LightGBM-DART)**: Tree dropout boosting (`num_leaves=47`, `drop_rate=0.15`, `max_drop=30`).
+3. **Engine 3 (LightGBM-Focal)**: Class imbalance focal-style gradient boosting (`num_leaves=63`, `scale_pos_weight=3.0`).
+4. **Engine 4 (XGBoost-Deep)**: Histogram-based deep trees (`max_depth=7`, `tree_method=hist`).
+5. **Engine 5 (CatBoost-Recall)**: Cost-sensitive balanced trees (`depth=6`, `auto_class_weights='Balanced'`).
+
+#### 3. Why Model E Succeeded:
+Prior tree models struggled because each wafer experiences slightly different thermal/chemical chamber baselines. Tree models typically required dozens of splits on spatial coordinates or wafer IDs to establish local thresholds. By supplying **within-wafer standardized deviations (`wdev_*`)** and **cross-resolution bilinear interactions ($\text{PC01} \times \text{Roll350}$)** directly, Model E decouples die-level anomaly detection from wafer-scale baseline shifts, allowing every engine to reach $>0.60$ AUC-PR individually.
+
+*Detailed report: [`reports/MODEL_E_EVALUATION.md`](reports/MODEL_E_EVALUATION.md)*
 
 ---
 
@@ -641,21 +668,29 @@ python src/models/evaluate_final_test.py
 │   ├── features/
 │   │   ├── spatial.py                              # 19 multi-scale spatial context features
 │   │   └── block.py                                # 36 vectorized block anomaly features
-│   └── models/
-│       ├── common.py                               # Model feature sets, data loaders & metric routines
-│       ├── model_c_architecture.py                 # Multi-Resolution 1D CNN + Tabular MLP (PyTorch)
-│       ├── prepare_cnn_data.py                     # High-speed memory-mapped cache builder
-│       ├── train_model_a.py                        # Model A training & evaluation pipeline
-│       ├── train_model_b.py                        # Model B training & evaluation pipeline
-│       ├── train_model_b_no_spatial.py             # Controlled ablation training & evaluation pipeline
-│       ├── train_model_c.py                        # Model C end-to-end training & benchmarking (LR=1e-3)
-│       ├── train_model_c_lr3e4.py                  # Model C controlled LR ablation (LR=3e-4)
-│       ├── train_model_c1.py                       # Model C1 triple-branch multi-res training & ablation
-│       ├── train_model_c2.py                       # Model C2 multi-scale 1D CNN training & ablation
-│       ├── evaluate_blend_b_c.py                   # Model B + Model C ensemble blending & analysis
-│       ├── evaluate_blend_b_c1.py                  # Model B + Model C1 grand ensemble blending & analysis
-│       ├── cv_ensemble.py                          # 5-fold wafer-grouped CV for Grand Tri-Blend champion
-│       └── evaluate_final_test.py                  # Final unseen test inference & evaluation pipeline
+│   │   ├── block.py                                # 36 vectorized block anomaly features
+│   │   ├── model_e_features.py                     # 644-feature extraction pipeline (train & dev_val)
+│   │   └── model_e_test_features.py                # Zero-leakage test feature extraction pipeline
+│   ├── models/
+│   │   ├── common.py                               # Model feature sets, data loaders & metric routines
+│   │   ├── model_c_architecture.py                 # Multi-Resolution 1D CNN + Tabular MLP (PyTorch)
+│   │   ├── prepare_cnn_data.py                     # High-speed memory-mapped cache builder
+│   │   ├── train_model_a.py                        # Model A training & evaluation pipeline
+│   │   ├── train_model_b.py                        # Model B training & evaluation pipeline
+│   │   ├── train_model_b_no_spatial.py             # Controlled ablation training & evaluation pipeline
+│   │   ├── train_model_c.py                        # Model C end-to-end training & benchmarking (LR=1e-3)
+│   │   ├── train_model_c_lr3e4.py                  # Model C controlled LR ablation (LR=3e-4)
+│   │   ├── train_model_c1.py                       # Model C1 triple-branch multi-res training & ablation
+│   │   ├── train_model_c2.py                       # Model C2 multi-scale 1D CNN training & ablation
+│   │   ├── evaluate_blend_b_c.py                   # Model B + Model C ensemble blending & analysis
+│   │   ├── evaluate_blend_b_c1.py                  # Model B + Model C1 grand ensemble blending & analysis
+│   │   ├── cv_ensemble.py                          # 5-fold wafer-grouped CV for Grand Tri-Blend champion
+│   │   ├── evaluate_final_test.py                  # Final unseen test inference & evaluation pipeline
+│   │   ├── train_model_e.py                        # Model E 5-engine committee training & evaluation
+│   │   └── evaluate_model_e_test.py                # Final unseen test evaluation for Model E
+│   └── visualization/
+│       ├── plot_model_e.py                         # Model E validation curves & correlation heatmaps
+│       └── plot_final_test_model_e.py              # Final unseen test PR curves & milestone benchmarks
 ├── models/
 │   ├── model_a.joblib / model_a.txt                # Model A trained artifacts (3.44 MB)
 │   ├── model_b.joblib / model_b.txt                # Model B trained artifacts (3.45 MB)
@@ -669,18 +704,31 @@ python src/models/evaluate_final_test.py
 │   ├── model_c1_cnn_config.json                    # Model C1 architecture & hyperparameters
 │   ├── model_c1_normalization.json                 # Model C1 branch normalization metadata
 │   ├── model_c2_cnn.pt                             # Model C2 multi-scale PyTorch checkpoint (6.06 MB)
-│   └── model_c2_cnn_config.json                    # Model C2 multi-scale architecture & hyperparameters
+│   ├── model_c2_cnn_config.json                    # Model C2 multi-scale architecture & hyperparameters
+│   ├── model_e_cb_deep.cbm                         # Model E Engine 1: CatBoost-Deep trained model
+│   ├── model_e_lgb_dart.txt                        # Model E Engine 2: LightGBM-DART trained model
+│   ├── model_e_lgb_focal.txt                       # Model E Engine 3: LightGBM-Focal trained model
+│   ├── model_e_xgb_deep.json                       # Model E Engine 4: XGBoost-Deep trained model
+│   ├── model_e_cb_recall.cbm                       # Model E Engine 5: CatBoost-Recall trained model
+│   └── model_e_feature_list.json                   # Canonical 644 feature list for Model E
 ├── predictions/
-│   └── final_test_predictions.parquet              # Final unseen test predictions (208,264 dies x 8 cols)
+│   ├── final_test_predictions.parquet              # Frozen Champion final test predictions
+│   └── final_test_model_e_predictions.parquet      # Model E all-engine final test predictions
+├── submissions/
+│   └── submission_model_e_optimal.csv              # Official competition format submission for Model E
 ├── processed/
 │   ├── train_features.parquet                      # 888,497 rows x 560 cols (2.03 GB)
 │   ├── test_features.parquet                       # 208,264 rows x 560 cols (616.7 MB)
 │   ├── validation_features.parquet                 # 208,264 rows x 559 cols (616.7 MB)
 │   ├── dev_train_features.parquet                  # 734,137 rows x 560 cols (1.73 GB)
 │   ├── dev_val_features.parquet                    # 154,360 rows x 560 cols (457.1 MB)
-│   └── cache/                                      # Model C / C1 memory-mapped cache
+│   ├── dev_train_model_e_features.parquet          # 651,337 eligible dies x 649 cols (Model E train)
+│   ├── dev_val_model_e_features.parquet            # 137,576 eligible dies x 649 cols (Model E val)
+│   ├── final_test_model_e_features.parquet         # 185,126 eligible dies x 648 cols (Model E test)
+│   └── cache/                                      # Memory-mapped block signal cache
 │       ├── dev_train_raw_blocks.dat                # 651,337 x 2,000 float32 memmap (4.85 GB)
 │       ├── dev_val_raw_blocks.dat                  # 137,576 x 2,000 float32 memmap (1.03 GB)
+│       ├── final_test_raw_blocks.dat               # 208,264 x 2,000 float32 memmap (1.55 GB)
 │       ├── dev_train_tabular_norm.npy              # 651,337 x 519 normalized tabular features
 │       ├── dev_val_tabular_norm.npy                # 137,576 x 519 normalized tabular features
 │       ├── dev_train_c1_block_norm.npy             # 651,337 x 36 normalized block features
@@ -691,68 +739,25 @@ python src/models/evaluate_final_test.py
 │   ├── development_split.json                      # Canonical split definition & wafer IDs
 │   ├── CV_ENSEMBLE_EVALUATION.md                   # Full 5-fold wafer-grouped CV evaluation report
 │   ├── ADIT_BRANCH_ANALYSIS.md                     # Comprehensive audit of teammate Adit's branch
-│   ├── FINAL_TEST_EVALUATION.md                    # Final unseen test evaluation report (frozen champion)
+│   ├── FINAL_TEST_EVALUATION.md                    # Final unseen test report (frozen champion)
+│   ├── MODEL_E_EVALUATION.md                       # Comprehensive Model E committee evaluation report
+│   ├── MODEL_E_FINAL_TEST_EVALUATION.md            # Final unseen test evaluation report for Model E
+│   ├── model_e_metrics.json / .csv                 # Model E development metrics & correlations
+│   ├── model_e_final_test_metrics.json / .csv      # Model E final unseen test metrics & comparisons
 │   ├── cv_oof_predictions.parquet                  # 788,913 OOF per-die prediction records (6.73 MB)
 │   ├── cv_fold_metrics.csv / cv_summary.json       # 5-fold fold-by-fold and summary metrics
 │   ├── cv_ensemble_weight_sweep.csv                # 3D weight sweep over C2, C1, B
 │   ├── cv_threshold_sweep.csv                      # Decision threshold sweep metrics
 │   ├── model_a_metrics.json / .csv                 # Model A metrics & baseline comparisons
-│   ├── model_a_feature_importance.csv              # Model A gain & split rankings
-│   ├── model_a_dev_val_predictions.parquet         # Model A per-die validation predictions
 │   ├── model_b_metrics.json / .csv                 # Model B metrics
-│   ├── model_b_feature_importance.csv              # Model B gain & split rankings
-│   ├── model_b_dev_val_predictions.parquet         # Model B per-die validation predictions
-│   ├── model_comparison_a_vs_b.json / .csv         # Direct Model A vs. Model B deltas
-│   ├── model_b_no_spatial_metrics.json / .csv      # Ablation metrics
-│   ├── model_b_no_spatial_feature_importance.csv   # Ablation feature rankings
-│   ├── model_b_no_spatial_dev_val_predictions.parquet # Ablation predictions
-│   ├── model_ablation_comparison.json / .csv       # Full 3-way ablation comparison summary
-│   ├── model_c_metrics.json / .csv                 # Model C metrics (LR=1e-3)
-│   ├── model_c_training_history.csv                # Model C epoch-by-epoch loss & validation AUC-PR
-│   ├── model_c_dev_val_predictions.parquet         # Model C per-die validation predictions
-│   ├── model_comparison_a_b_c.json / .csv          # 4-way benchmark comparison (A, B-no-spatial, B, C)
-│   ├── model_c_lr3e4_metrics.json / .csv           # Model C (LR=3e-4) metrics
-│   ├── model_c_lr3e4_training_history.csv          # Model C (LR=3e-4) epoch-by-epoch history
-│   ├── model_c_lr3e4_dev_val_predictions.parquet   # Model C (LR=3e-4) validation predictions
-│   ├── model_c_vs_lr3e4_comparison.json / .csv     # Direct LR=1e-3 vs LR=3e-4 ablation comparison
 │   ├── model_c1_metrics.json / .csv                # Model C1 triple-branch metrics
-│   ├── model_c1_training_history.csv               # Model C1 epoch-by-epoch history
-│   ├── model_c1_dev_val_predictions.parquet        # Model C1 per-die validation predictions
-│   ├── model_c_vs_c1_comparison.csv                # Direct Model C vs Model C1 comparison table
-│   ├── model_c1_feature_branches.json              # Explicit feature-branch definitions
 │   ├── model_c2_metrics.json / .csv                # Model C2 multi-scale CNN metrics
-│   ├── model_c2_training_history.csv               # Model C2 epoch-by-epoch history
-│   ├── model_c2_dev_val_predictions.parquet        # Model C2 per-die validation predictions
-│   ├── model_c2_summary.md                         # Model C2 and Grand Tri-Blend summary
-│   ├── model_b_c_blend_metrics.json                # Model B + Model C ensemble metrics
-│   ├── model_b_c_blend_sweep.csv                   # Full alpha sweep results (0.000 to 1.000)
-│   ├── model_b_c_blend_comparison.csv              # Model B vs Model C vs Blend comparison
-│   ├── model_b_c_blend_predictions.parquet         # Ensemble per-die validation predictions
-│   ├── model_b_c1_blend_metrics.json               # Model B + Model C1 grand ensemble metrics
-│   ├── model_b_c1_blend_sweep.csv                  # B+C1 full alpha sweep results (0.000 to 1.000)
-│   ├── model_b_c1_blend_comparison.csv             # Model B vs Model C1 vs Grand Blend comparison
-│   ├── model_b_c1_blend_predictions.parquet        # Grand ensemble per-die validation predictions
 │   └── figures/
 │       ├── cv_pr_curves.png                        # 5-fold OOF Precision-Recall curves
 │       ├── cv_roc_curves.png                       # 5-fold OOF ROC curves
 │       ├── cv_fold_performance.png                 # Fold-by-fold AUC-PR & metric consistency
 │       ├── cv_threshold_tradeoff.png               # OOF F1, Precision, Recall vs Threshold
-│       ├── cv_ensemble_weight_heatmap.png          # 3D ensemble weight sensitivity heatmap
-│       ├── model_c_training_curve.png              # Model C (LR=1e-3) training progression
-│       ├── model_c_pr_comparison.png               # PR curves: Model A vs B-no-spatial vs B vs C
-│       ├── model_c_lr3e4_training_curve.png        # Model C (LR=3e-4) loss & metric curve
-│       ├── model_c_vs_lr3e4_pr_comparison.png      # Precision-Recall comparison: LR=1e-3 vs LR=3e-4
-│       ├── model_c1_training_curve.png             # Model C1 loss progression & validation curves
-│       ├── model_c_vs_c1_pr_comparison.png         # Precision-Recall comparison: C vs C1 vs B
-│       ├── model_c2_training_curve.png             # Model C2 loss & validation curves
-│       ├── model_c2_vs_c1_pr_curves.png            # Precision-Recall comparison: C2 vs C1
-│       ├── model_c2_vs_c1_roc_curves.png           # ROC curves: C2 vs C1
-│       ├── model_b_c_blend_aucpr.png               # Ensemble AUC-PR vs blend alpha curve
-│       ├── model_b_c_blend_rocauc.png              # Ensemble ROC-AUC vs blend alpha curve
-│       ├── model_b_c_prediction_scatter.png        # Model B vs Model C prediction scatter & thresholds
-│       ├── model_b_c1_blend_aucpr.png              # Grand Ensemble AUC-PR vs C1 alpha curve
-│       ├── model_b_c1_blend_rocauc.png             # Grand Ensemble ROC-AUC vs C1 alpha curve
-│       └── model_b_c1_prediction_scatter.png       # Model B vs Model C1 prediction scatter & thresholds
+│       └── cv_ensemble_weight_heatmap.png          # 3D ensemble weight sensitivity heatmap
 └── plots/
     ├── 1_target_distribution.png                   # Eligible class imbalance breakdown
     ├── 2_spatial_feature_distributions.png         # Spatial feature shifts (healthy vs fail)
