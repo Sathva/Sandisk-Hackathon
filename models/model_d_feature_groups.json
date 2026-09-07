@@ -1,0 +1,55 @@
+{
+  "PCA_FEATURES": [
+    "pca_01",
+    "pca_02",
+    "pca_03",
+    "pca_04",
+    "pca_05",
+    "pca_06",
+    "pca_07",
+    "pca_08",
+    "pca_09",
+    "pca_10"
+  ],
+  "CLUSTER_EDT_FEATURES": [
+    "exact_edt_distance",
+    "nearest_defect_cluster_size",
+    "nearest_defect_log_cluster_size",
+    "defect_vector_dr",
+    "defect_vector_dc",
+    "is_defect_neighbor_1hop",
+    "is_defect_neighbor_2hop"
+  ],
+  "W350_FEATURES": [
+    "block_rolling_mean_350",
+    "max_rolling_mean_350",
+    "min_rolling_mean_350",
+    "max_rolling_std_350",
+    "max_rolling_mean_350_start_idx",
+    "burst_excess_350"
+  ],
+  "TOPHAT_FEATURES": [
+    "tophat_peak_100",
+    "tophat_energy_100",
+    "tophat_peak_200",
+    "tophat_energy_200"
+  ],
+  "GEOMETRIC_FEATURES": [
+    "zernike_Z1_neg1",
+    "zernike_Z1_1",
+    "zernike_Z2_0",
+    "zernike_Z2_neg2",
+    "zernike_Z2_2",
+    "zernike_Z4_0",
+    "reticle_pos",
+    "is_reticle_corner"
+  ],
+  "INTERACTION_FEATURES": [
+    "inter_pca01_x_roll350",
+    "inter_pca01_x_cluster_size",
+    "inter_pca01_x_edt",
+    "inter_pca01_x_edge",
+    "inter_roll350_x_cluster"
+  ],
+  "TOTAL_ADDITIONAL_COUNT": 40
+}
