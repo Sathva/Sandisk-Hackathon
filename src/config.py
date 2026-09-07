@@ -32,10 +32,12 @@ if INPUT_DIR is None:
 PROCESSED_DIR = REPO_ROOT / "processed"
 PLOTS_DIR = REPO_ROOT / "plots"
 REPORTS_DIR = REPO_ROOT / "reports"
+MODELS_DIR = REPO_ROOT / "models"
 
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 PLOTS_DIR.mkdir(parents=True, exist_ok=True)
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+MODELS_DIR.mkdir(parents=True, exist_ok=True)
 
 # Dataset file paths
 TRAIN_CSV = INPUT_DIR / "train.csv"
