@@ -1,0 +1,43 @@
+nohup: ignoring input
+
+=====================================================================================
+STARTING MODEL A LIGHTGBM TRAINING & EVALUATION PIPELINE
+=====================================================================================
+Seed: 42
+Features: 519 (500 Parametric + 19 Spatial Context)
+Train Source: /home/user/Vinay/san/processed/dev_train_features.parquet
+Validation Source: /home/user/Vinay/san/processed/dev_val_features.parquet
+Predictive Task: ONLY Eligible Dies (old_label == 0)
+Target: label (0 = stayed healthy, 1 = newly failed)
+=====================================================================================
+
+--- STEP 1: LOADING DATASETS ---
+Loading dev_train_features.parquet (524 columns)...
+   Loaded 734,137 total dies in 0.86s.
+   Wafers: 640 | Total Dies: 734,137 | Eligible Dies (old_label==0): 651,337
+   Eligible Negatives (Pass): 627,274 (96.31%)
+   Eligible Positives (Newly Failed): 24,063 (3.694%)
+Loading dev_val_features.parquet (524 columns)...
+   Loaded 154,360 total dies in 0.23s.
+   Wafers: 160 | Total Dies: 154,360 | Eligible Dies (old_label==0): 137,576
+   Eligible Negatives (Pass): 132,209 (96.10%)
+   Eligible Positives (Newly Failed): 5,367 (3.901%)
+Data loading complete in 1.40s.
+
+Wafer-disjoint verification: 0 overlap between 640 train wafers and 160 dev-val wafers.
+
+--- STEP 2: CLASS IMBALANCE CONFIGURATION ---
+Train Negatives: 627,274 | Positives: 24,063
+Calculated scale_pos_weight: 26.067988 (exactly 627274/24063)
+
+--- STEP 3: TRAINING LIGHTGBM MODEL A ---
+Training until validation scores don't improve for 50 rounds
+[50]	valid_0's average_precision: 0.344049	valid_0's binary_logloss: 0.529515
+[100]	valid_0's average_precision: 0.414938	valid_0's binary_logloss: 0.529173
+[150]	valid_0's average_precision: 0.439713	valid_0's binary_logloss: 0.495457
+[200]	valid_0's average_precision: 0.452954	valid_0's binary_logloss: 0.465786
+[250]	valid_0's average_precision: 0.462313	valid_0's binary_logloss: 0.441512
+[300]	valid_0's average_precision: 0.467872	valid_0's binary_logloss: 0.422422
+[350]	valid_0's average_precision: 0.472391	valid_0's binary_logloss: 0.405913
+[400]	valid_0's average_precision: 0.475937	valid_0's binary_logloss: 0.390936
+[450]	valid_0's average_precision: 0.479018	valid_0's binary_logloss: 0.377084

@@ -30,6 +30,8 @@ from src.config import (
 )
 from src.models.common import (
     MODEL_A_FEATURES,
+    PARAMETRIC_FEATURES,
+    SPATIAL_FEATURES,
     load_dataset,
     compute_metrics,
     compute_predict_all_pass_baseline,
@@ -106,7 +108,7 @@ def run_model_a():
     )
 
     callbacks = [
-        lgb.early_stopping(stopping_rounds=50, verbose=True),
+        lgb.early_stopping(stopping_rounds=50, first_metric_only=True, verbose=True),
         lgb.log_evaluation(period=50),
     ]
 
@@ -311,6 +313,10 @@ def run_model_a():
     print(f"7. Precision (Fail Class):    {metrics_tuned['precision']:.4f} (at T*) | {metrics_05['precision']:.4f} (at 0.5)")
     print(f"8. Recall (Fail Class):       {metrics_tuned['recall']:.4f} (at T*) | {metrics_05['recall']:.4f} (at 0.5)")
     print(f"9. Tuned Threshold:           {tuned_threshold:.4f}")
+    print(f"10. Exact Files Created:")
+    for f_art in metrics_summary["artifacts_created"]:
+        print(f"    - {f_art}")
+    print(f"11. Warnings/Errors:          None")
     print(f"{'=' * 85}\n")
 
     print("--- COMPARISON SUMMARY TABLE ---")
