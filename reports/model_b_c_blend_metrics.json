@@ -1,0 +1,48 @@
+{
+  "experiment_name": "model_b_c_blend",
+  "description": "Probability-level ensemble of LightGBM Model B and Multi-Resolution 1D CNN Model C",
+  "best_alpha": 0.684,
+  "best_blended_auc_pr": 0.5763940712349876,
+  "best_blended_roc_auc": 0.8913077877440759,
+  "max_roc_auc": 0.891327416652211,
+  "max_roc_auc_alpha": 0.7100000000000001,
+  "optimal_threshold": 0.8250000000000001,
+  "f1_score": 0.5518015210073557,
+  "precision": 0.8338357196684251,
+  "recall": 0.41233463760014905,
+  "specificity": 0.9966643723195849,
+  "accuracy": 0.9738689887771123,
+  "confusion_matrix": {
+    "tp": 2213,
+    "fp": 441,
+    "fn": 3154,
+    "tn": 131768
+  },
+  "pairwise_deltas": {
+    "vs_model_b": {
+      "delta_auc_pr": 0.02207278240279431,
+      "rel_auc_pr_pct": 3.981947445910973,
+      "delta_roc_auc": 0.01532774618899535,
+      "delta_f1": 0.011348851256199
+    },
+    "vs_model_c": {
+      "delta_auc_pr": 0.004321693004073035,
+      "rel_auc_pr_pct": 0.7554451444478939,
+      "delta_roc_auc": 0.00218159078638569,
+      "delta_f1": 0.001305524831904492
+    }
+  },
+  "complementarity": {
+    "pearson_correlation": 0.8500237508284638,
+    "spearman_correlation": 0.8090486094465356,
+    "disagreement_rate": 0.0074722335291039135,
+    "both_correct": 133344,
+    "b_only_correct": 557,
+    "c_only_correct": 471,
+    "both_wrong": 3204,
+    "defects_caught_both": 2073,
+    "defects_caught_b_only": 88,
+    "defects_caught_c_only": 230,
+    "defects_missed_both": 2976
+  }
+}
