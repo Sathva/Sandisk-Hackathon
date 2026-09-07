@@ -1,0 +1,19 @@
+metric,value
+model_name,CatBoost Model B
+feature_set,Model B (500 Parametric + 19 Spatial + 36 Block)
+num_features,555
+best_iteration,1173
+training_time_seconds,27.6450092792511
+scale_pos_weight,26.067988197647843
+auc_pr,0.5491978761692168
+roc_auc,0.8761434344579644
+optimal_threshold,0.8176381909547739
+f1,0.5389760428067615
+precision,0.7759103641456583
+recall,0.4128936090926029
+specificity,0.9951591797835245
+accuracy,0.9724443216840146
+tp,2216
+fp,640
+fn,3151
+tn,131569

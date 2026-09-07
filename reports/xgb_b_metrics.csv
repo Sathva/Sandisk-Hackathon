@@ -1,0 +1,19 @@
+metric,value
+model_name,XGBoost Model B
+feature_set,Model B (500 Parametric + 19 Spatial + 36 Block)
+num_features,555
+best_iteration,782
+training_time_seconds,18.79958724975586
+scale_pos_weight,26.067988197647843
+auc_pr,0.5447387427300335
+roc_auc,0.8701706915786486
+optimal_threshold,0.768391959798995
+f1,0.5365853658536586
+precision,0.7996309963099631
+recall,0.4037637413825228
+specificity,0.9958928665975841
+accuracy,0.9727932197476304
+tp,2167
+fp,543
+fn,3200
+tn,131666

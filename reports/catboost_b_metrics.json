@@ -1,0 +1,36 @@
+{
+  "model_name": "CatBoost Model B",
+  "feature_set": "Model B (500 Parametric + 19 Spatial + 36 Block)",
+  "num_features": 555,
+  "best_iteration": 1173,
+  "training_time_seconds": 27.6450092792511,
+  "scale_pos_weight": 26.067988197647843,
+  "auc_pr": 0.5491978761692168,
+  "roc_auc": 0.8761434344579644,
+  "optimal_threshold": 0.8176381909547739,
+  "f1": 0.5389760428067615,
+  "precision": 0.7759103641456583,
+  "recall": 0.4128936090926029,
+  "specificity": 0.9951591797835245,
+  "accuracy": 0.9724443216840146,
+  "tp": 2216,
+  "fp": 640,
+  "fn": 3151,
+  "tn": 131569,
+  "metrics_at_05": {
+    "f1": 0.3187103594080338,
+    "precision": 0.20868662398338814,
+    "recall": 0.6741196198993852,
+    "specificity": 0.8962324803908962,
+    "accuracy": 0.8875675989998255
+  },
+  "comparison_vs_lgbm_b": {
+    "lgbm_b_auc_pr": 0.5543,
+    "delta_auc_pr": -0.005102123830783234,
+    "rel_lift_auc_pr_pct": -0.9204625348697879,
+    "lgbm_b_roc_auc": 0.876,
+    "delta_roc_auc": 0.00014343445796438647,
+    "lgbm_b_f1": 0.5397,
+    "delta_f1": -0.0007239571932384781
+  }
+}

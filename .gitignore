@@ -7,3 +7,5 @@ processed/cache/
 *.log
 __pycache__/
 *.pt
+catboost_info/
+models/rf_b.joblib

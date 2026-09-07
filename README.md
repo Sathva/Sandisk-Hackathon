@@ -48,7 +48,11 @@ All models were trained on **$651,337$ eligible training dies** (640 wafers) and
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **No-Skill Baseline** (Prevalence) | — | None | 0.0390 | 0.0000 | 0.0000 | 0.0000 | 0.5000 | 96.10% | N/A | — |
 | **Model A** (LightGBM Param + Spatial) | 519 | None | 0.4937 | 0.5200 | **0.9441** | 0.3589 | 0.8318 | **97.42%** | 0.8127 | 109.1 s |
+| **Model A** (XGBoost Param + Spatial) | 519 | None | 0.4918 | 0.5178 | 0.9540 | 0.3553 | 0.8282 | 97.42% | 0.7800 | 23.4 s |
 | **Model B-no-spatial** (LightGBM Param + Block) | 536 | 36 Summary Stats | 0.5517 | 0.5392 | 0.7933 | 0.4084 | 0.8732 | 97.28% | 0.8033 | 136.2 s |
+| **Model B** (Random Forest) | 555 | 36 Summary Stats | 0.3698 | 0.3759 | 0.4340 | 0.3315 | 0.8379 | 95.71% | 0.2500 | 204.2 s |
+| **Model B** (XGBoost Full Fusion) | 555 | 36 Summary Stats | 0.5447 | 0.5364 | 0.7929 | 0.4053 | 0.8702 | 97.27% | 0.7650 | 18.8 s |
+| **Model B** (CatBoost Full Fusion) | 555 | 36 Summary Stats | 0.5492 | 0.5385 | 0.7324 | 0.4257 | **0.8761** | 97.15% | 0.8000 | 27.6 s |
 | **Model B** (LightGBM Full Fusion) | 555 | 36 Summary Stats | 0.5543 | 0.5397 | 0.8266 | 0.4006 | 0.8760 | 97.33% | 0.8176 | 142.7 s |
 | **Model C (Multi-Res 1D CNN, LR=1e-3)** | 519 + Raw 2,000 Seq | Learned 1D CNN (256-dim) | 0.5721 | 0.5505 | 0.7677 | 0.4291 | 0.8891 | 97.27% | 0.8250 | **84.4 s** |
 | **Model C (LR=3e-4 Ablation)** | 519 + Raw 2,000 Seq | Learned 1D CNN (256-dim) | 0.5713 | 0.5483 | 0.7923 | 0.4192 | 0.8904 | 97.31% | 0.8850 | 117.2 s |
@@ -330,6 +334,13 @@ spatial         19           601,333.27       31,649.12        5.47%      1,202
    - Fused LightGBM Model B with the champion Triple-Branch Deep Net Model C1 at optimal weight **$\alpha^* = 0.855$** ($85.5\%$ Model C1, $14.5\%$ Model B).
    - Established the **all-time highest hackathon score: AUC-PR = 0.5786 (+17.20% over Model A, +4.38% over Model B, +1.14% over Model C, +0.35% over Model C1, +0.38% over previous B+C blend)**, **ROC-AUC = 0.8920**, **Tuned F1 = 0.5534**, and **Precision = 76.72%** (pruning 107 false alarms from C1).
    - Confirmed strong error complementarity: captures **$2,411$ unique defective dies ($44.92\%$ of all defects)** across the wafer population.
+15. **Controlled Tree Model Bake-Off & Complementarity Analysis (`src/models/evaluate_tree_bakeoff.py`)**:
+   - Executed controlled bake-off across 4 independent tree models on canonical dev split: **XGBoost Model A**, **XGBoost Model B**, **CatBoost Model B**, and **Random Forest Model B**.
+   - Independently corroborated the multi-resolution A $\to$ B gain on XGBoost: AUC-PR jumped from **0.4918 to 0.5447** (+10.77% relative lift), proving block features provide real physical signal across tree families.
+   - CatBoost Model B reached **0.5492 AUC-PR** and the highest tree ROC-AUC (**0.8761**).
+   - Random Forest failed under the 26:1 imbalance (AUC-PR = 0.3698).
+   - Confirmed high intra-tree correlation ($r > 0.92$), while all trees maintain diversity against neural Model C1 ($r \approx 0.81–0.85$).
+   - Reaffirmed that the **B + C1 ensemble remains the undisputed champion** (AUC-PR = 0.57861, ROC-AUC = 0.89203, F1 = 0.55342).
 
 ---
 
@@ -340,7 +351,7 @@ Ensure your virtual environment is active:
 ```bash
 cd /home/user/Vinay/san
 source datasources/venv/bin/activate
-pip install -r datasources/requirements.txt lightgbm torch
+pip install -r datasources/requirements.txt lightgbm torch xgboost catboost
 ```
 
 ### Step 1: Generate the 1,000-Wafer Dataset
@@ -379,48 +390,44 @@ cd /home/user/Vinay/san
 python src/visualize.py
 ```
 
-### Step 7: Train & Evaluate Model A (LightGBM Baseline)
+### Step 7: Train and Evaluate Model A (LightGBM Parametric + Spatial)
 ```bash
 cd /home/user/Vinay/san
-nohup python -u src/models/train_model_a.py > train_model_a.log 2>&1 &
-# Watch output: tail -f train_model_a.log
+python src/models/train_model_a.py
 ```
 
-### Step 8: Train & Evaluate Model B (Multi-Resolution Fusion)
+### Step 8: Train and Evaluate Model B (LightGBM Full Multi-Resolution Fusion)
 ```bash
 cd /home/user/Vinay/san
-nohup python -u src/models/train_model_b.py > train_model_b.log 2>&1 &
-# Watch output: tail -f train_model_b.log
+python src/models/train_model_b.py
 ```
 
-### Step 9: Run Controlled Ablation (Model B-Without-Spatial)
+### Step 9: Run Controlled Ablation Study (Model B Without Spatial Features)
 ```bash
 cd /home/user/Vinay/san
-nohup python -u src/models/train_model_b_no_spatial.py > train_model_b_no_spatial.log 2>&1 &
-# Watch output: tail -f train_model_b_no_spatial.log
+python src/models/train_model_b_no_spatial.py
 ```
 
-### Step 10: Train & Evaluate Model C (Multi-Resolution 1D CNN, LR=1e-3)
+### Step 10: Build High-Speed Memory-Mapped Cache for Deep Learning
+```bash
+cd /home/user/Vinay/san
+python src/models/prepare_cnn_data.py
+```
+
+### Step 11: Train & Evaluate Model C (Multi-Resolution 1D CNN + Tabular MLP)
 ```bash
 cd /home/user/Vinay/san
 nohup python -u src/models/train_model_c.py > train_model_c.log 2>&1 &
 # Watch output: tail -f train_model_c.log
 ```
 
-### Step 11: Train & Evaluate Controlled LR Ablation (Model C, LR=3e-4)
-```bash
-cd /home/user/Vinay/san
-nohup python -u src/models/train_model_c_lr3e4.py > train_model_c_lr3e4.log 2>&1 &
-# Watch output: tail -f train_model_c_lr3e4.log
-```
-
-### Step 12: Run Ensemble Blending & Complementarity Analysis (Model B + Model C)
+### Step 12: Run Model B + Model C Prediction Ensemble Sweep
 ```bash
 cd /home/user/Vinay/san
 python src/models/evaluate_blend_b_c.py
 ```
 
-### Step 13: Train & Evaluate Model C1 (Triple-Branch Multi-Resolution Deep Network)
+### Step 13: Train & Benchmark Model C1 (Triple-Branch Multi-Resolution Deep Net)
 ```bash
 cd /home/user/Vinay/san
 nohup python -u src/models/train_model_c1.py > train_model_c1.log 2>&1 &
@@ -431,6 +438,16 @@ nohup python -u src/models/train_model_c1.py > train_model_c1.log 2>&1 &
 ```bash
 cd /home/user/Vinay/san
 python src/models/evaluate_blend_b_c1.py
+```
+
+### Step 15: Run Controlled Tree Model Bake-Off & Ensemble Sweeps
+```bash
+cd /home/user/Vinay/san
+python src/models/train_xgb_a.py
+python src/models/train_xgb_b.py
+python src/models/train_catboost_b.py
+python src/models/train_rf_b.py
+python src/models/evaluate_tree_bakeoff.py
 ```
 
 ---

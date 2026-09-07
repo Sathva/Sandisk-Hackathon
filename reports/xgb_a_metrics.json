@@ -1,0 +1,36 @@
+{
+  "model_name": "XGBoost Model A",
+  "feature_set": "Model A (500 Parametric + 19 Spatial)",
+  "num_features": 519,
+  "best_iteration": 1139,
+  "training_time_seconds": 23.377596616744995,
+  "scale_pos_weight": 26.067988197647843,
+  "auc_pr": 0.4917573299353663,
+  "roc_auc": 0.8282452203020304,
+  "optimal_threshold": 0.7831658291457286,
+  "f1": 0.5178134348653793,
+  "precision": 0.9582284851534978,
+  "recall": 0.3547605738773989,
+  "specificity": 0.9993722061281758,
+  "accuracy": 0.9742251555503867,
+  "tp": 1904,
+  "fp": 83,
+  "fn": 3463,
+  "tn": 132126,
+  "metrics_at_05": {
+    "f1": 0.4288534003229858,
+    "precision": 0.4135663609621042,
+    "recall": 0.44531395565492826,
+    "specificity": 0.974366344197445,
+    "accuracy": 0.9537273943129616
+  },
+  "comparison_vs_lgbm_a": {
+    "lgbm_a_auc_pr": 0.4937,
+    "delta_auc_pr": -0.0019426700646337225,
+    "rel_lift_auc_pr_pct": -0.3934920122814912,
+    "lgbm_a_roc_auc": 0.8318,
+    "delta_roc_auc": -0.003554779697969579,
+    "lgbm_a_f1": 0.52,
+    "delta_f1": -0.002186565134620677
+  }
+}
