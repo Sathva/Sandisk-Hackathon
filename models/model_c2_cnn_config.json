@@ -1,0 +1,18 @@
+{
+  "model_name": "Model C2 (Multi-Scale 1D CNN + Tabular Multi-Resolution)",
+  "total_parameters": 504545,
+  "raw_cnn_parameters": 279360,
+  "tabular_parameters": 171424,
+  "fusion_head_parameters": 53761,
+  "kernel_sizes": [
+    5,
+    15,
+    31
+  ],
+  "fusion_kernel": 7,
+  "best_epoch": 2,
+  "best_val_auc_pr": 0.5717337534197571,
+  "learning_rate": 0.001,
+  "batch_size": 512,
+  "pos_weight": 26.067988197647843
+}

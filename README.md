@@ -57,8 +57,11 @@ All models were trained on **$651,337$ eligible training dies** (640 wafers) and
 | **Model C (Multi-Res 1D CNN, LR=1e-3)** | 519 + Raw 2,000 Seq | Learned 1D CNN (256-dim) | 0.5721 | 0.5505 | 0.7677 | 0.4291 | 0.8891 | 97.27% | 0.8250 | **84.4 s** |
 | **Model C (LR=3e-4 Ablation)** | 519 + Raw 2,000 Seq | Learned 1D CNN (256-dim) | 0.5713 | 0.5483 | 0.7923 | 0.4192 | 0.8904 | 97.31% | 0.8850 | 117.2 s |
 | **Model C1 (Triple-Branch Multi-Res)** ⚡ | All 555 + Raw 2,000 Seq | CNN (256) + Eng Block (32) + Tabular (128) | 0.5766 | 0.5504 | 0.7429 | **0.4371** | 0.8913 | 97.21% | 0.9250 | 84.8 s |
+| **Model C2 (Multi-Scale 1D CNN)** | All 555 + Raw 2,000 Seq | Multi-Scale (k=5, 15, 31) + Eng Block + Tabular | 0.5717 | 0.5508 | **0.8064** | 0.4183 | 0.8893 | 97.34% | 0.9150 | 496.6 s |
 | **Ensemble: Model B + Model C ($\alpha^*=0.684$)** | All 555 + Raw 2,000 Seq | Dual: 36 Stats + 1D CNN | 0.5764 | 0.5518 | **0.8338** | 0.4123 | 0.8913 | **97.39%** | 0.8250 | — (Blend) |
-| **Ensemble: Model B + Model C1 ($\alpha^*=0.855$)** 🏆 | **All 555 + Raw 2,000 Seq** | **Dual: GBDT + Triple-Branch CNN** | **0.5786** | **0.5534** | 0.7672 | 0.4328 | **0.8920** | 97.28% | 0.9000 | — (Blend) |
+| **Ensemble: Model B + Model C1 ($\alpha^*=0.855$)** | All 555 + Raw 2,000 Seq | Dual: GBDT + Triple-Branch CNN | 0.5786 | 0.5534 | 0.7672 | 0.4328 | 0.8920 | 97.28% | 0.9000 | — (Blend) |
+| **Ensemble: C2 + C1 Neural Blend ($\alpha^*=0.31$)** | All 555 + Raw 2,000 Seq | Dual Neural: Multi-Scale + Triple-Branch | 0.5787 | 0.5535 | 0.8214 | 0.4174 | 0.8931 | 97.35% | 0.9300 | — (Blend) |
+| **Grand Tri-Blend: C2 + C1 + LightGBM B** 🏆 | **All 555 + Raw 2,000 Seq** | **Tri-Modal: Multi-Scale CNN + Triple-Branch CNN + GBDT** | **0.5795** | **0.5553** | 0.7426 | **0.4435** | **0.8934** | 97.24% | 0.8900 | — (Blend) |
 
 ---
 
@@ -341,6 +344,15 @@ spatial         19           601,333.27       31,649.12        5.47%      1,202
    - Random Forest failed under the 26:1 imbalance (AUC-PR = 0.3698).
    - Confirmed high intra-tree correlation ($r > 0.92$), while all trees maintain diversity against neural Model C1 ($r \approx 0.81–0.85$).
    - Reaffirmed that the **B + C1 ensemble remains the undisputed champion** (AUC-PR = 0.57861, ROC-AUC = 0.89203, F1 = 0.55342).
+16. **Model C2 Multi-Scale 1D CNN & All-Time Record Tri-Blend Ensemble (`src/models/train_model_c2.py`)** 🏆:
+   - Designed and trained a multi-scale 1D CNN parallelizing local ($k=5$), medium ($k=15$), and broad ($k=31$) receptive fields across the raw 2,000-element block sequence, fused with dedicated engineered block and parametric/spatial branches ($504,545$ parameters).
+   - Standalone Model C2 achieved **AUC-PR = 0.5717**, **ROC-AUC = 0.8893**, and **Tuned F1 = 0.5509** with an ultra-high precision of **80.64%**.
+   - Discovered strong complementarity: catches $166$ defects that LightGBM B misses and $42$ defects that C1 misses.
+   - Blending C2 with C1 achieved **AUC-PR = 0.57871** and **ROC-AUC = 0.89313**.
+   - Fusing all three paradigms into a **Grand Tri-Blend ($27\%$ C2 + $63\%$ C1 + $10\%$ LightGBM B)** set the **new all-time hackathon record**:
+     - **AUC-PR = 0.57945** (New All-Time High)
+     - **ROC-AUC = 0.89335** (New All-Time High)
+     - **Tuned F1 = 0.55530** (New All-Time High, $+0.00188$ over B+C1)
 
 ---
 
@@ -448,6 +460,12 @@ python src/models/train_xgb_b.py
 python src/models/train_catboost_b.py
 python src/models/train_rf_b.py
 python src/models/evaluate_tree_bakeoff.py
+```
+
+### Step 16: Train & Benchmark Model C2 (Multi-Scale 1D CNN & Tri-Blend Ensemble)
+```bash
+cd /home/user/Vinay/san
+python src/models/train_model_c2.py
 ```
 
 ---
