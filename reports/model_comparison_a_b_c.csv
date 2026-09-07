@@ -1,0 +1,5 @@
+Model,Features,Block Representation,AUC-PR,ROC-AUC,Tuned F1,Precision,Recall,Threshold,Training Time
+Model A (Baseline),500 Parametric + 19 Spatial (519),None,0.4937,0.8318,0.52,0.9441,0.3589,0.8127,109.1s
+Model B-Without-Spatial,500 Parametric + 36 Block (536),36 Engineered Features,0.5517,0.8732,0.5392,0.7933,0.4084,0.8033,136.2s
+Model B (LightGBM Full),500 Param + 19 Spat + 36 Block (555),36 Engineered Features,0.5543,0.876,0.5397,0.8266,0.4006,0.8176,142.7s
+Model C (Multi-Res 1D CNN),"519 Tabular + Raw 2,000 Seq",Learned 1D CNN (256-dim embedding),0.5720723782309146,0.8891261969576902,0.5504959961754512,0.7676666666666667,0.4291037823737656,0.8250000000000001,84.4s

@@ -1,0 +1,42 @@
+======================================================================
+Model: MultiResolutionCNN
+======================================================================
+MultiResolutionCNN(
+  (block_cnn): BlockSequenceCNN(
+    (conv1): Conv1d(1, 32, kernel_size=(11,), stride=(1,), padding=same)
+    (bn1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, bias=True, track_running_stats=True)
+    (relu1): ReLU()
+    (pool1): MaxPool1d(kernel_size=4, stride=4, padding=0, dilation=1, ceil_mode=False)
+    (conv2): Conv1d(32, 64, kernel_size=(11,), stride=(1,), padding=same)
+    (bn2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, bias=True, track_running_stats=True)
+    (relu2): ReLU()
+    (pool2): MaxPool1d(kernel_size=4, stride=4, padding=0, dilation=1, ceil_mode=False)
+    (conv3): Conv1d(64, 128, kernel_size=(7,), stride=(1,), padding=same)
+    (bn3): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, bias=True, track_running_stats=True)
+    (relu3): ReLU()
+    (avg_pool): AdaptiveAvgPool1d(output_size=1)
+    (max_pool): AdaptiveMaxPool1d(output_size=1)
+  )
+  (tabular_mlp): TabularMLP(
+    (net): Sequential(
+      (0): Linear(in_features=519, out_features=256, bias=True)
+      (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, bias=True, track_running_stats=True)
+      (2): ReLU()
+      (3): Dropout(p=0.2, inplace=False)
+      (4): Linear(in_features=256, out_features=128, bias=True)
+      (5): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, bias=True, track_running_stats=True)
+      (6): ReLU()
+    )
+  )
+  (fusion_head): Sequential(
+    (0): Linear(in_features=384, out_features=128, bias=True)
+    (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, bias=True, track_running_stats=True)
+    (2): ReLU()
+    (3): Dropout(p=0.2, inplace=False)
+    (4): Linear(in_features=128, out_features=1, bias=True)
+  )
+)
+======================================================================
+Total Parameters:     297,345
+Trainable Parameters: 297,345
+======================================================================

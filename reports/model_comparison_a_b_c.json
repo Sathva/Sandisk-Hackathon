@@ -1,0 +1,50 @@
+[
+  {
+    "Model": "Model A (Baseline)",
+    "Features": "500 Parametric + 19 Spatial (519)",
+    "Block Representation": "None",
+    "AUC-PR": 0.4937,
+    "ROC-AUC": 0.8318,
+    "Tuned F1": 0.52,
+    "Precision": 0.9441,
+    "Recall": 0.3589,
+    "Threshold": 0.8127,
+    "Training Time": "109.1s"
+  },
+  {
+    "Model": "Model B-Without-Spatial",
+    "Features": "500 Parametric + 36 Block (536)",
+    "Block Representation": "36 Engineered Features",
+    "AUC-PR": 0.5517,
+    "ROC-AUC": 0.8732,
+    "Tuned F1": 0.5392,
+    "Precision": 0.7933,
+    "Recall": 0.4084,
+    "Threshold": 0.8033,
+    "Training Time": "136.2s"
+  },
+  {
+    "Model": "Model B (LightGBM Full)",
+    "Features": "500 Param + 19 Spat + 36 Block (555)",
+    "Block Representation": "36 Engineered Features",
+    "AUC-PR": 0.5543,
+    "ROC-AUC": 0.876,
+    "Tuned F1": 0.5397,
+    "Precision": 0.8266,
+    "Recall": 0.4006,
+    "Threshold": 0.8176,
+    "Training Time": "142.7s"
+  },
+  {
+    "Model": "Model C (Multi-Res 1D CNN)",
+    "Features": "519 Tabular + Raw 2,000 Seq",
+    "Block Representation": "Learned 1D CNN (256-dim embedding)",
+    "AUC-PR": 0.5720723782309146,
+    "ROC-AUC": 0.8891261969576902,
+    "Tuned F1": 0.5504959961754512,
+    "Precision": 0.7676666666666667,
+    "Recall": 0.4291037823737656,
+    "Threshold": 0.8250000000000001,
+    "Training Time": "84.4s"
+  }
+]

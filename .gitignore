@@ -1,3 +1,9 @@
 *.pkl
 input/
 *.parquet
+*.dat
+*.npy
+processed/cache/
+*.log
+__pycache__/
+*.pt

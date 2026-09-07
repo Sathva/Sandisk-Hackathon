@@ -1,0 +1,23 @@
+{
+  "model_name": "Model C (Multi-Resolution 1D CNN + Tabular MLP)",
+  "branch_1": "Raw 2,000-element block sequence (3-layer Conv1D + multi-scale pool)",
+  "branch_2": "519 tabular features (519: 500 parametric + 19 spatial)",
+  "num_parameters": 297345,
+  "best_epoch": 2,
+  "total_epochs_trained": 5,
+  "training_time_s": 84.35640716552734,
+  "auc_pr": 0.5720723782309146,
+  "roc_auc": 0.8891261969576902,
+  "optimal_threshold": 0.8250000000000001,
+  "f1_score": 0.5504959961754512,
+  "precision": 0.7676666666666667,
+  "recall": 0.4291037823737656,
+  "specificity": 0.9947280442329948,
+  "accuracy": 0.9726623829737745,
+  "confusion_matrix": {
+    "tp": 2303,
+    "fp": 697,
+    "tn": 131512,
+    "fn": 3064
+  }
+}

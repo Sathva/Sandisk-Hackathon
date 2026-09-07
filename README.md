@@ -44,12 +44,13 @@ All models were trained on **$651,337$ eligible training dies** (640 wafers) and
 
 ### 1. Master Performance Comparison Table
 
-| Model Architecture | Features | AUC-PR 🥇 | Tuned F1 🥈 | Precision (Fail) | Recall (Fail) | ROC-AUC | Overall Accuracy | Optimal Threshold ($T^*$) | Training Time | Inference Speed |
+| Model Architecture | Features / Input | Block Representation | AUC-PR 🥇 | Tuned F1 🥈 | Precision (Fail) | Recall (Fail) | ROC-AUC | Overall Accuracy | Optimal Threshold ($T^*$) | Training Time |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **No-Skill Baseline** (Prevalence) | — | 0.0390 | 0.0000 | 0.0000 | 0.0000 | 0.5000 | 96.10% | N/A | — | — |
-| **Model A** (Parametric + Spatial) | 519 | 0.4937 | 0.5200 | **0.9441** | 0.3589 | 0.8318 | **97.42%** | 0.8127 | **109.1 s** | 396.8k dies/s |
-| **Model B-no-spatial** (Parametric + Block) | 536 | 0.5517 | 0.5392 | 0.7933 | **0.4084** | 0.8750 | 97.28% | **0.8078** | 114.7 s | 383.2k dies/s |
-| **Model B** (Full Multi-Resolution Fusion) | 555 | **0.5543** | **0.5397** | 0.8266 | 0.4006 | **0.8760** | 97.33% | 0.8176 | 116.9 s | 393.4k dies/s |
+| **No-Skill Baseline** (Prevalence) | — | None | 0.0390 | 0.0000 | 0.0000 | 0.0000 | 0.5000 | 96.10% | N/A | — |
+| **Model A** (LightGBM Param + Spatial) | 519 | None | 0.4937 | 0.5200 | **0.9441** | 0.3589 | 0.8318 | **97.42%** | 0.8127 | 109.1 s |
+| **Model B-no-spatial** (LightGBM Param + Block) | 536 | 36 Summary Stats | 0.5517 | 0.5392 | 0.7933 | 0.4084 | 0.8732 | 97.28% | 0.8033 | 136.2 s |
+| **Model B** (LightGBM Full Fusion) | 555 | 36 Summary Stats | 0.5543 | 0.5397 | 0.8266 | 0.4006 | 0.8760 | 97.33% | 0.8176 | 142.7 s |
+| **Model C (Multi-Res 1D CNN)** 🏆 | **519 + Raw 2,000 Seq** | **Learned 1D CNN (256-dim)** | **0.5721** | **0.5505** | 0.7677 | **0.4291** | **0.8891** | 97.27% | 0.8250 | **84.4 s** |
 
 ---
 
@@ -57,38 +58,48 @@ All models were trained on **$651,337$ eligible training dies** (640 wafers) and
 
 | Pairwise Comparison | Research Question Answered | $\Delta$ AUC-PR | Rel. AUC-PR | $\Delta$ F1 | Rel. F1 | $\Delta$ Recall | $\Delta$ Precision | $\Delta$ ROC-AUC |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Model B vs. Model A** | Incremental value of adding block context to spatial model | **$+0.0607$** | **$+12.29\%$** | **$+0.0196$** | **$+3.77\%$** | **$+0.0417$** | $-0.1175$ | **$+0.0442$** |
+| **Model C vs. Model B** | **Learned 1D CNN vs. 36 summary features** | **$+0.0178$** | **$+3.21\%$** | **$+0.0108$** | **$+2.00\%$** | **$+0.0285$** | $-0.0589$ | **$+0.0131$** |
+| **Model C vs. Model A** | **Learned block sequence + spatial vs. spatial alone** | **$+0.0784$** | **$+15.88\%$** | **$+0.0305$** | **$+5.86\%$** | **$+0.0702$** | $-0.1764$ | **$+0.0573$** |
+| **Model B vs. Model A** | Incremental value of adding 36 block features to spatial model | **$+0.0607$** | **$+12.29\%$** | **$+0.0196$** | **$+3.77\%$** | **$+0.0417$** | $-0.1175$ | **$+0.0442$** |
 | **Model B-no-spatial vs. Model A** | Block context vs. Spatial context on top of parametric | **$+0.0581$** | **$+11.76\%$** | **$+0.0192$** | **$+3.69\%$** | **$+0.0496$** | $-0.1508$ | **$+0.0433$** |
 | **Model B vs. Model B-no-spatial** | Incremental value of spatial context when block features exist | **$+0.0026$** | **$+0.47\%$** | **$+0.0004$** | **$+0.08\%$** | $-0.0078$ | **$+0.0333$** | **$+0.0010$** |
 
 ### Key Engineering Takeaways:
-1. **Block Signals Drive Defect Detection**: Replacing the 19 spatial features with the 36 block features increases AUC-PR by **$+11.76\%$** and Recall by **$+13.82\%$**, proving sub-die block readings provide superior discriminative signal even without spatial coordinates.
-2. **Spatial Context Stabilizes Precision**: Adding spatial features back into the block model (**B vs. B-no-spatial**) provides an incremental **$+3.33\%$ boost in precision** ($79.33\% \to 82.66\%$), eliminating 120 false positives ($571 \to 451$).
-3. **Full Multi-Resolution Fusion Wins**: Model B achieves the highest global ranking (**AUC-PR $= 0.5543$**, **ROC-AUC $= 0.8760$**) and highest operational utility (**Tuned F1 $= 0.5397$**).
+1. **Raw 2,000-Reading Sequence Outperforms Hand-Crafted Summaries**: Learning directly from the raw 2,000 block sequence with a 1D CNN (**Model C**) achieves **AUC-PR = 0.5721**, surpassing the 36 engineered summary features in Model B by **$+3.21\%$ relative lift** ($+0.0178$ absolute).
+2. **Defect Catch Rate Reaches New High**: Model C catches **$2,303$ defects out of $5,367$** ($42.91\%$ recall)—detecting **$153$ more defective dies** than Model B and **$377$ more** than Model A, while maintaining a $99.47\%$ specificity ($131,512$ clean pass classifications).
+3. **Multi-Scale Convolutional Receptive Fields Capture Local Gradients**: By using convolutional filters ($k=11, 11, 7$) followed by dual global pooling (`AdaptiveAvgPool1d` + `AdaptiveMaxPool1d`), Model C preserves both baseline voltage/timing shifts and localized micro-defects simultaneously.
+4. **Hardware-Accelerated Efficiency**: Model C trains in only **$84.4$ seconds** on the RTX 4500 Ada GPU using mixed precision (AMP) with zero host memory spikes due to memory-mapped binary caching.
 
 ---
 
 ### 3. Confusion Matrices (at Tuned F1 Thresholds)
 
-#### Model A ($T^* = 0.8127$)
+#### Model C ($T^* = 0.8250$) — 🏆 Current Leader
 ```text
                     Pred Fail      Pred Pass         Metric                     Value
-Actual Fail             1,926          3,441         Fail Accuracy (Recall)     0.358860
-Actual Pass               114        132,095         Pass Accuracy (Recall)     0.999138
-```
-
-#### Model B-no-spatial ($T^* = 0.8078$)
-```text
-                    Pred Fail      Pred Pass         Metric                     Value
-Actual Fail             2,192          3,175         Fail Accuracy (Recall)     0.408422
-Actual Pass               571        131,638         Pass Accuracy (Recall)     0.995681
+Actual Fail             2,303          3,064         Fail Accuracy (Recall)     0.429104
+Actual Pass               697        131,512         Pass Accuracy (Specificity)0.994728
 ```
 
 #### Model B ($T^* = 0.8176$)
 ```text
                     Pred Fail      Pred Pass         Metric                     Value
 Actual Fail             2,150          3,217         Fail Accuracy (Recall)     0.400596
-Actual Pass               451        131,758         Pass Accuracy (Recall)     0.996589
+Actual Pass               451        131,758         Pass Accuracy (Specificity)0.996589
+```
+
+#### Model B-no-spatial ($T^* = 0.8033$)
+```text
+                    Pred Fail      Pred Pass         Metric                     Value
+Actual Fail             2,192          3,175         Fail Accuracy (Recall)     0.408422
+Actual Pass               571        131,638         Pass Accuracy (Specificity)0.995681
+```
+
+#### Model A ($T^* = 0.8127$)
+```text
+                    Pred Fail      Pred Pass         Metric                     Value
+Actual Fail             1,926          3,441         Fail Accuracy (Recall)     0.358860
+Actual Pass               114        132,095         Pass Accuracy (Specificity)0.999138
 ```
 
 * **Defect Detection Lift**: Model B captures **224 more defective dies** than Model A while preserving a **$99.66\%$ pass accuracy** (only 451 false alarms out of 132,209 healthy dies).
@@ -144,6 +155,10 @@ spatial         19           601,333.27       31,649.12        5.47%      1,202
    - Achieved **AUC-PR = 0.5543 ($+12.29\%$ lift)**, **Tuned F1 = 0.5397**, **ROC-AUC = 0.8760**, and captured **224 more defects**.
 9. **Controlled Ablation Study (`src/models/train_model_b_no_spatial.py`)**:
    - Evaluated Model B-without-spatial (536 features), proving that block features independently drive a **$+11.76\%$ AUC-PR lift** over Model A, while spatial context refines precision.
+10. **Model C Implementation & Deep Learning Benchmark (`src/models/train_model_c.py`)**:
+   - Designed and trained a dual-branch hybrid neural network (**Multi-Resolution 1D CNN + Tabular MLP**) fusing the raw 2,000-element sub-die sequence with 519 die-level parametric and spatial features.
+   - Built a high-speed memory-mapped binary cache (`processed/cache/`) enabling zero host RAM spikes and mixed precision GPU training in **84.4 seconds** on NVIDIA RTX 4500 Ada.
+   - Set the **new benchmark record: AUC-PR = 0.5721 (+15.88% over Model A, +3.21% over Model B)**, **ROC-AUC = 0.8891**, **Tuned F1 = 0.5505**, catching **2,303 defects** (+153 defects over Model B).
 
 ---
 
@@ -154,7 +169,7 @@ Ensure your virtual environment is active:
 ```bash
 cd /home/user/Vinay/san
 source datasources/venv/bin/activate
-pip install -r datasources/requirements.txt lightgbm
+pip install -r datasources/requirements.txt lightgbm torch
 ```
 
 ### Step 1: Generate the 1,000-Wafer Dataset
@@ -214,6 +229,13 @@ nohup python -u src/models/train_model_b_no_spatial.py > train_model_b_no_spatia
 # Watch output: tail -f train_model_b_no_spatial.log
 ```
 
+### Step 10: Train & Evaluate Model C (Multi-Resolution 1D CNN)
+```bash
+cd /home/user/Vinay/san
+nohup python -u src/models/train_model_c.py > train_model_c.log 2>&1 &
+# Watch output: tail -f train_model_c.log
+```
+
 ---
 
 ## 📂 Repository Structure
@@ -245,19 +267,32 @@ nohup python -u src/models/train_model_b_no_spatial.py > train_model_b_no_spatia
 │   │   └── block.py                                # 36 vectorized block anomaly features
 │   └── models/
 │       ├── common.py                               # Model feature sets, data loaders & metric routines
+│       ├── model_c_architecture.py                 # Multi-Resolution 1D CNN + Tabular MLP (PyTorch)
+│       ├── prepare_cnn_data.py                     # High-speed memory-mapped cache builder
 │       ├── train_model_a.py                        # Model A training & evaluation pipeline
 │       ├── train_model_b.py                        # Model B training & evaluation pipeline
-│       └── train_model_b_no_spatial.py             # Controlled ablation training & evaluation pipeline
+│       ├── train_model_b_no_spatial.py             # Controlled ablation training & evaluation pipeline
+│       └── train_model_c.py                        # Model C end-to-end training & benchmarking pipeline
 ├── models/
 │   ├── model_a.joblib / model_a.txt                # Model A trained artifacts (3.44 MB)
 │   ├── model_b.joblib / model_b.txt                # Model B trained artifacts (3.45 MB)
-│   └── model_b_no_spatial.joblib / .txt            # Model B-no-spatial trained artifacts (3.50 MB)
+│   ├── model_b_no_spatial.joblib / .txt            # Model B-no-spatial trained artifacts (3.50 MB)
+│   ├── model_c_cnn.pt                              # Model C PyTorch best checkpoint (3.45 MB)
+│   ├── model_c_cnn_config.json                     # Model C architecture & hyperparameters
+│   └── model_c_normalization.json                  # Model C zero-leakage normalization parameters
 ├── processed/
 │   ├── train_features.parquet                      # 888,497 rows x 560 cols (2.03 GB)
 │   ├── test_features.parquet                       # 208,264 rows x 560 cols (616.7 MB)
 │   ├── validation_features.parquet                 # 208,264 rows x 559 cols (616.7 MB)
 │   ├── dev_train_features.parquet                  # 734,137 rows x 560 cols (1.73 GB)
-│   └── dev_val_features.parquet                    # 154,360 rows x 560 cols (457.1 MB)
+│   ├── dev_val_features.parquet                    # 154,360 rows x 560 cols (457.1 MB)
+│   └── cache/                                      # Model C memory-mapped cache
+│       ├── dev_train_raw_blocks.dat                # 651,337 x 2,000 float32 memmap (4.85 GB)
+│       ├── dev_val_raw_blocks.dat                  # 137,576 x 2,000 float32 memmap (1.03 GB)
+│       ├── dev_train_tabular_norm.npy              # 651,337 x 519 normalized tabular features
+│       ├── dev_val_tabular_norm.npy                # 137,576 x 519 normalized tabular features
+│       ├── dev_train_labels.npy / dev_val_labels.npy
+│       └── dev_val_meta.parquet                    # Validation metadata for die mapping
 ├── reports/
 │   ├── development_split.json                      # Canonical split definition & wafer IDs
 │   ├── model_a_metrics.json / .csv                 # Model A metrics & baseline comparisons
@@ -270,7 +305,14 @@ nohup python -u src/models/train_model_b_no_spatial.py > train_model_b_no_spatia
 │   ├── model_b_no_spatial_metrics.json / .csv      # Ablation metrics
 │   ├── model_b_no_spatial_feature_importance.csv   # Ablation feature rankings
 │   ├── model_b_no_spatial_dev_val_predictions.parquet # Ablation predictions
-│   └── model_ablation_comparison.json / .csv       # Full 3-way ablation comparison summary
+│   ├── model_ablation_comparison.json / .csv       # Full 3-way ablation comparison summary
+│   ├── model_c_metrics.json / .csv                 # Model C metrics
+│   ├── model_c_training_history.csv                # Model C epoch-by-epoch loss & validation AUC-PR
+│   ├── model_c_dev_val_predictions.parquet         # Model C per-die validation predictions
+│   ├── model_comparison_a_b_c.json / .csv          # 4-way benchmark comparison (A, B-no-spatial, B, C)
+│   └── figures/
+│       ├── model_c_training_curve.png              # Model C train/val loss & AUC-PR progression
+│       └── model_c_pr_comparison.png               # Precision-Recall curves: Model A vs B-no-spatial vs B vs C
 └── plots/
     ├── 1_target_distribution.png                   # Eligible class imbalance breakdown
     ├── 2_spatial_feature_distributions.png         # Spatial feature shifts (healthy vs fail)
