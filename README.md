@@ -11,9 +11,10 @@ In semiconductor manufacturing, each silicon wafer contains thousands of dies te
 2. **Wafer gradients**: Thermal and chemical process chamber variations (radial and linear).
 3. **Sub-die block readings**: High-dimensional internal signals ($2,000$ readings per die) capturing fine-grained defects.
 
-### The Competition Benchmark:
-* **Model A (Die-Level Only)**: Predicts die pass/fail probability using $500$ parametric test measurements + spatial context ($m \times m$ neighborhood, radial/edge geometry).
-* **Model B (Die + Block-Level)**: Predicts die pass/fail probability using everything in Model A **plus** the $2,000$-dimensional sub-die block readings.
+### The Competition Benchmark & Hypotheses:
+* **Model A (Die-Level + Spatial)**: Predicts die pass/fail probability using $500$ parametric test measurements + $19$ spatial context features ($519$ features total).
+* **Model B (Die + Spatial + Block)**: Predicts die pass/fail probability using everything in Model A **plus** $36$ sub-die block anomaly features ($555$ features total).
+* **Model B-Without-Spatial (Controlled Ablation)**: Predicts pass/fail using $500$ parametric + $36$ block features ($536$ features total), strictly excluding spatial context to isolate the independent predictive value of high-dimensional block readings.
 * **Goal**: Quantify and demonstrate how the block-level signal resolves marginal failures that are indistinguishable using die-level features alone.
 
 ---
@@ -33,6 +34,87 @@ In semiconductor manufacturing, each silicon wafer contains thousands of dies te
   * In the submission file, any die with `old_label == 1` is **hardcoded to `predicted_label = 1`**.
   * Model loss functions and decision thresholds are trained and tuned **exclusively on eligible dies (`old_label == 0`)**.
 * **Zero Leakage**: `label` is strictly an output. It is never used to construct any input feature.
+* **Wafer ID Safety**: `wafer_id` is an identifier, strictly excluded from predictive features.
+
+---
+
+## 🏆 Model Benchmark & Ablation Results
+
+All models were trained on **$651,337$ eligible training dies** (640 wafers) and evaluated strictly on **$137,576$ eligible validation dies** (160 wafers) across the canonical wafer-disjoint split.
+
+### 1. Master Performance Comparison Table
+
+| Model Architecture | Features | AUC-PR 🥇 | Tuned F1 🥈 | Precision (Fail) | Recall (Fail) | ROC-AUC | Overall Accuracy | Optimal Threshold ($T^*$) | Training Time | Inference Speed |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **No-Skill Baseline** (Prevalence) | — | 0.0390 | 0.0000 | 0.0000 | 0.0000 | 0.5000 | 96.10% | N/A | — | — |
+| **Model A** (Parametric + Spatial) | 519 | 0.4937 | 0.5200 | **0.9441** | 0.3589 | 0.8318 | **97.42%** | 0.8127 | **109.1 s** | 396.8k dies/s |
+| **Model B-no-spatial** (Parametric + Block) | 536 | 0.5517 | 0.5392 | 0.7933 | **0.4084** | 0.8750 | 97.28% | **0.8078** | 114.7 s | 383.2k dies/s |
+| **Model B** (Full Multi-Resolution Fusion) | 555 | **0.5543** | **0.5397** | 0.8266 | 0.4006 | **0.8760** | 97.33% | 0.8176 | 116.9 s | 393.4k dies/s |
+
+---
+
+### 2. Pairwise Incremental Predictive Value (Deltas & Improvements)
+
+| Pairwise Comparison | Research Question Answered | $\Delta$ AUC-PR | Rel. AUC-PR | $\Delta$ F1 | Rel. F1 | $\Delta$ Recall | $\Delta$ Precision | $\Delta$ ROC-AUC |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Model B vs. Model A** | Incremental value of adding block context to spatial model | **$+0.0607$** | **$+12.29\%$** | **$+0.0196$** | **$+3.77\%$** | **$+0.0417$** | $-0.1175$ | **$+0.0442$** |
+| **Model B-no-spatial vs. Model A** | Block context vs. Spatial context on top of parametric | **$+0.0581$** | **$+11.76\%$** | **$+0.0192$** | **$+3.69\%$** | **$+0.0496$** | $-0.1508$ | **$+0.0433$** |
+| **Model B vs. Model B-no-spatial** | Incremental value of spatial context when block features exist | **$+0.0026$** | **$+0.47\%$** | **$+0.0004$** | **$+0.08\%$** | $-0.0078$ | **$+0.0333$** | **$+0.0010$** |
+
+### Key Engineering Takeaways:
+1. **Block Signals Drive Defect Detection**: Replacing the 19 spatial features with the 36 block features increases AUC-PR by **$+11.76\%$** and Recall by **$+13.82\%$**, proving sub-die block readings provide superior discriminative signal even without spatial coordinates.
+2. **Spatial Context Stabilizes Precision**: Adding spatial features back into the block model (**B vs. B-no-spatial**) provides an incremental **$+3.33\%$ boost in precision** ($79.33\% \to 82.66\%$), eliminating 120 false positives ($571 \to 451$).
+3. **Full Multi-Resolution Fusion Wins**: Model B achieves the highest global ranking (**AUC-PR $= 0.5543$**, **ROC-AUC $= 0.8760$**) and highest operational utility (**Tuned F1 $= 0.5397$**).
+
+---
+
+### 3. Confusion Matrices (at Tuned F1 Thresholds)
+
+#### Model A ($T^* = 0.8127$)
+```text
+                    Pred Fail      Pred Pass         Metric                     Value
+Actual Fail             1,926          3,441         Fail Accuracy (Recall)     0.358860
+Actual Pass               114        132,095         Pass Accuracy (Recall)     0.999138
+```
+
+#### Model B-no-spatial ($T^* = 0.8078$)
+```text
+                    Pred Fail      Pred Pass         Metric                     Value
+Actual Fail             2,192          3,175         Fail Accuracy (Recall)     0.408422
+Actual Pass               571        131,638         Pass Accuracy (Recall)     0.995681
+```
+
+#### Model B ($T^* = 0.8176$)
+```text
+                    Pred Fail      Pred Pass         Metric                     Value
+Actual Fail             2,150          3,217         Fail Accuracy (Recall)     0.400596
+Actual Pass               451        131,758         Pass Accuracy (Recall)     0.996589
+```
+
+* **Defect Detection Lift**: Model B captures **224 more defective dies** than Model A while preserving a **$99.66\%$ pass accuracy** (only 451 false alarms out of 132,209 healthy dies).
+
+---
+
+### 4. Feature Group Attribution & Importance Breakdown
+
+#### Feature Group Gain Summary (Model B):
+```text
+Group           Features   Total Gain         Mean Gain       Gain %     Total Splits
+parametric      500        8,633,762.43       17,267.52       78.56%     27,223
+block           36         1,754,707.60       48,741.88       15.97%      1,095
+spatial         19           601,333.27       31,649.12        5.47%      1,202
+```
+
+* **Highest Information Density**: Block features averaged **$48,741.88$ gain per feature** ($2.8\times$ higher than parametric and $1.5\times$ higher than spatial).
+* **Top Features by Decision Tree Gain (Model B)**:
+  1. `max_rolling_mean_400` (**Block**) — Gain: **$950,354.11$** (Rank #1 by a landslide, $>4.5\times$ higher than any spatial feature)
+  2. `max_rolling_mean_200` (**Block**) — Gain: **$227,567.46$** (Rank #2)
+  3. `wafer_die_count` (**Spatial**) — Gain: **$209,768.26$** (Rank #3)
+  4. `block_mean_top200` (**Block**) — Gain: **$203,134.64$** (Rank #4)
+  5. `block_mean` (**Block**) — Gain: **$188,893.02$** (Rank #5)
+  6. `wafer_old_fail_rate` (**Spatial**) — Gain: **$170,384.20$** (Rank #6)
+  7. `wafer_old_fail_count` (**Spatial**) — Gain: **$119,416.18$** (Rank #7)
+  8. `feature_365` (**Parametric**) — Gain: **$67,630.83$** (Rank #8)
 
 ---
 
@@ -40,92 +122,96 @@ In semiconductor manufacturing, each silicon wafer contains thousands of dies te
 
 1. **WM-811K Source Sampling Audit & Provenance Tracking**:
    - Audited the full $811,457$ WM-811K source population ($25,519$ defect-pattern wafers and $147,431$ none-type wafers).
-   - Modified the generator to preserve full source provenance for every generated wafer, saving [`input/wafer_provenance.csv`](datasources/input/wafer_provenance.csv) with original WM-811K row index, defect pattern, lot name, and wafer index.
+   - Preserved full source provenance for every generated wafer in [`datasources/input/wafer_provenance.csv`](datasources/input/wafer_provenance.csv).
 2. **Memory-Safe 1,000-Wafer Generation**:
-   - Fixed an OOM memory bottleneck in `generate_data.py` (preventing string duplication during summary calculations and freeing train memory before test generation).
-   - Successfully generated the final **1,000-wafer dataset** ($1,096,761$ total dies: $800$ train wafers / $200$ test wafers).
+   - Fixed an OOM memory bottleneck in `generate_data.py`.
+   - Generated the final **1,000-wafer dataset** ($1,096,761$ total dies: $800$ train wafers / $200$ test wafers).
 3. **Streaming Data Inspection (`src/inspect_data.py`)**:
    - Validated all $1,096,761$ dies: **0 missing values**, **0 duplicate coordinates**, **0 malformed block strings**, all sequences verified at length $2,000$.
 4. **Multi-Scale Feature Engineering (`src/features/`)**:
    - **19 Spatial Features** ([`spatial.py`](src/features/spatial.py)): Normalized coordinates, radial distance, radial squared, distance to border, multi-scale old-defect density ($3\times3, 5\times5, 7\times7, 9\times9, 11\times11$), Euclidean distance to nearest defect, wafer die count, and defect rates.
    - **36 Block-Level Anomaly Features** ([`block.py`](src/features/block.py)): Multi-scale rolling means & stds ($W \in \{50, 100, 200, 400\}$), top/bottom tail means, quantiles, extreme outlier counts, robust MAD deviations, and longest contiguous anomaly runs.
 5. **High-Performance Parquet Preprocessing (`src/preprocess.py`)**:
-   - Extracted all 560 features across $1.1\text{M}$ dies in **$4.45\text{ minutes}$** using parallel multiprocessing. Reduced data footprint from ~25 GB of CSV down to compact `float32` Parquet files in `processed/`.
+   - Extracted all 560 features across $1.1\text{M}$ dies in **$4.45\text{ minutes}$** using parallel multiprocessing. Reduced footprint from ~25 GB CSV down to compact `float32` Parquet files in `processed/`.
 6. **Canonical Development Split (`src/make_dev_split.py`)**:
    - Partitioned the 800 train wafers strictly at the wafer level into **640 dev-train wafers** ($734,137$ dies) and **160 dev-val wafers** ($154,360$ dies) with **zero wafer overlap** and balanced positive rates ($3.69\%$ vs $3.90\%$).
    - Saved canonical metadata to [`reports/development_split.json`](reports/development_split.json).
-7. **Statistical Effect Size Validation (`src/diagnostics.py`)**:
-   - Proved that block anomaly features achieve **Cohen's $d = 0.8075$** ($>3.4\times$ stronger than the best parametric feature at $d = 0.2360$), confirming that block readings resolve marginal failures.
-8. **Diagnostic Visualizations (`src/visualize.py`)**:
-   - Generated 6 high-resolution diagnostic plots in `plots/`.
+7. **Model A Implementation & Evaluation (`src/models/train_model_a.py`)**:
+   - Trained LightGBM baseline on 519 parametric + spatial features with `scale_pos_weight = 26.068` and threshold optimization.
+   - Achieved **AUC-PR = 0.4937**, **Tuned F1 = 0.5200**, **Precision = 0.9441**, and **Accuracy = 97.42%**.
+8. **Model B Implementation & Evaluation (`src/models/train_model_b.py`)**:
+   - Trained full multi-resolution model on 555 features under identical hyperparameters.
+   - Achieved **AUC-PR = 0.5543 ($+12.29\%$ lift)**, **Tuned F1 = 0.5397**, **ROC-AUC = 0.8760**, and captured **224 more defects**.
+9. **Controlled Ablation Study (`src/models/train_model_b_no_spatial.py`)**:
+   - Evaluated Model B-without-spatial (536 features), proving that block features independently drive a **$+11.76\%$ AUC-PR lift** over Model A, while spatial context refines precision.
 
 ---
 
 ## 🛠️ How to Run All Commands (Step-by-Step)
 
-Ensure your virtual environment is created and active:
+Ensure your virtual environment is active:
 
 ```bash
-cd /home/user/Vinay/san/datasources
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+cd /home/user/Vinay/san
+source datasources/venv/bin/activate
+pip install -r datasources/requirements.txt lightgbm
 ```
 
 ### Step 1: Generate the 1,000-Wafer Dataset
-Generates `train.csv`, `test.csv`, `validation.csv`, and `wafer_provenance.csv`:
 ```bash
 cd /home/user/Vinay/san/datasources
 python generate_data.py --num_wafers 1000 --csv
 ```
 
 ### Step 2: Audit and Inspect Dataset Integrity
-Streams through the raw CSV files, verifying coordinates, shapes, distributions, and schema:
 ```bash
 cd /home/user/Vinay/san
 python src/inspect_data.py
 ```
 
 ### Step 3: Run Preprocessing & Feature Extraction
-Extracts 19 spatial features and 36 block anomaly features, saving to `processed/*.parquet`:
 ```bash
 cd /home/user/Vinay/san
 python src/preprocess.py
 ```
 
 ### Step 4: Generate Canonical Development Train/Validation Split
-Partitions the 800 train wafers into 640 dev-train and 160 dev-validation with zero leakage:
 ```bash
 cd /home/user/Vinay/san
 python src/make_dev_split.py
 ```
 
 ### Step 5: Run Statistical Effect Size Diagnostics
-Computes Cohen's $d$ effect sizes on eligible dies (`old_label == 0`) and ranks the top features:
 ```bash
 cd /home/user/Vinay/san
 python src/diagnostics.py
 ```
 
 ### Step 6: Generate Diagnostic Plots
-Generates all 6 diagnostic figures in `plots/`:
 ```bash
 cd /home/user/Vinay/san
 python src/visualize.py
 ```
 
----
+### Step 7: Train & Evaluate Model A (LightGBM Baseline)
+```bash
+cd /home/user/Vinay/san
+nohup python -u src/models/train_model_a.py > train_model_a.log 2>&1 &
+# Watch output: tail -f train_model_a.log
+```
 
-## 📊 Feature Effect Size Benchmark
+### Step 8: Train & Evaluate Model B (Multi-Resolution Fusion)
+```bash
+cd /home/user/Vinay/san
+nohup python -u src/models/train_model_b.py > train_model_b.log 2>&1 &
+# Watch output: tail -f train_model_b.log
+```
 
-Statistical effect sizes computed on **$788,913$ eligible training dies**:
-
-```text
-Domain                 Top Feature                   |Cohen's d|  Impact
----------------------------------------------------------------------------------------------
-Die Parametric Tests   feature_336                      0.2360    Marginal (High distribution overlap)
-Spatial Topography     old_fail_density_5x5             0.2081    Defect clustering effect
-Block Test Readings    max_rolling_mean_400             0.8075    VERY LARGE (>3.4x signal boost!)
+### Step 9: Run Controlled Ablation (Model B-Without-Spatial)
+```bash
+cd /home/user/Vinay/san
+nohup python -u src/models/train_model_b_no_spatial.py > train_model_b_no_spatial.log 2>&1 &
+# Watch output: tail -f train_model_b_no_spatial.log
 ```
 
 ---
@@ -134,44 +220,62 @@ Block Test Readings    max_rolling_mean_400             0.8075    VERY LARGE (>3
 
 ```text
 /home/user/Vinay/san/
-├── README.md                              # Main documentation & run guide
-├── PREPROCESSING_NOTES.md                 # Detailed mathematical formulas & leakage rules
+├── README.md                                       # Main documentation & run guide
+├── PREPROCESSING_NOTES.md                          # Detailed mathematical formulas & leakage rules
 ├── datasources/
-│   ├── generate_data.py                   # Data generator with provenance tracking
-│   ├── config.yaml                        # Generator configuration (seed=42)
-│   ├── requirements.txt                   # Project dependencies
-│   ├── audit_sampling.py                  # Source sampling audit script
+│   ├── generate_data.py                            # Data generator with provenance tracking
+│   ├── config.yaml                                 # Generator configuration (seed=42)
+│   ├── requirements.txt                            # Project dependencies
 │   ├── data/
-│   │   └── LSWMD.pkl                      # WM-811K wafer dataset
+│   │   └── LSWMD.pkl                               # WM-811K wafer dataset
 │   └── input/
-│       ├── train.csv                      # 800 wafers (888,497 dies)
-│       ├── test.csv                       # 200 wafers (208,264 dies)
-│       ├── validation.csv                 # 200 wafers without label
-│       └── wafer_provenance.csv           # 1,000-wafer WM-811K source mapping
+│       ├── train.csv                               # 800 wafers (888,497 dies)
+│       ├── test.csv                                # 200 wafers (208,264 dies)
+│       ├── validation.csv                          # 200 wafers without label
+│       └── wafer_provenance.csv                    # 1,000-wafer WM-811K source mapping
 ├── src/
-│   ├── config.py                          # Centralized dynamic path manager
-│   ├── inspect_data.py                    # Streaming data inspection & schema validator
-│   ├── preprocess.py                      # Multi-threaded feature extraction pipeline
-│   ├── make_dev_split.py                  # Wafer-isolated 80/20 train/val partitioner
-│   ├── diagnostics.py                     # Cohen's d effect size evaluation
-│   ├── visualize.py                       # Diagnostic plotting script
-│   └── features/
-│       ├── spatial.py                     # 19 multi-scale spatial context features
-│       └── block.py                       # 36 vectorized block anomaly features
+│   ├── config.py                                   # Centralized dynamic path manager
+│   ├── inspect_data.py                             # Streaming data inspection & schema validator
+│   ├── preprocess.py                               # Multi-threaded feature extraction pipeline
+│   ├── make_dev_split.py                           # Wafer-isolated 80/20 train/val partitioner
+│   ├── diagnostics.py                              # Cohen's d effect size evaluation
+│   ├── visualize.py                                # Diagnostic plotting script
+│   ├── features/
+│   │   ├── spatial.py                              # 19 multi-scale spatial context features
+│   │   └── block.py                                # 36 vectorized block anomaly features
+│   └── models/
+│       ├── common.py                               # Model feature sets, data loaders & metric routines
+│       ├── train_model_a.py                        # Model A training & evaluation pipeline
+│       ├── train_model_b.py                        # Model B training & evaluation pipeline
+│       └── train_model_b_no_spatial.py             # Controlled ablation training & evaluation pipeline
+├── models/
+│   ├── model_a.joblib / model_a.txt                # Model A trained artifacts (3.44 MB)
+│   ├── model_b.joblib / model_b.txt                # Model B trained artifacts (3.45 MB)
+│   └── model_b_no_spatial.joblib / .txt            # Model B-no-spatial trained artifacts (3.50 MB)
 ├── processed/
-│   ├── train_features.parquet             # 888,497 rows x 560 cols (2.03 GB)
-│   ├── test_features.parquet              # 208,264 rows x 560 cols (616.7 MB)
-│   ├── validation_features.parquet        # 208,264 rows x 559 cols (616.7 MB)
-│   ├── dev_train_features.parquet         # 734,137 rows x 560 cols (1.73 GB)
-│   └── dev_val_features.parquet           # 154,360 rows x 560 cols (457.1 MB)
+│   ├── train_features.parquet                      # 888,497 rows x 560 cols (2.03 GB)
+│   ├── test_features.parquet                       # 208,264 rows x 560 cols (616.7 MB)
+│   ├── validation_features.parquet                 # 208,264 rows x 559 cols (616.7 MB)
+│   ├── dev_train_features.parquet                  # 734,137 rows x 560 cols (1.73 GB)
+│   └── dev_val_features.parquet                    # 154,360 rows x 560 cols (457.1 MB)
 ├── reports/
-│   ├── development_split.json             # Canonical split definition & wafer IDs
-│   └── source_wafer_mapping.csv           # Audited source provenance mapping
+│   ├── development_split.json                      # Canonical split definition & wafer IDs
+│   ├── model_a_metrics.json / .csv                 # Model A metrics & baseline comparisons
+│   ├── model_a_feature_importance.csv              # Model A gain & split rankings
+│   ├── model_a_dev_val_predictions.parquet         # Model A per-die validation predictions
+│   ├── model_b_metrics.json / .csv                 # Model B metrics
+│   ├── model_b_feature_importance.csv              # Model B gain & split rankings
+│   ├── model_b_dev_val_predictions.parquet         # Model B per-die validation predictions
+│   ├── model_comparison_a_vs_b.json / .csv         # Direct Model A vs. Model B deltas
+│   ├── model_b_no_spatial_metrics.json / .csv      # Ablation metrics
+│   ├── model_b_no_spatial_feature_importance.csv   # Ablation feature rankings
+│   ├── model_b_no_spatial_dev_val_predictions.parquet # Ablation predictions
+│   └── model_ablation_comparison.json / .csv       # Full 3-way ablation comparison summary
 └── plots/
-    ├── 1_target_distribution.png          # Eligible class imbalance breakdown
-    ├── 2_spatial_feature_distributions.png# Spatial feature shifts (healthy vs fail)
-    ├── 3_block_feature_distributions.png  # Block anomaly feature divergence
-    ├── 4_new_failure_block_traces.png     # 2,000 block traces for failing dies
-    ├── 5_healthy_block_traces.png         # 2,000 block traces for healthy dies
-    └── 6_sample_wafer_map.png             # Wafer map with Pre-Test and Target Fails
+    ├── 1_target_distribution.png                   # Eligible class imbalance breakdown
+    ├── 2_spatial_feature_distributions.png         # Spatial feature shifts (healthy vs fail)
+    ├── 3_block_feature_distributions.png           # Block anomaly feature divergence
+    ├── 4_new_failure_block_traces.png              # 2,000 block traces for failing dies
+    ├── 5_healthy_block_traces.png                  # 2,000 block traces for healthy dies
+    └── 6_sample_wafer_map.png                      # Wafer map with Pre-Test and Target Fails
 ```
