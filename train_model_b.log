@@ -1,0 +1,179 @@
+nohup: ignoring input
+
+=====================================================================================
+STARTING MODEL B LIGHTGBM TRAINING & A-VS-B EVALUATION PIPELINE
+=====================================================================================
+Seed: 42
+Features: 555 (500 Parametric + 19 Spatial + 36 Block)
+Train Source: /home/user/Vinay/san/processed/dev_train_features.parquet
+Validation Source: /home/user/Vinay/san/processed/dev_val_features.parquet
+Predictive Task: ONLY Eligible Dies (old_label == 0)
+Target: label (0 = stayed healthy, 1 = newly failed)
+=====================================================================================
+
+--- STEP 1: LOADING DATASETS ---
+Loading dev_train_features.parquet (560 columns)...
+   Loaded 734,137 total dies in 0.91s.
+   Wafers: 640 | Total Dies: 734,137 | Eligible Dies (old_label==0): 651,337
+   Eligible Negatives (Pass): 627,274 (96.31%)
+   Eligible Positives (Newly Failed): 24,063 (3.694%)
+Loading dev_val_features.parquet (560 columns)...
+   Loaded 154,360 total dies in 0.23s.
+   Wafers: 160 | Total Dies: 154,360 | Eligible Dies (old_label==0): 137,576
+   Eligible Negatives (Pass): 132,209 (96.10%)
+   Eligible Positives (Newly Failed): 5,367 (3.901%)
+Data loading complete in 1.53s.
+
+--- INTEGRITY CHECKS ---
+1. Wafer overlap check: 0 overlap (640 train wafers, 160 dev-val wafers) [PASSED]
+2. Feature leakage check: wafer_id strictly excluded from features [PASSED]
+3. Feature count check: exactly 555 features (500 parametric + 19 spatial + 36 block) [PASSED]
+4. Missing value check: 0 NaNs in train, 0 NaNs in validation [PASSED]
+
+--- STEP 2: CLASS IMBALANCE CONFIGURATION ---
+Train Negatives: 627,274 | Positives: 24,063
+Calculated scale_pos_weight: 26.067988 (identical to Model A)
+
+--- STEP 3: TRAINING LIGHTGBM MODEL B ---
+Training until validation scores don't improve for 50 rounds
+[50]	valid_0's average_precision: 0.241866	valid_0's binary_logloss: 0.482552
+[100]	valid_0's average_precision: 0.36609	valid_0's binary_logloss: 0.481238
+[150]	valid_0's average_precision: 0.436232	valid_0's binary_logloss: 0.449314
+[200]	valid_0's average_precision: 0.474582	valid_0's binary_logloss: 0.422112
+[250]	valid_0's average_precision: 0.496046	valid_0's binary_logloss: 0.398907
+[300]	valid_0's average_precision: 0.511928	valid_0's binary_logloss: 0.380606
+[350]	valid_0's average_precision: 0.520915	valid_0's binary_logloss: 0.363984
+[400]	valid_0's average_precision: 0.528583	valid_0's binary_logloss: 0.350435
+[450]	valid_0's average_precision: 0.534491	valid_0's binary_logloss: 0.337999
+[500]	valid_0's average_precision: 0.53901	valid_0's binary_logloss: 0.327104
+[550]	valid_0's average_precision: 0.542381	valid_0's binary_logloss: 0.31736
+[600]	valid_0's average_precision: 0.544783	valid_0's binary_logloss: 0.306867
+[650]	valid_0's average_precision: 0.546821	valid_0's binary_logloss: 0.296775
+[700]	valid_0's average_precision: 0.549037	valid_0's binary_logloss: 0.288517
+[750]	valid_0's average_precision: 0.550019	valid_0's binary_logloss: 0.281097
+[800]	valid_0's average_precision: 0.551485	valid_0's binary_logloss: 0.273556
+[850]	valid_0's average_precision: 0.552259	valid_0's binary_logloss: 0.266552
+[900]	valid_0's average_precision: 0.552446	valid_0's binary_logloss: 0.25971
+[950]	valid_0's average_precision: 0.55348	valid_0's binary_logloss: 0.253342
+[1000]	valid_0's average_precision: 0.554235	valid_0's binary_logloss: 0.247425
+Did not meet early stopping. Best iteration is:
+[984]	valid_0's average_precision: 0.554321	valid_0's binary_logloss: 0.249058
+Evaluated only: average_precision
+
+Training completed in 116.90s (1.95 min). Best iteration: 984
+
+--- STEP 4: INFERENCE ON DEV_VAL ---
+Inference completed in 0.3497s (393,429.8 dies/sec, 0.0025 ms/die)
+
+--- STEP 5: EVALUATION & THRESHOLD TUNING ---
+Tuning decision threshold to maximize positive-class F1...
+Optimal Threshold T*: 0.8176 (Max Dev-Val F1: 0.5397)
+
+--- STEP 6: FEATURE IMPORTANCE & GROUP CONTRIBUTION ANALYSIS ---
+
+--- STEP 7: MODEL A VS MODEL B COMPARATIVE ANALYSIS ---
+
+--- STEP 8: SAVING ARTIFACTS ---
+  Saved model (joblib):        /home/user/Vinay/san/models/model_b.joblib (3.45 MB)
+  Saved model (txt):           /home/user/Vinay/san/models/model_b.txt (3.41 MB)
+  Saved predictions:           /home/user/Vinay/san/reports/model_b_dev_val_predictions.parquet (0.90 MB)
+  Saved features list:         /home/user/Vinay/san/reports/model_b_features.json
+  Saved feature importance:    /home/user/Vinay/san/reports/model_b_feature_importance.csv
+  Saved metrics JSON:          /home/user/Vinay/san/reports/model_b_metrics.json
+  Saved metrics CSV:           /home/user/Vinay/san/reports/model_b_metrics.csv
+  Saved comparison JSON:       /home/user/Vinay/san/reports/model_comparison_a_vs_b.json
+  Saved comparison CSV:        /home/user/Vinay/san/reports/model_comparison_a_vs_b.csv
+
+=====================================================================================
+MODEL B EVALUATION REPORT & A-VS-B COMPARISON
+=====================================================================================
+1. Training Time:             116.90 s (1.95 min)
+2. Inference Time:            0.3497 s (393,429.8 dies/s)
+3. Best Iteration:            984
+4. Eligible Training Dies:    651,337 (out of 734,137)
+   Eligible Validation Dies:  137,576 (out of 154,360)
+5. Positive Rate:             Train: 3.694% | Dev-Val: 3.901%
+6. AUC-PR (Average Prec):     0.5543 (Model A: 0.4937 | Delta: +0.0607 [+12.29%])
+7. Tuned F1 Score:            0.5397 (Model A: 0.5200 | Delta: +0.0196 [+3.77%])
+8. Precision (Fail Class):    0.8266 (at T*) | 0.2736 (at 0.5)
+9. Recall (Fail Class):       0.4006 (at T*) | 0.6193 (at 0.5)
+10. Tuned Threshold:          0.8176 (Model A: 0.8127)
+11. Exact Files Created:
+    - /home/user/Vinay/san/models/model_b.joblib
+    - /home/user/Vinay/san/models/model_b.txt
+    - /home/user/Vinay/san/reports/model_b_dev_val_predictions.parquet
+    - /home/user/Vinay/san/reports/model_b_features.json
+    - /home/user/Vinay/san/reports/model_b_feature_importance.csv
+    - /home/user/Vinay/san/reports/model_b_metrics.json
+    - /home/user/Vinay/san/reports/model_b_metrics.csv
+    - /home/user/Vinay/san/reports/model_comparison_a_vs_b.json
+    - /home/user/Vinay/san/reports/model_comparison_a_vs_b.csv
+12. Warnings/Errors:          None (Clean execution)
+=====================================================================================
+
+--- CONCISE A VS B COMPARISON TABLE ---
+                    metric Model_A Model_B Absolute_Delta (B - A) Relative_Improvement
+AUC-PR (Average Precision)  0.4937  0.5543                +0.0607              +12.29%
+          F1 Score (Tuned)    0.52  0.5397                +0.0196               +3.77%
+          Precision (Fail)  0.9441  0.8266                -0.1175              -12.45%
+             Recall (Fail)  0.3589  0.4006                +0.0417              +11.63%
+                   ROC-AUC  0.8318   0.876                +0.0442               +5.32%
+          Overall Accuracy  97.42%  97.33%                 -0.08%                    —
+   Decision Threshold (T*)  0.8127  0.8176                +0.0049                    —
+         Training Time (s)  109.13   116.9                 +7.77s                    —
+        Inference Time (s)  0.3467  0.3497               +0.0030s                    —
+            Best Iteration     984     984                     +0                    —
+
+--- CONFUSION MATRIX (MODEL B @ TUNED THRESHOLD T* = 0.8176) ---
+                 Pred Fail   Pred Pass       Metric                    Value
+Actual Fail           2150        3217       Fail Accuracy (Rec)    0.400596
+Actual Pass            451      131758       Pass Accuracy (Rec)    0.996589
+
+--- FEATURE GROUP ATTRIBUTION (GAIN BREAKDOWN) ---
+Group           Features   Total Gain         Mean Gain       Gain %     Total Splits
+----------------+------------+--------------------+-----------------+------------+-------------
+parametric      500        8633762.43         17267.52        78.56    % 27223       
+block           36         1754707.60         48741.88        15.97    % 1095        
+spatial         19         601333.27          31649.12        5.47     % 1202        
+
+--- TOP 20 FEATURES OVERALL BY GAIN ---
+Rank  Feature                             Group        Gain            Splits  
+------+-------------------------------------+--------------+-----------------+---------
+1     max_rolling_mean_400                block        950354.11       150     
+2     max_rolling_mean_200                block        227567.46       131     
+3     wafer_die_count                     spatial      209768.26       200     
+4     block_mean_top200                   block        203134.64       109     
+5     block_mean                          block        188893.02       53      
+6     wafer_old_fail_rate                 spatial      170384.20       424     
+7     wafer_old_fail_count                spatial      119416.18       325     
+8     feature_365                         parametric   67630.83        98      
+9     feature_312                         parametric   63241.95        103     
+10    block_q75                           block        60257.74        83      
+11    feature_277                         parametric   57926.10        84      
+12    feature_446                         parametric   57622.25        93      
+13    feature_223                         parametric   57400.91        98      
+14    feature_262                         parametric   56961.03        99      
+15    feature_472                         parametric   56525.50        87      
+16    feature_65                          parametric   55913.04        111     
+17    feature_242                         parametric   54800.55        87      
+18    feature_436                         parametric   54122.76        111     
+19    feature_183                         parametric   53806.53        95      
+20    feature_163                         parametric   52615.94        92      
+
+--- TOP 10 BLOCK FEATURES BY GAIN ---
+Rank  Feature                             Gain            Splits   Overall Rank
+------+-------------------------------------+-----------------+----------+-------------
+1     max_rolling_mean_400                950354.11       150      #1          
+2     max_rolling_mean_200                227567.46       131      #2          
+3     block_mean_top200                   203134.64       109      #4          
+4     block_mean                          188893.02       53       #5          
+5     block_q75                           60257.74        83       #10         
+6     block_q95                           16036.82        46       #216        
+7     max_rolling_mean_100                15921.69        43       #217        
+8     max_rolling_mean_100_start_idx      12426.86        65       #260        
+9     block_mean_top100                   11198.72        36       #281        
+10    block_median                        10131.59        41       #297        
+
+=====================================================================================
+ALL MODEL B ARTIFACTS AND A-VS-B COMPARISONS SUCCESSFULLY GENERATED
+=====================================================================================

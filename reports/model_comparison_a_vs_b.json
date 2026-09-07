@@ -1,0 +1,16 @@
+{
+  "model_a_auc_pr": 0.4936589409766958,
+  "model_b_auc_pr": 0.5543213005242843,
+  "delta_auc_pr": 0.0607,
+  "rel_improvement_auc_pr_pct": 12.29,
+  "model_a_f1": 0.520048602673147,
+  "model_b_f1": 0.5396586345381527,
+  "delta_f1": 0.0196,
+  "rel_improvement_f1_pct": 3.77,
+  "model_a_precision": 0.9441176470588235,
+  "model_b_precision": 0.8266051518646674,
+  "delta_precision": -0.1175,
+  "model_a_recall": 0.3588596981553941,
+  "model_b_recall": 0.40059623625861746,
+  "delta_recall": 0.0417
+}

@@ -1,0 +1,11 @@
+metric,Model_A,Model_B,Absolute_Delta (B - A),Relative_Improvement
+AUC-PR (Average Precision),0.4937,0.5543,+0.0607,+12.29%
+F1 Score (Tuned),0.52,0.5397,+0.0196,+3.77%
+Precision (Fail),0.9441,0.8266,-0.1175,-12.45%
+Recall (Fail),0.3589,0.4006,+0.0417,+11.63%
+ROC-AUC,0.8318,0.876,+0.0442,+5.32%
+Overall Accuracy,97.42%,97.33%,-0.08%,—
+Decision Threshold (T*),0.8127,0.8176,+0.0049,—
+Training Time (s),109.13,116.9,+7.77s,—
+Inference Time (s),0.3467,0.3497,+0.0030s,—
+Best Iteration,984,984,+0,—

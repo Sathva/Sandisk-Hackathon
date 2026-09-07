@@ -41,3 +41,93 @@ Training until validation scores don't improve for 50 rounds
 [350]	valid_0's average_precision: 0.472391	valid_0's binary_logloss: 0.405913
 [400]	valid_0's average_precision: 0.475937	valid_0's binary_logloss: 0.390936
 [450]	valid_0's average_precision: 0.479018	valid_0's binary_logloss: 0.377084
+[500]	valid_0's average_precision: 0.481358	valid_0's binary_logloss: 0.365763
+[550]	valid_0's average_precision: 0.483875	valid_0's binary_logloss: 0.35525
+[600]	valid_0's average_precision: 0.485446	valid_0's binary_logloss: 0.344397
+[650]	valid_0's average_precision: 0.486634	valid_0's binary_logloss: 0.3353
+[700]	valid_0's average_precision: 0.488143	valid_0's binary_logloss: 0.327129
+[750]	valid_0's average_precision: 0.489791	valid_0's binary_logloss: 0.317092
+[800]	valid_0's average_precision: 0.490554	valid_0's binary_logloss: 0.308918
+[850]	valid_0's average_precision: 0.491343	valid_0's binary_logloss: 0.301593
+[900]	valid_0's average_precision: 0.49213	valid_0's binary_logloss: 0.294821
+[950]	valid_0's average_precision: 0.492735	valid_0's binary_logloss: 0.287352
+[1000]	valid_0's average_precision: 0.493525	valid_0's binary_logloss: 0.280654
+Did not meet early stopping. Best iteration is:
+[984]	valid_0's average_precision: 0.493659	valid_0's binary_logloss: 0.282473
+Evaluated only: average_precision
+
+Training completed in 109.13s (1.82 min). Best iteration: 984
+
+--- STEP 4: INFERENCE ON DEV_VAL ---
+Inference completed in 0.3467s (396,795.8 dies/sec, 0.0025 ms/die)
+
+--- STEP 5: EVALUATION & BASELINES ---
+Tuning decision threshold to maximize positive-class F1...
+Optimal Threshold T*: 0.8127 (Max Dev-Val F1: 0.5200)
+
+--- STEP 6: SAVING ARTIFACTS ---
+  Saved model (joblib): /home/user/Vinay/san/models/model_a.joblib (3.44 MB)
+  Saved model (txt):    /home/user/Vinay/san/models/model_a.txt (3.41 MB)
+  Saved predictions:    /home/user/Vinay/san/reports/model_a_dev_val_predictions.parquet (0.89 MB)
+  Saved features list:  /home/user/Vinay/san/reports/model_a_features.json
+  Saved feature importance: /home/user/Vinay/san/reports/model_a_feature_importance.csv
+  Saved metrics JSON:   /home/user/Vinay/san/reports/model_a_metrics.json
+  Saved metrics CSV:    /home/user/Vinay/san/reports/model_a_metrics.csv
+
+=====================================================================================
+MODEL A EVALUATION REPORT & SUMMARY
+=====================================================================================
+1. Training Time:             109.13 s (1.82 min)
+2. Inference Time:            0.3467 s (396,795.8 dies/s)
+3. Eligible Training Dies:    651,337 (out of 734,137)
+   Eligible Validation Dies:  137,576 (out of 154,360)
+4. Positive Rate:             Train: 3.694% | Dev-Val: 3.901%
+5. AUC-PR (Average Prec):     0.4937 (Baseline: 0.0390)
+6. Tuned F1 Score:            0.5200 (at T* = 0.8127)
+7. Precision (Fail Class):    0.9441 (at T*) | 0.2667 (at 0.5)
+8. Recall (Fail Class):       0.3589 (at T*) | 0.5152 (at 0.5)
+9. Tuned Threshold:           0.8127
+10. Exact Files Created:
+    - /home/user/Vinay/san/models/model_a.joblib
+    - /home/user/Vinay/san/models/model_a.txt
+    - /home/user/Vinay/san/reports/model_a_dev_val_predictions.parquet
+    - /home/user/Vinay/san/reports/model_a_features.json
+    - /home/user/Vinay/san/reports/model_a_feature_importance.csv
+    - /home/user/Vinay/san/reports/model_a_metrics.json
+    - /home/user/Vinay/san/reports/model_a_metrics.csv
+11. Warnings/Errors:          None
+=====================================================================================
+
+--- COMPARISON SUMMARY TABLE ---
+                        Model / Setup Threshold AUC-PR ROC-AUC Precision (Fail) Recall (Fail) F1 (Fail) Accuracy
+           Baseline: Predict-All-Pass       N/A 0.0390  0.5000           0.0000        0.0000    0.0000   96.10%
+      Model A (Default Threshold 0.5)    0.5000 0.4937  0.8318           0.2667        0.5152    0.3515   92.58%
+Model A (Tuned Threshold T* = 0.8127)    0.8127 0.4937  0.8318           0.9441        0.3589    0.5200   97.42%
+
+--- CONFUSION MATRIX (TUNED THRESHOLD T* = 0.8127) ---
+                 Pred Fail   Pred Pass       Metric                    Value
+Actual Fail           1926        3441       Fail Accuracy (Rec)    0.358860
+Actual Pass            114      132095       Pass Accuracy (Rec)    0.999138
+
+--- CONFUSION MATRIX (DEFAULT THRESHOLD = 0.5000) ---
+                 Pred Fail   Pred Pass       Metric                    Value
+Actual Fail           2765        2602       Fail Accuracy (Rec)    0.515185
+Actual Pass           7601      124608       Pass Accuracy (Rec)    0.942508
+
+--- TOP 10 IMPORTANT FEATURES (GAIN) ---
+Rank  Feature                             Type         Gain            Splits  
+------+-------------------------------------+--------------+-----------------+---------
+1     wafer_die_count                     spatial      245132.27       219     
+2     wafer_old_fail_rate                 spatial      207084.88       496     
+3     wafer_old_fail_count                spatial      173629.18       300     
+4     feature_277                         parametric   83529.59        63      
+5     feature_113                         parametric   71453.99        104     
+6     feature_163                         parametric   71266.60        96      
+7     feature_312                         parametric   69851.66        95      
+8     feature_223                         parametric   66736.50        98      
+9     feature_33                          parametric   64729.19        84      
+10    feature_472                         parametric   64149.02        87      
+
+=====================================================================================
+ALL MODEL A ARTIFACTS SUCCESSFULLY GENERATED
+=====================================================================================

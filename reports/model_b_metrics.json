@@ -1,0 +1,132 @@
+{
+  "model_name": "Model B (LightGBM Die + Spatial + Block)",
+  "timestamp": "2026-09-07 18:25:20",
+  "random_seed": 42,
+  "timing": {
+    "training_time_seconds": 116.9,
+    "inference_time_seconds": 0.3497,
+    "inference_throughput_dies_per_sec": 393429.8,
+    "best_iteration": 984
+  },
+  "dataset_statistics": {
+    "dev_train_wafers": 640,
+    "dev_train_total_dies": 734137,
+    "dev_train_eligible_dies": 651337,
+    "dev_train_positives": 24063,
+    "dev_train_negatives": 627274,
+    "dev_train_positive_rate_pct": 3.6944,
+    "scale_pos_weight": 26.067988,
+    "dev_val_wafers": 160,
+    "dev_val_total_dies": 154360,
+    "dev_val_eligible_dies": 137576,
+    "dev_val_positives": 5367,
+    "dev_val_negatives": 132209,
+    "dev_val_positive_rate_pct": 3.9011
+  },
+  "evaluation_default_threshold_05": {
+    "threshold": 0.5,
+    "auc_pr": 0.5543213005242843,
+    "roc_auc": 0.8759800429643934,
+    "accuracy": 0.9210109321393266,
+    "precision": 0.2736252881132697,
+    "recall": 0.6193404136389045,
+    "f1": 0.3795603768198687,
+    "pass_precision": 0.9837117708964506,
+    "pass_recall": 0.933257191265345,
+    "pass_f1": 0.9578204993847933,
+    "tp": 3324,
+    "fp": 8824,
+    "fn": 2043,
+    "tn": 123385,
+    "confusion_matrix": [
+      [
+        123385,
+        8824
+      ],
+      [
+        2043,
+        3324
+      ]
+    ]
+  },
+  "evaluation_tuned_threshold": {
+    "optimal_threshold": 0.8176,
+    "threshold": 0.8176381909547739,
+    "auc_pr": 0.5543213005242843,
+    "roc_auc": 0.8759800429643934,
+    "accuracy": 0.97333837297203,
+    "precision": 0.8266051518646674,
+    "recall": 0.40059623625861746,
+    "f1": 0.5396586345381527,
+    "pass_precision": 0.9761659566586405,
+    "pass_recall": 0.9965887345037024,
+    "pass_f1": 0.986271633031918,
+    "tp": 2150,
+    "fp": 451,
+    "fn": 3217,
+    "tn": 131758,
+    "confusion_matrix": [
+      [
+        131758,
+        451
+      ],
+      [
+        3217,
+        2150
+      ]
+    ]
+  },
+  "feature_group_attribution": [
+    {
+      "group": "parametric",
+      "num_features": 500,
+      "total_gain": 8633762.42540741,
+      "mean_gain": 17267.524850814818,
+      "total_splits": 27223,
+      "gain_pct": 78.56157382326921
+    },
+    {
+      "group": "block",
+      "num_features": 36,
+      "total_gain": 1754707.5968933105,
+      "mean_gain": 48741.87769148085,
+      "total_splits": 1095,
+      "gain_pct": 15.966687941969882
+    },
+    {
+      "group": "spatial",
+      "num_features": 19,
+      "total_gain": 601333.2685928345,
+      "mean_gain": 31649.11939962287,
+      "total_splits": 1202,
+      "gain_pct": 5.471738234760902
+    }
+  ],
+  "comparison_vs_model_a": {
+    "model_a_auc_pr": 0.4936589409766958,
+    "model_b_auc_pr": 0.5543213005242843,
+    "delta_auc_pr": 0.0607,
+    "rel_improvement_auc_pr_pct": 12.29,
+    "model_a_f1": 0.520048602673147,
+    "model_b_f1": 0.5396586345381527,
+    "delta_f1": 0.0196,
+    "rel_improvement_f1_pct": 3.77,
+    "model_a_precision": 0.9441176470588235,
+    "model_b_precision": 0.8266051518646674,
+    "delta_precision": -0.1175,
+    "model_a_recall": 0.3588596981553941,
+    "model_b_recall": 0.40059623625861746,
+    "delta_recall": 0.0417
+  },
+  "artifacts_created": [
+    "/home/user/Vinay/san/models/model_b.joblib",
+    "/home/user/Vinay/san/models/model_b.txt",
+    "/home/user/Vinay/san/reports/model_b_dev_val_predictions.parquet",
+    "/home/user/Vinay/san/reports/model_b_features.json",
+    "/home/user/Vinay/san/reports/model_b_feature_importance.csv",
+    "/home/user/Vinay/san/reports/model_b_metrics.json",
+    "/home/user/Vinay/san/reports/model_b_metrics.csv",
+    "/home/user/Vinay/san/reports/model_comparison_a_vs_b.json",
+    "/home/user/Vinay/san/reports/model_comparison_a_vs_b.csv"
+  ]
+}
