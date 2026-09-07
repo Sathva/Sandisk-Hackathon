@@ -1,0 +1,22 @@
+{
+  "model_name": "Model C (Multi-Resolution 1D CNN, LR=3e-4)",
+  "learning_rate": 0.0003,
+  "early_stopping_patience": 5,
+  "best_epoch": 2,
+  "total_epochs_trained": 7,
+  "training_time_s": 117.16397619247437,
+  "auc_pr": 0.5713162256193938,
+  "roc_auc": 0.8904317864134421,
+  "optimal_threshold": 0.885,
+  "f1_score": 0.5483124162300476,
+  "precision": 0.7922535211267606,
+  "recall": 0.41922861934041367,
+  "specificity": 0.995514677518172,
+  "accuracy": 0.9730548932953422,
+  "confusion_matrix": {
+    "tp": 2253,
+    "fp": 593,
+    "tn": 131616,
+    "fn": 3114
+  }
+}

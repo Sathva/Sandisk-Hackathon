@@ -1,0 +1,30 @@
+[
+  {
+    "Experiment": "Model C (Baseline LR=1e-3)",
+    "Learning Rate": "1e-3",
+    "Patience": 3,
+    "Best Epoch": 2,
+    "AUC-PR": 0.572072,
+    "ROC-AUC": 0.889126,
+    "Tuned F1": 0.550496,
+    "Precision": 0.767667,
+    "Recall": 0.429104,
+    "Threshold": 0.825,
+    "Delta AUC-PR": "0.0000 (Ref)",
+    "Rel Lift AUC-PR": "0.00%"
+  },
+  {
+    "Experiment": "Model C (New LR=3e-4)",
+    "Learning Rate": "3e-4",
+    "Patience": 5,
+    "Best Epoch": 2,
+    "AUC-PR": 0.5713162256193938,
+    "ROC-AUC": 0.8904317864134421,
+    "Tuned F1": 0.5483124162300476,
+    "Precision": 0.7922535211267606,
+    "Recall": 0.41922861934041367,
+    "Threshold": 0.885,
+    "Delta AUC-PR": "-0.0008",
+    "Rel Lift AUC-PR": "-0.13%"
+  }
+]
