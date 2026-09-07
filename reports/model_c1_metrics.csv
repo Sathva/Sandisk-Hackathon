@@ -1,0 +1,14 @@
+metric,value
+model_name,Model C1 (Multi-Resolution Triple-Branch Deep Network)
+parameters,306081
+best_epoch,2
+total_epochs_trained,5
+training_time_s,84.8269693851471
+auc_pr,0.5765830853359013
+roc_auc,0.8913069034003184
+optimal_threshold,0.925
+f1_score,0.5503812316715543
+precision,0.7428752374920836
+recall,0.43711570709893793
+specificity,0.9937598801896996
+accuracy,0.972073617491423

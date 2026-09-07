@@ -1,0 +1,3 @@
+Model,Branches,Parameters,AUC-PR,ROC-AUC,Tuned F1,Precision,Recall,Threshold,TP,FP,Delta AUC-PR,Rel Lift AUC-PR
+Model C (Dual-Branch Baseline),Raw CNN (256) + Non-Block Tabular (128),297345,0.572072,0.889126,0.550496,0.767667,0.429104,0.825,2303,697,0.0000 (Ref),0.00%
+Model C1 (Triple-Branch Separated),Raw CNN (256) + Eng Block (32) + Param/Spatial (128),306081,0.5765830853359013,0.8913069034003184,0.5503812316715543,0.7428752374920836,0.43711570709893793,0.925,2350,825,+0.0045,+0.79%

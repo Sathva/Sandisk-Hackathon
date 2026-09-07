@@ -1,0 +1,35 @@
+{
+  "model_name": "Model C1 (Multi-Resolution Triple-Branch Deep Network)",
+  "parameters": 306081,
+  "best_epoch": 2,
+  "total_epochs_trained": 5,
+  "training_time_s": 84.8269693851471,
+  "auc_pr": 0.5765830853359013,
+  "roc_auc": 0.8913069034003184,
+  "optimal_threshold": 0.925,
+  "f1_score": 0.5503812316715543,
+  "precision": 0.7428752374920836,
+  "recall": 0.43711570709893793,
+  "specificity": 0.9937598801896996,
+  "accuracy": 0.972073617491423,
+  "confusion_matrix": {
+    "tp": 2350,
+    "fp": 825,
+    "tn": 131384,
+    "fn": 3017
+  },
+  "pairwise_vs_model_c": {
+    "delta_auc_pr": 0.004511085335901277,
+    "rel_lift_auc_pr_pct": 0.7885520242034703,
+    "delta_roc_auc": 0.0021809034003184014,
+    "delta_f1": -0.0001147683284457024,
+    "delta_precision": -0.02479176250791637,
+    "delta_recall": 0.008011707098937948
+  },
+  "branch_attribution_ablation": {
+    "full_model_auc_pr": 0.5765830853359013,
+    "mask_branch1_raw_cnn_auc_pr": 0.5425125157490137,
+    "mask_branch2_eng_block_auc_pr": 0.5667920974698097,
+    "mask_branch3_non_block_auc_pr": 0.13851469847525297
+  }
+}

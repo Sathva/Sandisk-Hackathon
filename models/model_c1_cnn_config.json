@@ -1,0 +1,17 @@
+{
+  "model_type": "MultiResolutionC1",
+  "num_block_features": 36,
+  "num_non_block_features": 519,
+  "cnn_embed_dim": 256,
+  "block_mlp_hidden": 64,
+  "block_mlp_out": 32,
+  "tab_mlp_hidden": 256,
+  "tab_mlp_out": 128,
+  "fusion_hidden": 128,
+  "batch_size": 512,
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "pos_weight": 26.067988197647843,
+  "best_epoch": 2,
+  "best_val_auc_pr": 0.5765830853359013
+}
