@@ -5,7 +5,11 @@ input/
 *.npy
 processed/cache/
 *.log
-__pycache__/
 *.pt
 catboost_info/
 models/rf_b.joblib
+
+# Byte-compiled / optimized / cache files
+__pycache__/
+*.py[cod]
+*$py.class
