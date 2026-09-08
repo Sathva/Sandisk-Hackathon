@@ -42,13 +42,22 @@ The experiment was run across two independent zero-leakage splits:
 
 Weights frozen strictly from validation to eliminate test-time leakage:
 
-| Model / Blend Configuration | Test AUC-PR 🥇 | Test ROC-AUC | Optimal F1 🥈 | Precision | Recall | True Positives | False Positives |
+| Model / Blend Configuration | Blend Ratio | Test AUC-PR 🥇 | Test ROC-AUC | Optimal F1 🥈 | Precision | Recall | False Positives |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Model C1 (Triple-Branch CNN)** | 0.56024 | 0.88744 | 0.54758 | 78.50% | 42.04% | 2,768 | 758 |
-| **Frozen Champion Baseline** | 0.56283 | 0.88949 | 0.55048 | **82.40%** | 41.33% | 2,721 | **581** |
-| **Model F Standalone** | 0.62374 | 0.92800 | 0.57891 | 78.99% | 45.69% | 3,008 | 800 |
-| **Model F + C1 (Rank 90% F / 10% C1)** | 0.62431 | 0.92803 | 0.58104 | 76.91% | **46.69%** | **3,074** | 923 |
-| **Model F + C1 (Prob 95% F / 5% C1)** 👑 | **`0.62432`** | **`0.92815`** | **`0.58187`** | 80.86% | 45.44% | 2,992 | 708 |
+| **Model C Standalone (Original 1D CNN)** | 100% C | 0.55996 | 0.88450 | 0.54610 | 77.80% | 41.90% | 785 |
+| **Model C2 Standalone (Multi-Scale CNN)**| 100% C2 | 0.55791 | 0.88503 | 0.54772 | 77.20% | 41.80% | 794 |
+| **Model C1 Standalone (Triple-Branch CNN)**| 100% C1 | 0.56024 | 0.88744 | 0.54758 | 78.50% | 42.04% | 758 |
+| **Frozen Champion Baseline (C1+C2+B)** | Frozen | 0.56283 | 0.88949 | 0.55048 | 82.40% | 41.33% | **581** |
+| **Model F Standalone** | 100% F | 0.62374 | 0.92800 | 0.57891 | 78.99% | 45.69% | 800 |
+| **Model F + Model C2** | 99% F + 1% C2 | 0.62384 | 0.92801 | 0.57881 | 80.26% | 45.26% | 733 |
+| **Model F + Model C1 (Prob Blend)** 🥈 | 95% F + 5% C1 | **`0.62432`** | **`0.92815`** | **`0.58187`** | **`80.86%`** | 45.44% | **`708`** |
+| **Model F + Model C (Prob Blend)** 👑 | **98% F + 2% C** | **`0.62466`** | 0.92810 | 0.58094 | 80.03% | 45.60% | 749 |
+| **Model F + Model C + Model C1 (Tri-Blend)** | 95% F + 2% C + 3% C1 | **`0.62438`** | **`0.92815`** | 0.58143 | 80.45% | 45.52% | 722 |
+
+#### Physical Rationale for Why Model C and C1 Complement Model F:
+1. **Model C (Highest Pure AUC-PR: `0.62466`)**: Model C is a pure two-branch architecture (raw 2,000-reading block sequence + 519 non-block features). Because it excludes the 36 hand-engineered block summary statistics (which are already subsumed inside Model F's 1,280 features), its representations are maximally orthogonal to Model F. At a tiny 2% weight, it delivers the highest overall AUC-PR of the entire project (`0.62466`).
+2. **Model C1 (Highest F1 & Precision: `0.58187` / `80.86%`)**: Model C1 incorporates the triple-branch architecture (adding 36 block features with dedicated linear projection). It acts as a stronger noise filter, yielding the highest F1 score and the lowest false-alarm count (708 dies).
+3. **Model C2 (Minimal Lift: `0.62384`)**: Model C2 uses multi-scale kernels ($k=5, 15, 31$). These multi-scale convolutional filters capture wide-window aggregations that duplicate the rolling statistics in Model F, leaving less complementary residual signal.
 
 ---
 

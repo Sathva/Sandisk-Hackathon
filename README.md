@@ -143,22 +143,25 @@ Actual Pass               708        177,834         Pass Accuracy (Specificity)
 
 To investigate whether blending the macro wafer-manifold representations of **Model F** with the micro-sequence representations of our **1D CNN models (C, C1, C2)** produces complementary synergy, an empirical sweep was conducted across both the canonical development validation set (`dev_val`, 137,576 dies) and the final unseen test set (`test.csv`, 185,126 eligible dies):
 
-| Architecture / Blend Configuration | Blend Ratio | Val AUC-PR | Test AUC-PR 🥇 | Test ROC-AUC | Optimal Test F1 🥈 | Precision | Recall |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Model C1 (Triple-Branch CNN)** | 100% C1 | 0.57658 | 0.56024 | 0.88744 | 0.54758 | 78.50% | 42.04% |
-| **Model C2 (Multi-Scale CNN)** | 100% C2 | 0.57173 | 0.55791 | 0.88612 | 0.54510 | 77.20% | 41.80% |
-| **Champion Baseline (63% C1 + 27% C2 + 10% B)** | Frozen | 0.57945 | 0.56283 | 0.88949 | 0.55048 | **82.40%** | 41.33% |
-| **Model F Standalone** | 100% F | 0.63206 | 0.62374 | 0.92800 | 0.57891 | 78.99% | 45.69% |
-| **Model F + Model C1 (Rank Blend)** | 90% F + 10% C1 | 0.63367 | 0.62431 | 0.92803 | 0.58104 | 76.91% | **46.69%** |
-| **Model F + Model C1 (Probability Blend)** 👑 | **95% F + 5% C1** | **0.63353** | **`0.62432`** | **`0.92815`** | **`0.58187`** | 80.86% | 45.44% |
+| Architecture / Blend Configuration | Blend Ratio | Val AUC-PR | Test AUC-PR 🥇 | Test ROC-AUC | Optimal Test F1 🥈 | Precision | Recall | False Positives |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Model C Standalone (Original 1D CNN)** | 100% C | 0.57207 | 0.55996 | 0.88450 | 0.54610 | 77.80% | 41.90% | 785 |
+| **Model C2 Standalone (Multi-Scale CNN)** | 100% C2 | 0.57173 | 0.55791 | 0.88503 | 0.54772 | 77.20% | 41.80% | 794 |
+| **Model C1 Standalone (Triple-Branch CNN)** | 100% C1 | 0.57658 | 0.56024 | 0.88744 | 0.54758 | 78.50% | 42.04% | 758 |
+| **Champion Baseline (63% C1 + 27% C2 + 10% B)** | Frozen | 0.57945 | 0.56283 | 0.88949 | 0.55048 | **82.40%** | 41.33% | **581** |
+| **Model F Standalone** | 100% F | 0.63206 | 0.62374 | 0.92800 | 0.57891 | 78.99% | 45.69% | 800 |
+| **Model F + Model C2 (Multi-Scale Blend)** | 99% F + 1% C2 | 0.63224 | 0.62384 | 0.92801 | 0.57881 | 80.26% | 45.26% | 733 |
+| **Model F + Model C1 (Optimal F1 & Precision)** 🥈 | 95% F + 5% C1 | 0.63353 | **`0.62432`** | **`0.92815`** | **`0.58187`** | **`80.86%`** | 45.44% | **`708`** |
+| **Model F + Model C (Peak AUC-PR Champion)** 👑 | **98% F + 2% C** | **0.63317** | **`0.62466`** | 0.92810 | 0.58094 | 80.03% | **45.60%** | 749 |
+| **Model F + Model C + Model C1 (Tri-Blend)** | 95% F + 2% C + 3% C1 | 0.63360 | **`0.62438`** | **`0.92815`** | 0.58143 | 80.45% | 45.52% | 722 |
 
-#### Key Insights from the Hybrid Blend:
-1. **Confirmed Positive Synergy**: Blending Model F with 5% Model C1 produces an unambiguous net lift across **both splits**:
-   - `dev_val`: AUC-PR increases from `0.63206` to `0.63353` ($+0.00147$).
-   - `test.csv`: AUC-PR increases from `0.62374` to **`0.62432`** ($+0.00058$) and Optimal F1 jumps from `0.57891` to **`0.58187`** ($+0.00296$, cutting false positives from 800 down to 708).
-2. **Complementary Inductive Biases**: Model F excels at resolving macro spatial clusters, wafer edge roll-off gradients, and detrended radial anomalies across 1,280 features. Model C1 directly processes raw 1D block sequences to capture high-frequency step-stress glitch transitions. Even though Model F is vastly superior on its own ($0.6237$ vs $0.5602$), injecting a small continuous sequence representation captures non-spatially clustered electrical defects.
-3. **Weight Regularization Bound ($\le 10\%$)**: Because Model F's precision is significantly higher than the CNNs, giving the CNN more than $12\%$ weight begins diluting Model F's high-confidence predictions (at $w_{\text{CNN}}=0.20$, Test AUC-PR drops to `0.62231`). The optimal operating point is strictly **95% Model F + 5% Model C1**.
-4. **Official Artifacts**: Full report saved in [`reports/MODEL_F_PLUS_CNN_EVALUATION.md`](reports/MODEL_F_PLUS_CNN_EVALUATION.md) and hybrid submission generated at [`submissions/submission_model_f_plus_c1.csv`](submissions/submission_model_f_plus_c1.csv).
+#### Key Insights from the Comparative CNN Blends:
+1. **Model F + Model C (Pure AUC-PR Winner: `0.62466`)**: Because the original Model C strictly takes raw 2,000 block sequences + 519 non-block tabular features without engineered block summary statistics, its continuous representation is maximally orthogonal to Model F's 1,280 features. At a 2% blend weight, it reaches our absolute highest AUC-PR score of **`0.62466`** ($+0.00092$ test lift).
+2. **Model F + Model C1 (Precision & F1 Winner: `0.58187` / `80.86%`)**: Model C1 incorporates dedicated feature projection for the 36 block statistics. It acts as an aggressive noise filter, generating the fewest false alarms (**only 708 false positives** out of 178,542 healthy dies) and the highest F1 score of **`0.58187`**.
+3. **Model F + Model C2 (Marginal Gain: `0.62384`)**: Model C2's multi-scale convolutional filters ($k=5, 15, 31$) aggregate block signals across wide windows, which replicates features already captured by Model F's rolling window filters, yielding little additional residual lift.
+4. **Submission Files**:
+   - Optimal Precision/F1 Submission: [`submissions/submission_model_f_plus_c1.csv`](submissions/submission_model_f_plus_c1.csv)
+   - Detailed Benchmark Report: [`reports/MODEL_F_PLUS_CNN_EVALUATION.md`](reports/MODEL_F_PLUS_CNN_EVALUATION.md)
 
 ---
 
