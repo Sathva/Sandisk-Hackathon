@@ -85,7 +85,7 @@ To directly fulfill the primary SanDisk Hackathon objective (*"Demonstrate wheth
 | **Single Baseline Tree (LightGBM)** | None (Raw Features) | Val: 0.4937<br>Test: 0.4870 | Val: 0.5543<br>Test: 0.5353 | **+0.0607 Val (+12.3%)**<br>**+0.0483 Test (+9.9%)** |
 | **Single Baseline Tree (XGBoost)** | None (Raw Features) | Val: 0.4918<br>Test: 0.4882 | Val: 0.5447<br>Test: 0.5319 | **+0.0530 Val (+10.8%)**<br>**+0.0437 Test (+8.9%)** |
 | **Single Baseline Tree (CatBoost)**| None (Raw Features) | Val: 0.4878<br>Test: 0.4815 | Val: 0.5492<br>Test: 0.5374 | **+0.0614 Val (+12.6%)**<br>**+0.0559 Test (+11.6%)** |
-| **Pure Multi-Tree Stack (LGB + CB + XGB)** | **None (Raw Baseline Features)** | Val: **0.4984**<br>Test: **0.4931** | Val: **0.5574**<br>Test: **0.5416** | **+0.0590 Val (+11.8%)**<br>**+0.0485 Test (+9.8%)** |
+| **Pure Multi-Tree Stack (LGB + CB + XGB)** | **None (Raw Baseline Features)** | Val: **0.4984**<br>Test: **0.4944** | Val: **0.5574**<br>Test: **0.5416** | **+0.0590 Val (+11.8%)**<br>**+0.0473 Test (+9.6%)** |
 | **1D CNN Sequence Model (Model C / C1)** | Raw 2,000 Block Seq | — (Requires Block Seq) | Val: **0.5766**<br>Test: **0.5602** | **+0.0829 Val (+16.8%)**<br>**+0.0733 Test (+15.1%)** |
 | **Model E Stack (5-Engine Committee)** | Bilinear PCA + Local Rank Dev (644 Feats) | — | Val: **0.6193**<br>Test: **0.6138** | **+0.1257 Val (+25.4%)**<br>**+0.1269 Test (+26.0%)** |
 | **Model F Stack (Manifold Detector)**| Wafer Detrending + LDA (1,280 Feats) | — | Val: **0.6321**<br>Test: **0.6237** | **+0.1384 Val (+28.0%)**<br>**+0.1368 Test (+28.1%)** |

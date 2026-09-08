@@ -22,7 +22,7 @@ Evaluated across both the 160-wafer canonical validation set (`dev_val`, 137,576
 | **Single Baseline Tree (LightGBM)** | None (Raw Features) | Val: 0.49366<br>Test: 0.48695 | Val: 0.55432<br>Test: 0.53528 | **+0.06066 Val (+12.3%)**<br>**+0.04833 Test (+9.9%)** |
 | **Single Baseline Tree (XGBoost)** | None (Raw Features) | Val: 0.49176<br>Test: 0.48821 | Val: 0.54474<br>Test: 0.53187 | **+0.05298 Val (+10.8%)**<br>**+0.04366 Test (+8.9%)** |
 | **Single Baseline Tree (CatBoost)**| None (Raw Features) | Val: 0.48776<br>Test: 0.48150 | Val: 0.54920<br>Test: 0.53740 | **+0.06144 Val (+12.6%)**<br>**+0.05590 Test (+11.6%)** |
-| **Pure Multi-Tree Stack (LGB + CB + XGB)** | **None (Raw Baseline Features)** | Val: **0.49841**<br>Test: **0.49313** | Val: **0.55740**<br>Test: **0.54164** | **+0.05899 Val (+11.8%)**<br>**+0.04851 Test (+9.8%)** |
+| **Pure Multi-Tree Stack (LGB + CB + XGB)** | **None (Raw Baseline Features)** | Val: **0.49841**<br>Test: **0.49437** | Val: **0.55740**<br>Test: **0.54164** | **+0.05899 Val (+11.8%)**<br>**+0.04727 Test (+9.6%)** |
 | **1D CNN Sequence Model (Model C / C1)** | Raw 2,000 Block Seq | — (Requires Block Seq) | Val: **0.57658**<br>Test: **0.56024** | **+0.08292 Val (+16.8%)**<br>**+0.07329 Test (+15.1%)** |
 | **Model E Stack (5-Engine Committee)** | Bilinear PCA + Local Rank Dev (644 Feats) | — | Val: **0.61931**<br>Test: **0.61382** | **+0.12565 Val (+25.4%)**<br>**+0.12687 Test (+26.0%)** |
 | **Model F Stack (Manifold Detector)**| Spatial Detrending + Shrinkage LDA (1,280 Feats) | — | Val: **0.63206**<br>Test: **0.62374** | **+0.13840 Val (+28.0%)**<br>**+0.13679 Test (+28.1%)** |
