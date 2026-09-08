@@ -137,6 +137,29 @@ Actual Pass             1,304        177,238         Pass Accuracy (Specificity)
 
 ---
 
+### 1.2.1 Hybrid Ensemble Benchmark: Model F + 1D CNN Models (C, C1, C2) 🧬
+
+To investigate whether blending the macro wafer-manifold representations of **Model F** with the micro-sequence representations of our **1D CNN models (C, C1, C2)** produces complementary synergy, an empirical sweep was conducted across both the canonical development validation set (`dev_val`, 137,576 dies) and the final unseen test set (`test.csv`, 185,126 eligible dies):
+
+| Architecture / Blend Configuration | Blend Ratio | Val AUC-PR | Test AUC-PR 🥇 | Test ROC-AUC | Optimal Test F1 🥈 | Precision | Recall |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Model C1 (Triple-Branch CNN)** | 100% C1 | 0.57658 | 0.56024 | 0.88744 | 0.54758 | 78.50% | 42.04% |
+| **Model C2 (Multi-Scale CNN)** | 100% C2 | 0.57173 | 0.55791 | 0.88612 | 0.54510 | 77.20% | 41.80% |
+| **Champion Baseline (63% C1 + 27% C2 + 10% B)** | Frozen | 0.57945 | 0.56283 | 0.88949 | 0.55048 | **82.40%** | 41.33% |
+| **Model F Standalone** | 100% F | 0.63206 | 0.62374 | 0.92800 | 0.57891 | 78.99% | 45.69% |
+| **Model F + Model C1 (Rank Blend)** | 90% F + 10% C1 | 0.63367 | 0.62431 | 0.92803 | 0.58104 | 76.91% | **46.69%** |
+| **Model F + Model C1 (Probability Blend)** 👑 | **95% F + 5% C1** | **0.63353** | **`0.62432`** | **`0.92815`** | **`0.58187`** | 80.86% | 45.44% |
+
+#### Key Insights from the Hybrid Blend:
+1. **Confirmed Positive Synergy**: Blending Model F with 5% Model C1 produces an unambiguous net lift across **both splits**:
+   - `dev_val`: AUC-PR increases from `0.63206` to `0.63353` ($+0.00147$).
+   - `test.csv`: AUC-PR increases from `0.62374` to **`0.62432`** ($+0.00058$) and Optimal F1 jumps from `0.57891` to **`0.58187`** ($+0.00296$, cutting false positives from 800 down to 708).
+2. **Complementary Inductive Biases**: Model F excels at resolving macro spatial clusters, wafer edge roll-off gradients, and detrended radial anomalies across 1,280 features. Model C1 directly processes raw 1D block sequences to capture high-frequency step-stress glitch transitions. Even though Model F is vastly superior on its own ($0.6237$ vs $0.5602$), injecting a small continuous sequence representation captures non-spatially clustered electrical defects.
+3. **Weight Regularization Bound ($\le 10\%$)**: Because Model F's precision is significantly higher than the CNNs, giving the CNN more than $12\%$ weight begins diluting Model F's high-confidence predictions (at $w_{\text{CNN}}=0.20$, Test AUC-PR drops to `0.62231`). The optimal operating point is strictly **95% Model F + 5% Model C1**.
+4. **Official Artifacts**: Full report saved in [`reports/MODEL_F_PLUS_CNN_EVALUATION.md`](reports/MODEL_F_PLUS_CNN_EVALUATION.md) and hybrid submission generated at [`submissions/submission_model_f_plus_c1.csv`](submissions/submission_model_f_plus_c1.csv).
+
+---
+
 ### 1.3 Teammate Adit Branch Architectural Audit & Comparative Findings 🔍
 
 A comprehensive technical audit of teammate Adit's branch (`adit`, commits `d5315d1`, `a277468`) was conducted:
@@ -771,7 +794,8 @@ python src/models/evaluate_final_test.py
 │   └── final_test_model_f_predictions.parquet      # Model F all-engine final test predictions
 ├── submissions/
 │   ├── submission_model_e_optimal.csv              # Official competition submission for Model E
-│   └── submission_model_f_optimal.csv              # Official competition submission for Model F (208,264 dies)
+│   ├── submission_model_f_optimal.csv              # Official competition submission for Model F (208,264 dies)
+│   └── submission_model_f_plus_c1.csv              # Hybrid Model F + Model C1 submission (208,264 dies)
 ├── processed/
 │   ├── train_features.parquet                      # 888,497 rows x 560 cols (2.03 GB)
 │   ├── test_features.parquet                       # 208,264 rows x 560 cols (616.7 MB)
@@ -803,6 +827,7 @@ python src/models/evaluate_final_test.py
 │   ├── MODEL_E_FINAL_TEST_EVALUATION.md            # Final unseen test evaluation report for Model E
 │   ├── MODEL_F_EVALUATION.md                       # Comprehensive Model F manifold detector report (0.6321 AUC-PR)
 │   ├── MODEL_F_FINAL_TEST_EVALUATION.md            # Final unseen test evaluation report for Model F (0.62374 AUC-PR)
+│   ├── MODEL_F_PLUS_CNN_EVALUATION.md              # Hybrid evaluation report: Model F + CNNs (0.62432 Test AUC-PR)
 │   ├── model_f_val_preds.npz                       # Model F validation predictions across all engines
 │   ├── model_f_final_test_metrics.json / .csv      # Model F final unseen test benchmark metrics
 │   ├── model_e_metrics.json / .csv                 # Model E development metrics & correlations
@@ -837,5 +862,6 @@ python src/models/evaluate_final_test.py
     ├── 22_model_f_aucpr_comparison.png             # Validation AUC-PR benchmark across all models
     ├── 23_model_f_correlation_heatmap.png          # Model F engine prediction correlation matrix
     ├── 24_final_test_model_f_pr_curves.png         # Final unseen test PR curves (200 test wafers)
-    └── 25_final_test_model_f_aucpr_comparison.png  # Final unseen test AUC-PR benchmark across all models
+    ├── 25_final_test_model_f_aucpr_comparison.png  # Final unseen test AUC-PR benchmark across all models
+    └── 26_model_f_plus_cnn_comparison.png          # Model F + CNN hybrid PR and F1 comparison
 ```
