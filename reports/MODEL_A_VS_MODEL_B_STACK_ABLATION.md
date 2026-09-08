@@ -24,7 +24,8 @@ Evaluated across both the 160-wafer canonical validation set (`dev_val`, 137,576
 | **Single Baseline Tree (CatBoost)**| None (Raw Features) | Val: 0.48776<br>Test: 0.48150 | Val: 0.54920<br>Test: 0.53740 | **+0.06144 Val (+12.6%)**<br>**+0.05590 Test (+11.6%)** |
 | **Pure Multi-Tree Stack (LGB + CB + XGB)** | **None (Raw Baseline Features)** | Val: **0.49841**<br>Test: **0.49313** | Val: **0.55740**<br>Test: **0.54164** | **+0.05899 Val (+11.8%)**<br>**+0.04851 Test (+9.8%)** |
 | **1D CNN Sequence Model (Model C / C1)** | Raw 2,000 Block Seq | — (Requires Block Seq) | Val: **0.57658**<br>Test: **0.56024** | **+0.08292 Val (+16.8%)**<br>**+0.07329 Test (+15.1%)** |
-| **Advanced Manifold Detector (Model F Stack)**| Spatial Detrending + Shrinkage LDA (1,280 Feats) | — | Val: **0.63206**<br>Test: **0.62374** | **+0.13840 Val (+28.0%)**<br>**+0.13679 Test (+28.1%)** |
+| **Model E Stack (5-Engine Committee)** | Bilinear PCA + Local Rank Dev (644 Feats) | — | Val: **0.61931**<br>Test: **0.61382** | **+0.12565 Val (+25.4%)**<br>**+0.12687 Test (+26.0%)** |
+| **Model F Stack (Manifold Detector)**| Spatial Detrending + Shrinkage LDA (1,280 Feats) | — | Val: **0.63206**<br>Test: **0.62374** | **+0.13840 Val (+28.0%)**<br>**+0.13679 Test (+28.1%)** |
 | **Grand Champion Hybrid (Model F + Model C)** | Multi-Modal Physics + Deep Sequence | — | Val: **0.63317**<br>Test: **0.62466** | **+0.13951 Val (+28.3%)**<br>**+0.13771 Test (+28.3%)** |
 
 ---
