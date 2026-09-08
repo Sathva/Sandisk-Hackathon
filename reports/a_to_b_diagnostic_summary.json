@@ -1,0 +1,63 @@
+{
+  "model_a_features": 519,
+  "model_b_features": 555,
+  "test_dies_evaluated": 185126,
+  "test_actual_failures": 6584,
+  "model_a_stack_aucpr": 0.49362,
+  "model_b_stack_aucpr": 0.54164,
+  "absolute_block_aucpr_lift": 0.04802,
+  "relative_block_lift_pct": 9.73,
+  "dies_caught_by_both": 3394,
+  "dies_rescued_by_model_b_only": 795,
+  "dies_missed_by_both": 2013,
+  "top_block_features_by_gain": [
+    {
+      "feature": "max_rolling_mean_400",
+      "gain": 950354.11
+    },
+    {
+      "feature": "max_rolling_mean_200",
+      "gain": 227567.46
+    },
+    {
+      "feature": "block_mean_top200",
+      "gain": 203134.64
+    },
+    {
+      "feature": "block_mean",
+      "gain": 188893.02
+    },
+    {
+      "feature": "block_q75",
+      "gain": 60257.74
+    },
+    {
+      "feature": "block_q95",
+      "gain": 16036.82
+    },
+    {
+      "feature": "max_rolling_mean_100",
+      "gain": 15921.69
+    },
+    {
+      "feature": "max_rolling_mean_100_start_idx",
+      "gain": 12426.86
+    },
+    {
+      "feature": "block_mean_top100",
+      "gain": 11198.72
+    },
+    {
+      "feature": "block_median",
+      "gain": 10131.59
+    },
+    {
+      "feature": "block_std",
+      "gain": 8584.82
+    },
+    {
+      "feature": "block_mean_top10",
+      "gain": 7514.42
+    }
+  ]
+}
