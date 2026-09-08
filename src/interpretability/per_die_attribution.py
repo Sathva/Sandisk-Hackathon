@@ -310,24 +310,25 @@ def _generate_global_shap_figures(
     # Figure 27b: Domain Share Distribution
     print("Generating Figure 27b (Domain Relative Attribution Share)...")
     plt.figure(figsize=(10, 5.5), dpi=160)
-    domain_mean_shares = []
-    valid_domains = [d for d in DOMAINS_ORDER if d in domain_pcts]
-    for d in valid_domains:
-        domain_mean_shares.append(float(np.mean(domain_pcts[d])))
+    # Sort domains by descending share
+    domain_mean_dict = {d: float(np.mean(domain_pcts[d])) for d in DOMAINS_ORDER if d in domain_pcts}
+    sorted_dom_tuples = sorted(domain_mean_dict.items(), key=lambda x: x[1], reverse=True)
+    sorted_dom_names = [x[0] for x in sorted_dom_tuples]
+    sorted_dom_shares = [x[1] for x in sorted_dom_tuples]
 
     bars2 = plt.bar(
-        valid_domains, domain_mean_shares,
-        color=[domain_colors[d] for d in valid_domains],
+        sorted_dom_names, sorted_dom_shares,
+        color=[domain_colors[d] for d in sorted_dom_names],
         edgecolor="black", linewidth=0.8, width=0.55
     )
-    plt.ylabel("Mean Attribution Magnitude Share (%)", fontsize=11, fontweight="bold")
+    plt.ylabel("Mean Attribution Magnitude Share (% of Evidence)", fontsize=11, fontweight="bold")
     plt.title(
-        "Physical Domain Attribution Share Across Predicted Failures\n"
-        "(Relative Share of Absolute SHAP Magnitude)",
+        "Physical Domain Attribution Share Across Evaluated Silicon Dies\n"
+        "(Exact Native TreeSHAP on CatBoost GPU, N=25,013 Unseen Test Dies)",
         fontsize=13, fontweight="bold", pad=12
     )
-    plt.xticks(rotation=25, ha="right", fontsize=9.5)
-    plt.ylim([0, max(domain_mean_shares) * 1.25])
+    plt.xticks(rotation=22, ha="right", fontsize=9.5, fontweight="bold")
+    plt.ylim([0, max(sorted_dom_shares) * 1.25])
     plt.grid(True, linestyle="--", alpha=0.4, axis="y")
 
     for bar in bars2:

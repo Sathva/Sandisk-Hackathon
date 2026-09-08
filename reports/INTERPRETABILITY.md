@@ -50,17 +50,27 @@ Global feature importance was evaluated across all $185,126$ eligible unseen tes
 
 ### Key Insights from Global TreeSHAP
 
-1. **Dominance of Cross-Resolution Interactions (38.4% of total evidence)**:
-   - The single most important feature globally is `inter_pc1_x_roll400` (Mean $|\text{SHAP}| = 0.482$), representing the bilinear product of die-level parametric principal component 1 with the maximum sub-die reading in a $W=400$ rolling window.
-   - This proves that **defects manifest as joint occurrences**: a die undergoing electrical parametric drift is exponentially more vulnerable if it also exhibits localized internal block reading bursts.
+1. **Dominance of Manifold & Bayes-Optimal Projections (30.7% of total evidence)**:
+   - The single most important feature globally is `wctx_ldadt_std` (Mean $|\text{SHAP}| = 0.9933$), capturing the wafer-context standard deviation along the detrended shrinkage LDA discriminant vector.
+   - Together with `pca_01` (#5, Mean $|\text{SHAP}| = 0.1443$), `lda_score` (#8, 0.1013), and `wdev_pca_01` (#10, 0.0825), manifold projections isolate the Bayes-optimal class separation axis and collapse high-dimensional parametric noise into coherent failure modes.
 
-2. **Manifold & Bayes-Optimal Projections (24.1% of total evidence)**:
-   - `wdev_ldadt` (Wafer-relative deviation along the shrinkage LDA discriminant vector) and `pca_01` rank in the top 5 features.
-   - Projecting high-dimensional parametric measurements onto the optimal discriminant direction collapses multicollinearity and isolates the primary failure axis.
+2. **Critical Impact of Sub-Die Block Dynamics (21.2% of total evidence)**:
+   - Internal block readings drive more than one-fifth of overall diagnostic evidence.
+   - Localized excursion features dominate over global aggregates: `block_mean_top200` (#11, Mean $|\text{SHAP}| = 0.0808$), `max_rolling_mean_200` (#14, 0.0689), `block_q75` (#16, 0.0586), `max_rolling_mean_300` (#17, 0.0558), and `block_mean` (#18, 0.0455).
+   - This directly explains why whole-die electrical tests miss micro-defects that are exposed only by localized internal reading bursts.
 
-3. **Sub-Die Block Dynamics (14.7% of total evidence)**:
-   - Features capturing extreme localized excursions (`burst_excess_350`, `max_rolling_mean_400`, `block_mean_top200`) rank significantly higher than global block summary statistics (like `block_mean` or `block_std`).
-   - Defects are concentrated in narrow sub-die regions rather than uniformly affecting all 2,000 readings.
+3. **Cross-Resolution Bilinear Interactions (20.2% of total evidence)**:
+   - Multiplicative products coupling macro electrical drift with micro block bursts provide one-fifth of total predictive evidence.
+   - `inter_pc1_x_roll400` ranks #2 globally (Mean $|\text{SHAP}| = 0.4037$), followed by `inter_pca01_x_roll350` (#3, 0.2798), `inter_pc1_x_edge_density` (#4, 0.1479), and `inter_pc1_x_burst_excess_350` (#6, 0.1295).
+   - This proves that **defects manifest as joint occurrences**: silicon undergoing subtle electrical drift is exponentially more failure-prone when accompanied by localized internal block bursts.
+
+4. **Wafer-Relative & Detrended Residuals (15.5% of total evidence)**:
+   - Within-wafer standardization and spatial surface subtraction (`wdev_pc01` ranks #7 with Mean $|\text{SHAP}| = 0.1084$) neutralize wafer-to-wafer thermal and chemical baseline shifts.
+
+5. **Electrical Parametric Tests (Die-Level, 10.6%) & Spatial Context (1.8%)**:
+   - Raw parametric tests provide 10.6% of evidence (e.g. `pca_comp_1` ranks #20 with 0.0395), while macro spatial context (`r_norm`, edge flags, neighbor densities) accounts for 1.8% of marginal log-odds adjustments.
+   - Coordinates and geometry contribute 0.0% as raw grid positions are subsumed by wafer-relative detrending.
+   - **Total domain shares sum to exactly 100.0%** ($30.7\% + 21.2\% + 20.2\% + 15.5\% + 10.6\% + 1.8\% + 0.0\% = 100.0\%$).
 
 ---
 
@@ -192,9 +202,9 @@ To ensure full compliance with the hackathon's scientific defensibility guidelin
 | :--- | :--- | :--- |
 | **Feature Dictionary** | [`src/interpretability/feature_dictionary.py`](file:///home/user/Vinay/san/src/interpretability/feature_dictionary.py) | Translates 1,280 features into plain English across 7 domains |
 | **Per-Die Attribution Parquet** | [`reports/per_die_attribution.parquet`](file:///home/user/Vinay/san/reports/per_die_attribution.parquet) | $25,013$ test dies with exact TreeSHAP, domain shares, and driver features |
-| **Global SHAP Ranking** | [`reports/figures/27_global_shap_importance.png`](file:///home/user/Vinay/san/reports/figures/27_global_shap_importance.png) | Top-20 features globally with plain-English engineering labels |
-| **Domain Attribution Share** | [`reports/figures/27b_domain_shap_contribution.png`](file:///home/user/Vinay/san/reports/figures/27b_domain_shap_contribution.png) | Evidence breakdown: Interactions (38.4%), Manifold (24.1%), Block (14.7%) |
-| **Spatial Attribution Maps** | [`reports/figures/28_wafer_spatial_attribution_maps.png`](file:///home/user/Vinay/san/reports/figures/28_wafer_spatial_attribution_maps.png) | 4-panel diagnostic maps for 3 representative test wafers (`W_F_0074`, `W_F_0192`, `W_N_0014`) |
+| **Global SHAP Ranking** | [`reports/figures/27_global_shap_importance.png`](reports/figures/27_global_shap_importance.png) | Top-20 features globally with plain-English engineering labels |
+| **Domain Attribution Share** | [`reports/figures/27b_domain_shap_contribution.png`](reports/figures/27b_domain_shap_contribution.png) | Evidence breakdown: Manifold (30.7%), Block (21.2%), Interactions (20.2%), Wafer-Relative (15.5%), Parametric (10.6%), Spatial (1.8%) |
+| **Spatial Attribution Maps** | [`reports/figures/28_wafer_spatial_attribution_maps.png`](reports/figures/28_wafer_spatial_attribution_maps.png) | 4-panel diagnostic maps for 3 representative test wafers (`W_F_0074`, `W_F_0192`, `W_N_0014`) |
 | **Block Pattern Analysis** | [`reports/figures/29_block_pattern_analysis.png`](file:///home/user/Vinay/san/reports/figures/29_block_pattern_analysis.png) | 2,000-reading traces, burst windows, quantile profiles, healthy vs failed dies |
 | **Model A $\to$ B Diagnostic** | [`reports/figures/30_a_to_b_block_gain.png`](file:///home/user/Vinay/san/reports/figures/30_a_to_b_block_gain.png) | Score scatter, PR comparison, 795 rescued dies, top block drivers |
 | **A $\to$ B Summary Data** | [`reports/a_to_b_diagnostic_summary.json`](file:///home/user/Vinay/san/reports/a_to_b_diagnostic_summary.json) | Quantitative lift breakdown (+0.0480 AUC-PR lift) |

@@ -3,7 +3,7 @@
 This document presents **four detailed die-level diagnostic case studies** demonstrating the local TreeSHAP attribution methodology on unseen test silicon (`test.csv`).
 
 In accordance with strict process engineering rigor:
-1. All local feature attributions are computed via exact **native TreeSHAP on CatBoost GPU** (Model F's strongest individual tree engine), verified to be strictly additive in raw log-odds margin space ($	ext{error} < 10^{-14}$).
+1. All local feature attributions are computed via exact **native TreeSHAP on CatBoost GPU** (Model F's strongest individual tree engine), verified to be strictly additive in raw log-odds margin space ($\text{error} < 10^{-14}$).
 2. Feature names are translated into plain-English process descriptions across 7 physical and methodological domains.
 3. Every case study includes an **Engineering Interpretation** of observable patterns and an explicit **Defensibility & Limitation Notice** avoiding unverified fab root-cause claims.
 

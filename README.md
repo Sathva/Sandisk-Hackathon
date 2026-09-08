@@ -283,9 +283,11 @@ To satisfy the hackathon's **Interpretability Rubric (30% of total score)** with
 
 #### 2. Key Interpretability Findings & Visual Artifacts:
 1. **Global Evidence Hierarchy ([Figure 27](reports/figures/27_global_shap_importance.png) & [Figure 27b](reports/figures/27b_domain_shap_contribution.png))**:
-   - **Cross-Resolution Interactions dominate (38.4% of total evidence)**: `inter_pc1_x_roll400` is the #1 feature globally, proving defects arise from the joint convergence of electrical parametric drift and sub-die bursts.
-   - **Bayes-Optimal Manifold Projections (24.1%)**: Shrinkage LDA direction `wdev_ldadt` and PCA mode `pca_01` capture primary failure axes.
-   - **Sub-Die Block Dynamics (14.7%)**: Localized bursts (`burst_excess_350`, `max_rolling_mean_400`) far outperform whole-die averages.
+   - **Manifold & Bayes-Optimal Projections (30.7% of total evidence)**: `wctx_ldadt_std` is the #1 feature globally (Mean $|\text{SHAP}| = 0.9933$), accompanied by `pca_01` (#5, 0.1443) and `lda_score` (#8, 0.1013), capturing the primary discriminant failure axis.
+   - **Sub-Die Block Dynamics (21.2% of total evidence)**: Micro-scale localized burst features (`block_mean_top200` #11, `max_rolling_mean_200` #14, `block_q75` #16) account for over one-fifth of diagnostic evidence.
+   - **Cross-Resolution Interactions (20.2% of total evidence)**: Bilinear interactions coupling macro parametric drift with micro bursts (`inter_pc1_x_roll400` #2 globally at 0.4037, `inter_pca01_x_roll350` #3 at 0.2798) prove defects arise from joint multi-scale degradation.
+   - **Wafer-Relative Detrended Features (15.5%)**: Within-wafer Z-scores (`wdev_pc01` #7 at 0.1084) decouple die screening from chamber drift.
+   - **Electrical Parametric (10.6%), Spatial Context (1.8%), Geometry (0.0%)**: Complete domain breakdown verified to sum to 100.0%.
 2. **Spatial Contribution Topography ([Figure 28](reports/figures/28_wafer_spatial_attribution_maps.png))**:
    - 4-panel diagnostic maps across 3 representative test wafers (`W_F_0074` edge risk, `W_F_0192` defect cluster, `W_N_0014` margin wafer) demonstrating smooth risk surfaces and signed spatial margin contributions ($\Delta \text{margin} \in [-0.65, +0.65]$).
 3. **Sub-Die Block Reading Patterns ([Figure 29](reports/figures/29_block_pattern_analysis.png))**:
