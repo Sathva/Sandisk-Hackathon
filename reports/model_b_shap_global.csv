@@ -1,0 +1,556 @@
+feature,mean_abs_shap,domain,meaning
+max_rolling_mean_400,0.34917217365885594,Sub-Die Block,strongest sustained sub-die burst over a 400-reading window
+max_rolling_mean_200,0.1895316175309959,Sub-Die Block,strongest sustained sub-die burst over a 200-reading window
+block_mean_top200,0.17693372757046455,Sub-Die Block,mean of the 200 most extreme sub-die readings
+block_mean,0.11512922497055021,Sub-Die Block,"mean amplitude across all 2,000 sub-die readings"
+wafer_die_count,0.08743719207201245,Spatial Context,how many dies this wafer carries
+feature_312,0.0782368598518826,Die Parametric,die-level parametric test 312
+wafer_old_fail_rate,0.07494041060180803,Spatial Context,share of this wafer already failing before test
+feature_365,0.07165718223281259,Die Parametric,die-level parametric test 365
+feature_242,0.06798887604932677,Die Parametric,die-level parametric test 242
+feature_446,0.06704428203131872,Die Parametric,die-level parametric test 446
+feature_295,0.06659874015174283,Die Parametric,die-level parametric test 295
+feature_65,0.06646150934090556,Die Parametric,die-level parametric test 65
+feature_223,0.06591464933739812,Die Parametric,die-level parametric test 223
+feature_277,0.06499474380548008,Die Parametric,die-level parametric test 277
+feature_246,0.06471195772888966,Die Parametric,die-level parametric test 246
+feature_472,0.06466974292460309,Die Parametric,die-level parametric test 472
+feature_245,0.06325211393786194,Die Parametric,die-level parametric test 245
+feature_262,0.06294467706413728,Die Parametric,die-level parametric test 262
+feature_290,0.06222168160429711,Die Parametric,die-level parametric test 290
+feature_495,0.062142783679115694,Die Parametric,die-level parametric test 495
+feature_163,0.06189854293103231,Die Parametric,die-level parametric test 163
+feature_412,0.061542902195569155,Die Parametric,die-level parametric test 412
+feature_236,0.061223729399076686,Die Parametric,die-level parametric test 236
+feature_183,0.06119300683070572,Die Parametric,die-level parametric test 183
+feature_271,0.060822002606872615,Die Parametric,die-level parametric test 271
+feature_436,0.060801120420755445,Die Parametric,die-level parametric test 436
+feature_178,0.060728996858482896,Die Parametric,die-level parametric test 178
+block_q75,0.060216112575756264,Sub-Die Block,75th percentile of this die's sub-die readings
+feature_189,0.060039572777653163,Die Parametric,die-level parametric test 189
+feature_33,0.05996769131316989,Die Parametric,die-level parametric test 33
+feature_381,0.05955555872893159,Die Parametric,die-level parametric test 381
+feature_251,0.059375222962657064,Die Parametric,die-level parametric test 251
+feature_433,0.059216177674908464,Die Parametric,die-level parametric test 433
+feature_336,0.05885058272471809,Die Parametric,die-level parametric test 336
+feature_113,0.05857125757170905,Die Parametric,die-level parametric test 113
+feature_286,0.05837615667510518,Die Parametric,die-level parametric test 286
+feature_171,0.05810671055454406,Die Parametric,die-level parametric test 171
+feature_387,0.0577168014096008,Die Parametric,die-level parametric test 387
+feature_454,0.05720673299356596,Die Parametric,die-level parametric test 454
+feature_474,0.057081882635867665,Die Parametric,die-level parametric test 474
+feature_447,0.05654119977149316,Die Parametric,die-level parametric test 447
+feature_294,0.0562233454792816,Die Parametric,die-level parametric test 294
+feature_284,0.056157122619032905,Die Parametric,die-level parametric test 284
+feature_209,0.056093792265985716,Die Parametric,die-level parametric test 209
+feature_193,0.05601078151189278,Die Parametric,die-level parametric test 193
+feature_130,0.05590459017161293,Die Parametric,die-level parametric test 130
+feature_85,0.05586085155928638,Die Parametric,die-level parametric test 85
+feature_159,0.05531857781475649,Die Parametric,die-level parametric test 159
+feature_77,0.055289602455385896,Die Parametric,die-level parametric test 77
+feature_342,0.055000148142069015,Die Parametric,die-level parametric test 342
+feature_298,0.054765674537464226,Die Parametric,die-level parametric test 298
+wafer_old_fail_count,0.05467484897382969,Spatial Context,number of dies on this wafer already failing before test
+feature_156,0.05464529262334529,Die Parametric,die-level parametric test 156
+feature_464,0.054432521144129734,Die Parametric,die-level parametric test 464
+feature_254,0.05432713992310204,Die Parametric,die-level parametric test 254
+feature_265,0.05413214395371898,Die Parametric,die-level parametric test 265
+feature_396,0.053860970127016024,Die Parametric,die-level parametric test 396
+feature_478,0.053483540848371106,Die Parametric,die-level parametric test 478
+feature_475,0.053426049718320136,Die Parametric,die-level parametric test 475
+feature_231,0.053398399724740274,Die Parametric,die-level parametric test 231
+feature_285,0.05338891329007617,Die Parametric,die-level parametric test 285
+feature_325,0.05329037022016952,Die Parametric,die-level parametric test 325
+feature_3,0.053195693989502926,Die Parametric,die-level parametric test 3
+feature_22,0.05318448066262025,Die Parametric,die-level parametric test 22
+feature_272,0.053115259861515475,Die Parametric,die-level parametric test 272
+feature_97,0.05239352571726766,Die Parametric,die-level parametric test 97
+feature_225,0.0521315564847904,Die Parametric,die-level parametric test 225
+feature_362,0.05199618052453959,Die Parametric,die-level parametric test 362
+feature_169,0.05188765793345932,Die Parametric,die-level parametric test 169
+feature_440,0.051711061374869256,Die Parametric,die-level parametric test 440
+feature_195,0.051652016500504286,Die Parametric,die-level parametric test 195
+feature_60,0.0516112882848026,Die Parametric,die-level parametric test 60
+feature_399,0.05158762972311969,Die Parametric,die-level parametric test 399
+feature_235,0.0515763533130097,Die Parametric,die-level parametric test 235
+feature_46,0.0514763926865221,Die Parametric,die-level parametric test 46
+feature_13,0.05139337874935904,Die Parametric,die-level parametric test 13
+feature_126,0.051278947696241445,Die Parametric,die-level parametric test 126
+feature_31,0.05115260792745437,Die Parametric,die-level parametric test 31
+feature_457,0.05091453827360433,Die Parametric,die-level parametric test 457
+feature_233,0.05087041237777095,Die Parametric,die-level parametric test 233
+feature_197,0.050501478090918164,Die Parametric,die-level parametric test 197
+feature_385,0.050207274397448785,Die Parametric,die-level parametric test 385
+feature_229,0.05009896332840773,Die Parametric,die-level parametric test 229
+feature_8,0.04984601313319095,Die Parametric,die-level parametric test 8
+feature_115,0.0497091605989941,Die Parametric,die-level parametric test 115
+feature_58,0.04965359723287345,Die Parametric,die-level parametric test 58
+feature_29,0.04956536822767197,Die Parametric,die-level parametric test 29
+feature_244,0.04896647278453324,Die Parametric,die-level parametric test 244
+feature_269,0.04887294672348359,Die Parametric,die-level parametric test 269
+feature_414,0.04852864339385048,Die Parametric,die-level parametric test 414
+feature_282,0.04813291727872327,Die Parametric,die-level parametric test 282
+feature_132,0.048000680618366105,Die Parametric,die-level parametric test 132
+feature_218,0.04795655067869438,Die Parametric,die-level parametric test 218
+feature_275,0.047803212734433644,Die Parametric,die-level parametric test 275
+feature_238,0.04780245316528704,Die Parametric,die-level parametric test 238
+feature_43,0.04759767217286053,Die Parametric,die-level parametric test 43
+feature_202,0.04753492266281526,Die Parametric,die-level parametric test 202
+feature_255,0.04724364501876649,Die Parametric,die-level parametric test 255
+feature_100,0.047234829102015624,Die Parametric,die-level parametric test 100
+radius,0.047054066150242393,Spatial Context,normalised distance from the wafer centre
+feature_78,0.046998104487912404,Die Parametric,die-level parametric test 78
+feature_349,0.046882992667772225,Die Parametric,die-level parametric test 349
+feature_482,0.04659993427166525,Die Parametric,die-level parametric test 482
+feature_160,0.046496201569195685,Die Parametric,die-level parametric test 160
+feature_243,0.04621999038854135,Die Parametric,die-level parametric test 243
+feature_153,0.04605419439304597,Die Parametric,die-level parametric test 153
+feature_460,0.045698116005027226,Die Parametric,die-level parametric test 460
+feature_421,0.04531016753569829,Die Parametric,die-level parametric test 421
+feature_404,0.04503634942306258,Die Parametric,die-level parametric test 404
+feature_89,0.04449562498259796,Die Parametric,die-level parametric test 89
+feature_191,0.04438830316448879,Die Parametric,die-level parametric test 191
+feature_340,0.044249373293485,Die Parametric,die-level parametric test 340
+feature_500,0.04380327128326116,Die Parametric,die-level parametric test 500
+feature_389,0.043615570158671166,Die Parametric,die-level parametric test 389
+feature_88,0.043476833262769216,Die Parametric,die-level parametric test 88
+feature_190,0.043447914863005525,Die Parametric,die-level parametric test 190
+feature_293,0.043348906536216585,Die Parametric,die-level parametric test 293
+feature_17,0.04316742399392186,Die Parametric,die-level parametric test 17
+feature_496,0.04314337520168856,Die Parametric,die-level parametric test 496
+feature_448,0.04306084775229205,Die Parametric,die-level parametric test 448
+feature_441,0.04301541039547806,Die Parametric,die-level parametric test 441
+feature_332,0.04301351723684441,Die Parametric,die-level parametric test 332
+feature_348,0.04298099460893184,Die Parametric,die-level parametric test 348
+feature_123,0.042645203234198105,Die Parametric,die-level parametric test 123
+feature_216,0.04252535380205895,Die Parametric,die-level parametric test 216
+feature_253,0.04234449449343328,Die Parametric,die-level parametric test 253
+feature_258,0.042317653230043564,Die Parametric,die-level parametric test 258
+feature_71,0.042300837902270925,Die Parametric,die-level parametric test 71
+feature_56,0.04222942037912404,Die Parametric,die-level parametric test 56
+feature_444,0.04213126187442763,Die Parametric,die-level parametric test 444
+feature_320,0.0419588212974323,Die Parametric,die-level parametric test 320
+feature_308,0.04187360345744822,Die Parametric,die-level parametric test 308
+feature_248,0.04184350513819251,Die Parametric,die-level parametric test 248
+feature_20,0.0417918349783625,Die Parametric,die-level parametric test 20
+feature_309,0.04145276101890018,Die Parametric,die-level parametric test 309
+feature_283,0.04111227351672293,Die Parametric,die-level parametric test 283
+feature_426,0.04107950970205947,Die Parametric,die-level parametric test 426
+feature_480,0.04107205167758168,Die Parametric,die-level parametric test 480
+feature_291,0.04100138577981249,Die Parametric,die-level parametric test 291
+feature_306,0.04093220735229115,Die Parametric,die-level parametric test 306
+feature_418,0.04090441386252778,Die Parametric,die-level parametric test 418
+feature_118,0.04075212940229194,Die Parametric,die-level parametric test 118
+feature_109,0.0405096528415939,Die Parametric,die-level parametric test 109
+feature_47,0.04023674474072457,Die Parametric,die-level parametric test 47
+feature_37,0.04020215512271865,Die Parametric,die-level parametric test 37
+feature_4,0.04015649443145739,Die Parametric,die-level parametric test 4
+feature_359,0.04006817369458592,Die Parametric,die-level parametric test 359
+feature_276,0.03991603063918287,Die Parametric,die-level parametric test 276
+feature_486,0.03981879663689161,Die Parametric,die-level parametric test 486
+feature_392,0.03958872297636262,Die Parametric,die-level parametric test 392
+feature_316,0.03928722007365216,Die Parametric,die-level parametric test 316
+feature_403,0.0391794372719903,Die Parametric,die-level parametric test 403
+feature_351,0.03916418769009767,Die Parametric,die-level parametric test 351
+feature_81,0.039065042020799745,Die Parametric,die-level parametric test 81
+feature_227,0.03900794699466255,Die Parametric,die-level parametric test 227
+feature_442,0.03897850870238579,Die Parametric,die-level parametric test 442
+feature_373,0.03871780351530012,Die Parametric,die-level parametric test 373
+feature_358,0.03869453967455826,Die Parametric,die-level parametric test 358
+feature_176,0.038627839568528465,Die Parametric,die-level parametric test 176
+feature_280,0.03858173608500863,Die Parametric,die-level parametric test 280
+feature_41,0.038326098331058364,Die Parametric,die-level parametric test 41
+feature_411,0.038291188416162636,Die Parametric,die-level parametric test 411
+feature_337,0.03817393229217675,Die Parametric,die-level parametric test 337
+feature_146,0.03813064353282779,Die Parametric,die-level parametric test 146
+feature_237,0.03807959420446386,Die Parametric,die-level parametric test 237
+feature_419,0.03795661133982975,Die Parametric,die-level parametric test 419
+feature_34,0.03788945765200671,Die Parametric,die-level parametric test 34
+feature_185,0.037859631895782335,Die Parametric,die-level parametric test 185
+feature_395,0.037832959495825054,Die Parametric,die-level parametric test 395
+feature_75,0.03764502056817812,Die Parametric,die-level parametric test 75
+feature_364,0.03733104058030238,Die Parametric,die-level parametric test 364
+feature_21,0.03725319224765446,Die Parametric,die-level parametric test 21
+feature_121,0.03719224547887172,Die Parametric,die-level parametric test 121
+feature_136,0.03711775691441892,Die Parametric,die-level parametric test 136
+feature_212,0.03711259574633481,Die Parametric,die-level parametric test 212
+feature_456,0.03697165204511054,Die Parametric,die-level parametric test 456
+feature_250,0.0362795413561861,Die Parametric,die-level parametric test 250
+feature_1,0.036209465264928686,Die Parametric,die-level parametric test 1
+feature_425,0.03616015872853709,Die Parametric,die-level parametric test 425
+feature_379,0.036122988808039234,Die Parametric,die-level parametric test 379
+feature_154,0.03597263820932069,Die Parametric,die-level parametric test 154
+feature_133,0.035926574146636484,Die Parametric,die-level parametric test 133
+feature_161,0.03584249283689364,Die Parametric,die-level parametric test 161
+feature_397,0.03573589913549214,Die Parametric,die-level parametric test 397
+feature_380,0.03543258029604507,Die Parametric,die-level parametric test 380
+feature_345,0.035427691602508485,Die Parametric,die-level parametric test 345
+feature_188,0.03532860474966571,Die Parametric,die-level parametric test 188
+feature_331,0.035172837391811866,Die Parametric,die-level parametric test 331
+feature_328,0.035105354749365894,Die Parametric,die-level parametric test 328
+feature_264,0.035069273651294926,Die Parametric,die-level parametric test 264
+feature_166,0.03496364208416888,Die Parametric,die-level parametric test 166
+feature_333,0.03490235171343686,Die Parametric,die-level parametric test 333
+feature_466,0.0347101620975481,Die Parametric,die-level parametric test 466
+feature_26,0.03465847350432012,Die Parametric,die-level parametric test 26
+feature_138,0.03459393527633756,Die Parametric,die-level parametric test 138
+feature_449,0.034591475698941436,Die Parametric,die-level parametric test 449
+feature_370,0.034446877559856655,Die Parametric,die-level parametric test 370
+feature_83,0.03442057782255788,Die Parametric,die-level parametric test 83
+feature_467,0.03410013692870485,Die Parametric,die-level parametric test 467
+feature_91,0.03408308222152523,Die Parametric,die-level parametric test 91
+feature_39,0.03390623363786412,Die Parametric,die-level parametric test 39
+feature_173,0.033893746949884125,Die Parametric,die-level parametric test 173
+feature_497,0.033852194686158514,Die Parametric,die-level parametric test 497
+feature_485,0.0337194373795316,Die Parametric,die-level parametric test 485
+feature_28,0.03327231319365737,Die Parametric,die-level parametric test 28
+feature_149,0.03322161422563825,Die Parametric,die-level parametric test 149
+feature_367,0.03295288993758047,Die Parametric,die-level parametric test 367
+feature_205,0.03277152971107195,Die Parametric,die-level parametric test 205
+feature_439,0.032678770590023436,Die Parametric,die-level parametric test 439
+feature_82,0.03262030691419403,Die Parametric,die-level parametric test 82
+feature_311,0.03247939704493363,Die Parametric,die-level parametric test 311
+feature_207,0.03230394173645886,Die Parametric,die-level parametric test 207
+feature_208,0.03214845522345917,Die Parametric,die-level parametric test 208
+feature_40,0.031982697054158765,Die Parametric,die-level parametric test 40
+feature_310,0.03184786541033778,Die Parametric,die-level parametric test 310
+feature_263,0.03155845086999715,Die Parametric,die-level parametric test 263
+feature_204,0.031428519850490645,Die Parametric,die-level parametric test 204
+feature_299,0.03134256693153218,Die Parametric,die-level parametric test 299
+feature_409,0.03115538675552907,Die Parametric,die-level parametric test 409
+feature_368,0.030987858746744253,Die Parametric,die-level parametric test 368
+feature_198,0.030700012112753836,Die Parametric,die-level parametric test 198
+feature_168,0.030623435769049173,Die Parametric,die-level parametric test 168
+feature_350,0.030404964336196362,Die Parametric,die-level parametric test 350
+feature_24,0.030293335370546823,Die Parametric,die-level parametric test 24
+feature_459,0.030102110690800196,Die Parametric,die-level parametric test 459
+feature_174,0.029982219751891,Die Parametric,die-level parametric test 174
+feature_221,0.02989224545105469,Die Parametric,die-level parametric test 221
+feature_196,0.0298621343155794,Die Parametric,die-level parametric test 196
+feature_335,0.029737060674181623,Die Parametric,die-level parametric test 335
+feature_257,0.029645394085435723,Die Parametric,die-level parametric test 257
+feature_69,0.029627841123627353,Die Parametric,die-level parametric test 69
+feature_80,0.02950590527600204,Die Parametric,die-level parametric test 80
+feature_315,0.029436827656724535,Die Parametric,die-level parametric test 315
+feature_455,0.029281680676144516,Die Parametric,die-level parametric test 455
+feature_127,0.029076534109278962,Die Parametric,die-level parametric test 127
+feature_260,0.028974706342427853,Die Parametric,die-level parametric test 260
+feature_270,0.028803659878383316,Die Parametric,die-level parametric test 270
+feature_432,0.028798724166240748,Die Parametric,die-level parametric test 432
+feature_473,0.028761810715508884,Die Parametric,die-level parametric test 473
+feature_211,0.02854417634007807,Die Parametric,die-level parametric test 211
+feature_390,0.02844286550814535,Die Parametric,die-level parametric test 390
+feature_422,0.02792300884713657,Die Parametric,die-level parametric test 422
+feature_99,0.027804310208539258,Die Parametric,die-level parametric test 99
+feature_79,0.027566355150265478,Die Parametric,die-level parametric test 79
+feature_346,0.027528521075049345,Die Parametric,die-level parametric test 346
+feature_375,0.02748300433804458,Die Parametric,die-level parametric test 375
+feature_186,0.02729346308124296,Die Parametric,die-level parametric test 186
+feature_76,0.02723655513518271,Die Parametric,die-level parametric test 76
+feature_105,0.026952276250245842,Die Parametric,die-level parametric test 105
+feature_9,0.026934674408706182,Die Parametric,die-level parametric test 9
+feature_170,0.026879833100225268,Die Parametric,die-level parametric test 170
+feature_302,0.026307310108272502,Die Parametric,die-level parametric test 302
+feature_239,0.02630683027698416,Die Parametric,die-level parametric test 239
+feature_431,0.026252723409833298,Die Parametric,die-level parametric test 431
+feature_427,0.026058433179134144,Die Parametric,die-level parametric test 427
+feature_461,0.02604325338287313,Die Parametric,die-level parametric test 461
+feature_114,0.02570436125630802,Die Parametric,die-level parametric test 114
+feature_400,0.025697161948353312,Die Parametric,die-level parametric test 400
+old_fail_density_5x5,0.025523365693297287,Spatial Context,density of pre-existing failures in the 5x5 neighbourhood
+feature_162,0.02550770261813901,Die Parametric,die-level parametric test 162
+feature_476,0.02550308413922183,Die Parametric,die-level parametric test 476
+distance_to_edge,0.025267650212698795,Spatial Context,distance from the wafer edge
+feature_327,0.025201642147163923,Die Parametric,die-level parametric test 327
+feature_32,0.025152796619960834,Die Parametric,die-level parametric test 32
+feature_443,0.024939343844319974,Die Parametric,die-level parametric test 443
+feature_471,0.024506640770133876,Die Parametric,die-level parametric test 471
+feature_386,0.024236158095409088,Die Parametric,die-level parametric test 386
+feature_152,0.024234136269326897,Die Parametric,die-level parametric test 152
+feature_324,0.024204772888999686,Die Parametric,die-level parametric test 324
+feature_210,0.024185178538789386,Die Parametric,die-level parametric test 210
+feature_402,0.02417468698927312,Die Parametric,die-level parametric test 402
+feature_35,0.024132132625432234,Die Parametric,die-level parametric test 35
+feature_303,0.024076313658582555,Die Parametric,die-level parametric test 303
+feature_125,0.02397560462249951,Die Parametric,die-level parametric test 125
+max_rolling_mean_100_start_idx,0.02393066318986205,Sub-Die Block,position along the trace where the strongest burst begins
+feature_369,0.023644945652722408,Die Parametric,die-level parametric test 369
+feature_116,0.02353524907787958,Die Parametric,die-level parametric test 116
+feature_326,0.023515831716278957,Die Parametric,die-level parametric test 326
+feature_5,0.023384732144960566,Die Parametric,die-level parametric test 5
+feature_415,0.02334187945575791,Die Parametric,die-level parametric test 415
+feature_62,0.022817781348089,Die Parametric,die-level parametric test 62
+feature_67,0.02253144963202774,Die Parametric,die-level parametric test 67
+feature_424,0.022341991779372718,Die Parametric,die-level parametric test 424
+feature_137,0.02233096922815846,Die Parametric,die-level parametric test 137
+feature_86,0.022150011344701973,Die Parametric,die-level parametric test 86
+feature_259,0.0221282241387161,Die Parametric,die-level parametric test 259
+feature_57,0.02209882201248635,Die Parametric,die-level parametric test 57
+max_rolling_mean_100,0.021983581545521918,Sub-Die Block,strongest sustained sub-die burst over a 100-reading window
+feature_341,0.02193204891653965,Die Parametric,die-level parametric test 341
+feature_220,0.02182031933408942,Die Parametric,die-level parametric test 220
+feature_483,0.021717645429701678,Die Parametric,die-level parametric test 483
+feature_30,0.02162103166309105,Die Parametric,die-level parametric test 30
+feature_377,0.02156909651568831,Die Parametric,die-level parametric test 377
+feature_140,0.02156106996625832,Die Parametric,die-level parametric test 140
+feature_288,0.02146579980719468,Die Parametric,die-level parametric test 288
+feature_445,0.021449312112872307,Die Parametric,die-level parametric test 445
+feature_487,0.02143396046938912,Die Parametric,die-level parametric test 487
+feature_356,0.02141286791138888,Die Parametric,die-level parametric test 356
+feature_343,0.02140610239078553,Die Parametric,die-level parametric test 343
+feature_129,0.021311976941688758,Die Parametric,die-level parametric test 129
+feature_226,0.0212375484563589,Die Parametric,die-level parametric test 226
+feature_401,0.0211360210365104,Die Parametric,die-level parametric test 401
+feature_73,0.020890055925840454,Die Parametric,die-level parametric test 73
+feature_408,0.020781440825847215,Die Parametric,die-level parametric test 408
+feature_64,0.020586458309357826,Die Parametric,die-level parametric test 64
+feature_321,0.020544188600292106,Die Parametric,die-level parametric test 321
+feature_430,0.02053071523841,Die Parametric,die-level parametric test 430
+feature_27,0.02029405544527803,Die Parametric,die-level parametric test 27
+feature_222,0.020142404174281647,Die Parametric,die-level parametric test 222
+feature_355,0.020113057528334987,Die Parametric,die-level parametric test 355
+feature_200,0.019765998796458264,Die Parametric,die-level parametric test 200
+feature_297,0.019756488043729196,Die Parametric,die-level parametric test 297
+feature_317,0.019722026931342496,Die Parametric,die-level parametric test 317
+feature_479,0.019703948597826034,Die Parametric,die-level parametric test 479
+feature_52,0.019568582667613,Die Parametric,die-level parametric test 52
+feature_428,0.019414732265765962,Die Parametric,die-level parametric test 428
+feature_347,0.01941424313702542,Die Parametric,die-level parametric test 347
+feature_164,0.01920471650577523,Die Parametric,die-level parametric test 164
+feature_252,0.01919165529640494,Die Parametric,die-level parametric test 252
+feature_2,0.019085460244105457,Die Parametric,die-level parametric test 2
+feature_334,0.019067438916930742,Die Parametric,die-level parametric test 334
+feature_16,0.01901264882808977,Die Parametric,die-level parametric test 16
+feature_38,0.018990856391683616,Die Parametric,die-level parametric test 38
+feature_274,0.01887892666489981,Die Parametric,die-level parametric test 274
+feature_462,0.01882048080835474,Die Parametric,die-level parametric test 462
+feature_74,0.01881146193495726,Die Parametric,die-level parametric test 74
+feature_224,0.018746845417538047,Die Parametric,die-level parametric test 224
+block_q95,0.01868029350537405,Sub-Die Block,95th percentile of this die's sub-die readings
+feature_410,0.018679666967034776,Die Parametric,die-level parametric test 410
+feature_96,0.018614367789440228,Die Parametric,die-level parametric test 96
+feature_184,0.018283941141255748,Die Parametric,die-level parametric test 184
+feature_493,0.018172252182136393,Die Parametric,die-level parametric test 493
+feature_361,0.018158484620546353,Die Parametric,die-level parametric test 361
+feature_134,0.018130793898633604,Die Parametric,die-level parametric test 134
+feature_70,0.017954441777365864,Die Parametric,die-level parametric test 70
+feature_458,0.017707295197632908,Die Parametric,die-level parametric test 458
+feature_292,0.01762226736336901,Die Parametric,die-level parametric test 292
+feature_19,0.017570543540494518,Die Parametric,die-level parametric test 19
+feature_215,0.017403811414749712,Die Parametric,die-level parametric test 215
+feature_481,0.017284360608397224,Die Parametric,die-level parametric test 481
+feature_111,0.01705759817381762,Die Parametric,die-level parametric test 111
+radius_squared,0.0169504295328918,Spatial Context,squared normalised distance from the wafer centre
+feature_372,0.016820325727937374,Die Parametric,die-level parametric test 372
+feature_498,0.01668371679893124,Die Parametric,die-level parametric test 498
+block_std,0.016546186526756653,Sub-Die Block,spread of this die's sub-die readings
+feature_36,0.016395480881476677,Die Parametric,die-level parametric test 36
+feature_256,0.016392364384418608,Die Parametric,die-level parametric test 256
+feature_420,0.016379920342409062,Die Parametric,die-level parametric test 420
+feature_141,0.016330175504685993,Die Parametric,die-level parametric test 141
+feature_51,0.01624392808150425,Die Parametric,die-level parametric test 51
+feature_147,0.016106370080645534,Die Parametric,die-level parametric test 147
+feature_181,0.016098606563299162,Die Parametric,die-level parametric test 181
+feature_490,0.015904675219065457,Die Parametric,die-level parametric test 490
+feature_240,0.015737830015246083,Die Parametric,die-level parametric test 240
+feature_499,0.015706866045564854,Die Parametric,die-level parametric test 499
+feature_180,0.01563734597838717,Die Parametric,die-level parametric test 180
+feature_48,0.01557512324926427,Die Parametric,die-level parametric test 48
+feature_435,0.015514992762059279,Die Parametric,die-level parametric test 435
+feature_187,0.015460605119062519,Die Parametric,die-level parametric test 187
+block_mean_top10,0.015407436186478905,Sub-Die Block,mean of the 10 most extreme sub-die readings
+feature_94,0.015248215285080548,Die Parametric,die-level parametric test 94
+feature_228,0.015040925455562001,Die Parametric,die-level parametric test 228
+block_median,0.015025485019622357,Sub-Die Block,block_median
+feature_10,0.014939034864572244,Die Parametric,die-level parametric test 10
+feature_90,0.014829333403939464,Die Parametric,die-level parametric test 90
+feature_434,0.014704520910617809,Die Parametric,die-level parametric test 434
+block_mean_top100,0.014611609452545188,Sub-Die Block,mean of the 100 most extreme sub-die readings
+feature_261,0.014158074274819313,Die Parametric,die-level parametric test 261
+feature_7,0.014086863664068788,Die Parametric,die-level parametric test 7
+feature_488,0.01403781099218709,Die Parametric,die-level parametric test 488
+feature_489,0.01379183248118228,Die Parametric,die-level parametric test 489
+feature_95,0.013486759723799927,Die Parametric,die-level parametric test 95
+feature_203,0.01347213105495191,Die Parametric,die-level parametric test 203
+feature_104,0.013212899937347375,Die Parametric,die-level parametric test 104
+feature_131,0.013149153235023237,Die Parametric,die-level parametric test 131
+feature_382,0.012960283465632095,Die Parametric,die-level parametric test 382
+feature_219,0.012891666060793495,Die Parametric,die-level parametric test 219
+feature_106,0.01265512557208205,Die Parametric,die-level parametric test 106
+feature_135,0.012561152807057416,Die Parametric,die-level parametric test 135
+feature_151,0.01250953951276263,Die Parametric,die-level parametric test 151
+feature_329,0.01250798895822267,Die Parametric,die-level parametric test 329
+feature_429,0.012461424817869353,Die Parametric,die-level parametric test 429
+feature_492,0.012411331458200026,Die Parametric,die-level parametric test 492
+feature_139,0.012372898240147829,Die Parametric,die-level parametric test 139
+feature_145,0.012366562961007811,Die Parametric,die-level parametric test 145
+feature_206,0.012114604885169224,Die Parametric,die-level parametric test 206
+feature_416,0.012089594675852728,Die Parametric,die-level parametric test 416
+feature_6,0.012040444287490208,Die Parametric,die-level parametric test 6
+feature_384,0.01200204160313579,Die Parametric,die-level parametric test 384
+feature_172,0.011965061017225543,Die Parametric,die-level parametric test 172
+feature_199,0.011908503395634769,Die Parametric,die-level parametric test 199
+feature_314,0.011823063471966554,Die Parametric,die-level parametric test 314
+feature_214,0.011804975599388529,Die Parametric,die-level parametric test 214
+feature_394,0.011740941548712303,Die Parametric,die-level parametric test 394
+feature_108,0.011634491521319007,Die Parametric,die-level parametric test 108
+feature_165,0.011589456508770876,Die Parametric,die-level parametric test 165
+feature_42,0.011546328522319618,Die Parametric,die-level parametric test 42
+feature_278,0.011536729712258132,Die Parametric,die-level parametric test 278
+feature_128,0.011469001951522161,Die Parametric,die-level parametric test 128
+feature_296,0.01144988035915168,Die Parametric,die-level parametric test 296
+feature_437,0.01144846045082758,Die Parametric,die-level parametric test 437
+feature_63,0.011351791779932263,Die Parametric,die-level parametric test 63
+feature_68,0.01129763868131028,Die Parametric,die-level parametric test 68
+feature_318,0.011061924067305053,Die Parametric,die-level parametric test 318
+feature_405,0.010920865430832125,Die Parametric,die-level parametric test 405
+feature_371,0.010913194272423913,Die Parametric,die-level parametric test 371
+feature_230,0.01087698702774528,Die Parametric,die-level parametric test 230
+feature_182,0.010868372458672894,Die Parametric,die-level parametric test 182
+feature_406,0.010401159908160868,Die Parametric,die-level parametric test 406
+feature_323,0.010182923653177483,Die Parametric,die-level parametric test 323
+feature_407,0.010073867278879812,Die Parametric,die-level parametric test 407
+feature_279,0.010069087118811841,Die Parametric,die-level parametric test 279
+feature_374,0.010048342599181326,Die Parametric,die-level parametric test 374
+old_fail_density_9x9,0.010029599722730025,Spatial Context,density of pre-existing failures in the 9x9 neighbourhood
+feature_194,0.010021513515801897,Die Parametric,die-level parametric test 194
+feature_143,0.009961508937787274,Die Parametric,die-level parametric test 143
+feature_142,0.009949925361122505,Die Parametric,die-level parametric test 142
+feature_366,0.009940582674510302,Die Parametric,die-level parametric test 366
+feature_84,0.009922859850008,Die Parametric,die-level parametric test 84
+feature_417,0.009791084210669614,Die Parametric,die-level parametric test 417
+feature_54,0.009701773508186838,Die Parametric,die-level parametric test 54
+feature_148,0.009699794817931056,Die Parametric,die-level parametric test 148
+feature_241,0.009537883928677627,Die Parametric,die-level parametric test 241
+feature_101,0.009466094643833446,Die Parametric,die-level parametric test 101
+feature_217,0.00932274009686218,Die Parametric,die-level parametric test 217
+feature_55,0.009187673252234461,Die Parametric,die-level parametric test 55
+feature_354,0.009105363183117382,Die Parametric,die-level parametric test 354
+feature_49,0.009066947356263438,Die Parametric,die-level parametric test 49
+feature_102,0.008938908347563859,Die Parametric,die-level parametric test 102
+feature_378,0.008856349469694288,Die Parametric,die-level parametric test 378
+feature_213,0.008795003973120075,Die Parametric,die-level parametric test 213
+feature_352,0.008724440593673026,Die Parametric,die-level parametric test 352
+feature_338,0.008724216921245915,Die Parametric,die-level parametric test 338
+feature_465,0.00867906890516071,Die Parametric,die-level parametric test 465
+feature_247,0.008657445002659197,Die Parametric,die-level parametric test 247
+feature_18,0.008623839403971992,Die Parametric,die-level parametric test 18
+feature_300,0.008621626776323258,Die Parametric,die-level parametric test 300
+feature_124,0.008440857193301458,Die Parametric,die-level parametric test 124
+feature_438,0.008416550646997398,Die Parametric,die-level parametric test 438
+feature_87,0.008393280707451333,Die Parametric,die-level parametric test 87
+feature_391,0.008285423296327315,Die Parametric,die-level parametric test 391
+feature_281,0.008221209024185643,Die Parametric,die-level parametric test 281
+feature_393,0.008047243649486675,Die Parametric,die-level parametric test 393
+feature_491,0.007951391112554858,Die Parametric,die-level parametric test 491
+feature_450,0.007477235651244005,Die Parametric,die-level parametric test 450
+feature_61,0.007406216609026291,Die Parametric,die-level parametric test 61
+feature_273,0.007388970395013334,Die Parametric,die-level parametric test 273
+feature_307,0.007370786348783781,Die Parametric,die-level parametric test 307
+feature_363,0.007349931309492108,Die Parametric,die-level parametric test 363
+feature_120,0.007322404430646194,Die Parametric,die-level parametric test 120
+feature_11,0.0072913918414397455,Die Parametric,die-level parametric test 11
+feature_287,0.0072176418861777504,Die Parametric,die-level parametric test 287
+feature_470,0.007112718489858528,Die Parametric,die-level parametric test 470
+feature_452,0.007091795545170225,Die Parametric,die-level parametric test 452
+feature_53,0.006964360701306855,Die Parametric,die-level parametric test 53
+feature_122,0.0069068031015580246,Die Parametric,die-level parametric test 122
+feature_110,0.006897428148415375,Die Parametric,die-level parametric test 110
+feature_388,0.006880347455501176,Die Parametric,die-level parametric test 388
+feature_484,0.0067296630367217475,Die Parametric,die-level parametric test 484
+feature_117,0.0067237655902954675,Die Parametric,die-level parametric test 117
+feature_119,0.00669059777631533,Die Parametric,die-level parametric test 119
+feature_167,0.006599737376265976,Die Parametric,die-level parametric test 167
+feature_155,0.006581877191736613,Die Parametric,die-level parametric test 155
+old_fail_density_11x11,0.006155480986110018,Spatial Context,density of pre-existing failures in the 11x11 neighbourhood
+feature_93,0.006150284786889119,Die Parametric,die-level parametric test 93
+feature_344,0.005981579314508457,Die Parametric,die-level parametric test 344
+old_fail_density_7x7,0.005978676080030985,Spatial Context,density of pre-existing failures in the 7x7 neighbourhood
+feature_413,0.00572664548596381,Die Parametric,die-level parametric test 413
+block_mean_top50,0.005630164095064727,Sub-Die Block,mean of the 50 most extreme sub-die readings
+feature_339,0.005603823371512822,Die Parametric,die-level parametric test 339
+feature_150,0.005421734879443052,Die Parametric,die-level parametric test 150
+max_rolling_std_200,0.005382713612546624,Sub-Die Block,max_rolling_std_200
+feature_330,0.005329338272641179,Die Parametric,die-level parametric test 330
+feature_14,0.005204937556388479,Die Parametric,die-level parametric test 14
+feature_451,0.005195035190999026,Die Parametric,die-level parametric test 451
+feature_107,0.005146058685429597,Die Parametric,die-level parametric test 107
+feature_301,0.005097537205787437,Die Parametric,die-level parametric test 301
+feature_59,0.005075689369596231,Die Parametric,die-level parametric test 59
+feature_25,0.005057053536930323,Die Parametric,die-level parametric test 25
+normalized_row,0.0049719683899913806,Spatial Context,vertical position on the wafer
+feature_158,0.004956398498941317,Die Parametric,die-level parametric test 158
+feature_268,0.004946827506172689,Die Parametric,die-level parametric test 268
+feature_305,0.004874655223539219,Die Parametric,die-level parametric test 305
+feature_267,0.0048442631347657295,Die Parametric,die-level parametric test 267
+feature_383,0.0048431412981584645,Die Parametric,die-level parametric test 383
+feature_360,0.00476833451222911,Die Parametric,die-level parametric test 360
+block_max,0.0047018452493266406,Sub-Die Block,block_max
+feature_72,0.004567147821075283,Die Parametric,die-level parametric test 72
+feature_50,0.004566322016794681,Die Parametric,die-level parametric test 50
+feature_353,0.00443031000753445,Die Parametric,die-level parametric test 353
+feature_234,0.004374167920051725,Die Parametric,die-level parametric test 234
+feature_45,0.004353248901412364,Die Parametric,die-level parametric test 45
+feature_98,0.0043519594581042645,Die Parametric,die-level parametric test 98
+feature_304,0.00434543893299181,Die Parametric,die-level parametric test 304
+feature_144,0.0042164692730395255,Die Parametric,die-level parametric test 144
+feature_177,0.004178325601631223,Die Parametric,die-level parametric test 177
+feature_423,0.004166767292440379,Die Parametric,die-level parametric test 423
+feature_289,0.004153584305925607,Die Parametric,die-level parametric test 289
+feature_232,0.0040954461028870825,Die Parametric,die-level parametric test 232
+feature_357,0.004062493000010837,Die Parametric,die-level parametric test 357
+feature_453,0.003964762716314126,Die Parametric,die-level parametric test 453
+feature_468,0.003847048071822005,Die Parametric,die-level parametric test 468
+feature_175,0.0037328510949042625,Die Parametric,die-level parametric test 175
+feature_201,0.003729670052513907,Die Parametric,die-level parametric test 201
+feature_44,0.0036722021442067996,Die Parametric,die-level parametric test 44
+feature_319,0.0036534837381859957,Die Parametric,die-level parametric test 319
+normalized_col,0.0036397443767572143,Spatial Context,horizontal position on the wafer
+feature_179,0.0036248259491936806,Die Parametric,die-level parametric test 179
+feature_398,0.0035620631868902982,Die Parametric,die-level parametric test 398
+feature_192,0.003504679459686952,Die Parametric,die-level parametric test 192
+feature_494,0.0034311866178442143,Die Parametric,die-level parametric test 494
+feature_112,0.0033687719872193397,Die Parametric,die-level parametric test 112
+feature_477,0.003251825806325616,Die Parametric,die-level parametric test 477
+feature_463,0.0032407404014245873,Die Parametric,die-level parametric test 463
+feature_266,0.003214564292912624,Die Parametric,die-level parametric test 266
+largest_contiguous_anomaly_run,0.003140000500025337,Sub-Die Block,longest unbroken run of abnormal sub-die readings
+max_rolling_std_50,0.0029529910758868396,Sub-Die Block,max_rolling_std_50
+feature_313,0.002943993559149955,Die Parametric,die-level parametric test 313
+block_q99,0.0026451724413850304,Sub-Die Block,99th percentile of this die's sub-die readings
+max_rolling_mean_50,0.0025493334970836485,Sub-Die Block,strongest sustained sub-die burst over a 50-reading window
+feature_469,0.0025321700191588644,Die Parametric,die-level parametric test 469
+feature_12,0.0024444057617033074,Die Parametric,die-level parametric test 12
+feature_157,0.002414180893499823,Die Parametric,die-level parametric test 157
+feature_376,0.0023932548362992716,Die Parametric,die-level parametric test 376
+feature_15,0.002304860873363039,Die Parametric,die-level parametric test 15
+old_fail_count_5x5,0.0022679792815499915,Spatial Context,count of pre-existing failures in the 5x5 neighbourhood
+block_mean_bottom10,0.002223264338462199,Sub-Die Block,block_mean_bottom10
+block_q01,0.002194612977910738,Sub-Die Block,block_q01
+block_range,0.0021675605349066184,Sub-Die Block,block_range
+block_q50,0.002163364954525007,Sub-Die Block,block_q50
+distance_to_nearest_old_failure,0.002147860042374765,Spatial Context,distance to the nearest pre-existing failure
+feature_103,0.002133378144281288,Die Parametric,die-level parametric test 103
+feature_23,0.0019212110967272527,Die Parametric,die-level parametric test 23
+feature_92,0.0018856423336510418,Die Parametric,die-level parametric test 92
+feature_322,0.0018666123225026844,Die Parametric,die-level parametric test 322
+block_count_z_gt_2,0.0018119579136142976,Sub-Die Block,block_count_z_gt_2
+block_q05,0.001735767188492837,Sub-Die Block,block_q05
+block_mean_bottom100,0.0015612112280643372,Sub-Die Block,block_mean_bottom100
+max_rolling_std_100,0.0014737536283856141,Sub-Die Block,max_rolling_std_100
+block_mean_bottom200,0.0014708214701273528,Sub-Die Block,block_mean_bottom200
+feature_249,0.0013795619019847374,Die Parametric,die-level parametric test 249
+feature_66,0.0013010184907378869,Die Parametric,die-level parametric test 66
+block_max_z,0.0012977230718286266,Sub-Die Block,most extreme standardised sub-die reading
+old_fail_count_7x7,0.0012782515055983572,Spatial Context,count of pre-existing failures in the 7x7 neighbourhood
+block_q25,0.0012352379277345928,Sub-Die Block,block_q25
+block_mean_bottom50,0.0012199825105542075,Sub-Die Block,block_mean_bottom50
+block_min,0.0010714276187055256,Sub-Die Block,block_min
+block_max_mad_deviation,0.0008848184652957182,Sub-Die Block,block_max_mad_deviation
+old_fail_count_9x9,0.0006897808939587731,Spatial Context,count of pre-existing failures in the 9x9 neighbourhood
+old_fail_count_11x11,0.0005697176367539838,Spatial Context,count of pre-existing failures in the 11x11 neighbourhood
+old_fail_count_3x3,0.00028667437824650215,Spatial Context,count of pre-existing failures in the 3x3 neighbourhood
+old_fail_density_3x3,0.0002455096396687993,Spatial Context,density of pre-existing failures in the 3x3 neighbourhood
+block_count_mad_gt_3,0.00017063677996167185,Sub-Die Block,block_count_mad_gt_3
+block_count_z_gt_4,0.000169799801323279,Sub-Die Block,block_count_z_gt_4
+block_count_z_gt_3,0.00013694830737059744,Sub-Die Block,block_count_z_gt_3

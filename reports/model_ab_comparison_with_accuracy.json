@@ -1,0 +1,52 @@
+{
+  "A": {
+    "threshold": 0.8260212555565659,
+    "auc_pr": 0.486953825136996,
+    "roc_auc": 0.8346491283051418,
+    "accuracy": 0.9764160625735985,
+    "f1_score": 0.5185266872518747,
+    "precision": 0.9464573268921095,
+    "recall": 0.35707776427703525,
+    "specificity": 0.9992550772367286,
+    "true_positives": 2351,
+    "false_positives": 133,
+    "false_negatives": 4233,
+    "true_negatives": 178409
+  },
+  "B": {
+    "threshold": 0.8224176161840325,
+    "auc_pr": 0.5352804615369748,
+    "roc_auc": 0.8744389064382209,
+    "accuracy": 0.9753141103896805,
+    "f1_score": 0.5316663250666119,
+    "precision": 0.8172652804032766,
+    "recall": 0.3939854191980559,
+    "specificity": 0.9967514646413729,
+    "true_positives": 2594,
+    "false_positives": 580,
+    "false_negatives": 3990,
+    "true_negatives": 177962
+  },
+  "predict_all_pass_baseline": {
+    "threshold": 0.5,
+    "auc_pr": 0.035564966563313635,
+    "roc_auc": 0.5,
+    "accuracy": 0.9644350334366864,
+    "f1_score": 0.0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "specificity": 1.0,
+    "true_positives": 0,
+    "false_positives": 0,
+    "false_negatives": 6584,
+    "true_negatives": 178542
+  },
+  "lift_a_to_b": {
+    "auc_pr_delta": 0.04832663639997886,
+    "auc_pr_relative_pct": 9.92427493230657,
+    "f1_delta_at_own_optima": 0.01313963781473726,
+    "recall_delta_points": 3.690765492102066,
+    "extra_true_positives": 243
+  },
+  "note_on_accuracy": "Accuracy is reported because the problem statement asks for it, but it is close to uninformative at 3.556% prevalence: predicting PASS for every die scores 0.9644 accuracy while finding zero defects. AUC-PR and positive-class F1 are the metrics that separate these models."
+}

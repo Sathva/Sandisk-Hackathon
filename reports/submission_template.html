@@ -383,7 +383,7 @@ li {
                 <tr>
                     <td><strong>2. Handling of Imbalance</strong></td>
                     <td class="text-center"><strong>20%</strong></td>
-                    <td>Imbalance-aware cost functions (<code>scale_pos_weight=24.9</code>), precision-recall threshold optimization, zero "predict-all-pass" collapse on 3.556% minority failures.</td>
+                    <td>Imbalance-aware cost functions (<code>scale_pos_weight=26.07</code>), precision-recall threshold optimization, zero "predict-all-pass" collapse on 3.556% minority failures.</td>
                     <td>Test F1: <strong>0.5819</strong> (at T*=0.4900)<br>Precision: <strong>80.86%</strong> | Recall: <strong>45.44%</strong><br>False Alarms cut to <strong>708 dies</strong></td>
                 </tr>
                 <tr>
@@ -493,8 +493,8 @@ li {
                     <td class="text-center">640</td>
                     <td class="text-center">734,137</td>
                     <td class="text-center"><strong>651,337</strong></td>
-                    <td class="text-center">24,534</td>
-                    <td class="text-center">3.767%</td>
+                    <td class="text-center">24,063</td>
+                    <td class="text-center">3.694%</td>
                     <td>Feature fitting, supervised tree training, 5-fold CV</td>
                 </tr>
                 <tr>
@@ -520,8 +520,8 @@ li {
                     <td class="text-center">1,000</td>
                     <td class="text-center">1,096,761</td>
                     <td class="text-center">974,039</td>
-                    <td class="text-center">36,485</td>
-                    <td class="text-center">3.746%</td>
+                    <td class="text-center">36,014</td>
+                    <td class="text-center">3.697%</td>
                     <td>Zero overlapping wafer IDs across train, val, and test</td>
                 </tr>
             </tbody>
@@ -531,14 +531,14 @@ li {
         <div class="callout callout-info">
             <strong>1. Complete Wafer-Level Isolation:</strong> All splits are grouped strictly by <code>wafer_id</code>. No dies from the same wafer appear across train and test sets, preventing spatial leakage.<br>
             <strong>2. Freezing Before Evaluation:</strong> Model architectures, feature scalers, PCA projectors, shrinkage LDA vectors, decision thresholds, and ensemble weights were permanently frozen on <code>dev_val</code> before test ground-truth labels were loaded.<br>
-            <strong>3. Blind Prediction Generation:</strong> Unseen test predictions were generated strictly from <code>validation_features.parquet</code> and <code>validation.csv</code> (which contain zero labels) and written to disk before evaluation scripts were executed.<br>
+            <strong>3. Blind Prediction Generation:</strong> Unseen test predictions were generated strictly from <code>validation_features.parquet</code> and <code>validation.csv</code> (which contain zero labels) and written to disk before evaluation scripts were executed. <em>These two files describe the same 200 wafers and the same 208,264 dies as <code>test.csv</code>: <code>validation.csv</code> is <code>test.csv</code> with the <code>label</code> column removed. Verified identical row-for-row on <code>wafer_id</code>, <code>die_row</code>, <code>die_col</code>, <code>old_label</code> and all 500 parametric measurements. Inference is therefore genuinely blind, while scoring uses the withheld ground truth for those identical dies &mdash; which is why the same population appears in the table above with a stated failure count of 6,584.</em><br>
             <strong>4. Defensibility on Synthetic Data:</strong> The parametric and block signals were generated synthetically. Consequently, our statistical attributions describe mathematical patterns discovered by models, not established physical fab equipment causality.
         </div>
 
         <h2 class="sub-title">3.2 Handling Extreme Imbalance (3.556% Failure Prevalence)</h2>
         <p>A naive model that predicts "PASS" for all dies achieves a deceptive <strong>96.44% accuracy</strong> but detects <strong>0 failures</strong>, leading to catastrophic field failure rates. To solve this:</p>
         <ul>
-            <li><strong>Class Weighting:</strong> Loss functions employ cost-sensitive weights (<code>scale_pos_weight = 24.9</code>), penalizing missed defects 25&times; more heavily than false alarms.</li>
+            <li><strong>Class Weighting:</strong> Loss functions employ cost-sensitive weights (<code>scale_pos_weight = 26.07</code>), penalizing missed defects 25&times; more heavily than false alarms.</li>
             <li><strong>Metric Alignment:</strong> Evaluation is conducted primarily on <strong>Precision-Recall AUC (AUC-PR)</strong> and <strong>F1 Score on the positive minority class</strong>, ensuring optimization focuses exclusively on defect discrimination.</li>
         </ul>
     </div>
@@ -581,7 +581,7 @@ li {
                     <td><strong>2. Spatial Context</strong></td>
                     <td class="text-center">19</td>
                     <td>Neighborhood defect densities in 3&times;3, 5&times;5 windows; normalized radial distance; perimeter and edge flags.</td>
-                    <td><code>r_norm</code>, <code>is_edge</code>, <code>neighbor_fail_count</code>, <code>spatial_density_3x3</code></td>
+                    <td><code>radius</code>, <code>distance_to_edge</code>, <code>old_fail_count_5x5</code>, <code>old_fail_density_3x3</code></td>
                 </tr>
                 <tr>
                     <td><strong>3. Block Dynamics (Sub-Die)</strong></td>
@@ -611,7 +611,7 @@ li {
                     <td><strong>7. Coordinates &amp; Geometry</strong></td>
                     <td class="text-center">12</td>
                     <td>Wafer grid coordinates, polar angle &theta;, and Chebyshev polynomial basis terms.</td>
-                    <td><code>die_row</code>, <code>die_col</code>, <code>poly_x2</code>, <code>poly_xy</code></td>
+                    <td><code>die_row</code>, <code>die_col</code>, <code>radius_squared</code>, <code>normalized_col</code></td>
                 </tr>
             </tbody>
         </table>
@@ -650,7 +650,7 @@ li {
         <h2 class="sub-title">5.1 Model A Architecture: 3-Engine Tree Stack</h2>
         <p>To eliminate algorithmic bias, Model A is implemented both as individual tree boosters and as an ensemble stack combining three diverse gradient boosted decision tree paradigms:</p>
         <ol>
-            <li><strong>LightGBM A</strong>: Leaf-wise asymmetric histogram trees (<code>num_leaves=63</code>, <code>scale_pos_weight=24.9</code>).</li>
+            <li><strong>LightGBM A</strong>: Leaf-wise asymmetric histogram trees (<code>num_leaves=63</code>, <code>scale_pos_weight=26.07</code>).</li>
             <li><strong>CatBoost A (GPU)</strong>: Symmetric oblivious decision trees on GPU (<code>depth=7</code>, <code>l2_leaf_reg=6.0</code>).</li>
             <li><strong>XGBoost A</strong>: Depth-wise histogram trees (<code>max_depth=6</code>, <code>subsample=0.80</code>).</li>
             <li><strong>Model A 3-Engine Stack</strong>: Weighted blend optimized on validation data (0.50 &times; LGB + 0.30 &times; CB + 0.20 &times; XGB).</li>
@@ -668,6 +668,7 @@ li {
                     <th class="text-center">Optimal F1 🥈</th>
                     <th class="text-center">Precision</th>
                     <th class="text-center">Recall</th>
+                    <th class="text-center">Accuracy</th>
                 </tr>
             </thead>
             <tbody>
@@ -676,10 +677,11 @@ li {
                     <td class="text-center">519</td>
                     <td class="text-center">0.49366</td>
                     <td class="text-center">0.48695</td>
-                    <td class="text-center">0.8318</td>
-                    <td class="text-center">0.5200</td>
-                    <td class="text-center">94.41%</td>
-                    <td class="text-center">35.89%</td>
+                    <td class="text-center">0.83465</td>
+                    <td class="text-center">0.51853</td>
+                    <td class="text-center">94.65%</td>
+                    <td class="text-center">35.71%</td>
+                    <td class="text-center">0.9764</td>
                 </tr>
                 <tr>
                     <td>XGBoost A (Single Booster)</td>
@@ -690,6 +692,7 @@ li {
                     <td class="text-center">0.5178</td>
                     <td class="text-center">95.40%</td>
                     <td class="text-center">35.53%</td>
+                    <td class="text-center">0.9765</td>
                 </tr>
                 <tr>
                     <td>CatBoost A (Single Booster)</td>
@@ -700,16 +703,18 @@ li {
                     <td class="text-center">0.5185</td>
                     <td class="text-center">93.80%</td>
                     <td class="text-center">35.60%</td>
+                    <td class="text-center">0.9763</td>
                 </tr>
                 <tr class="highlight-row">
                     <td><strong>Official Model A 3-Engine Stack</strong></td>
                     <td class="text-center"><strong>519</strong></td>
                     <td class="text-center"><strong>0.49841</strong></td>
                     <td class="text-center"><strong>0.49362</strong></td>
-                    <td class="text-center"><strong>0.8354</strong></td>
-                    <td class="text-center"><strong>0.5225</strong></td>
-                    <td class="text-center"><strong>94.10%</strong></td>
-                    <td class="text-center"><strong>36.12%</strong></td>
+                    <td class="text-center"><strong>0.84085</strong></td>
+                    <td class="text-center"><strong>0.51989</strong></td>
+                    <td class="text-center"><strong>95.34%</strong></td>
+                    <td class="text-center"><strong>35.74%</strong></td>
+                    <td class="text-center">0.9765</td>
                 </tr>
             </tbody>
         </table>
@@ -744,7 +749,7 @@ li {
         <h2 class="sub-title">6.1 Model B Architecture: Identical 3-Engine Tree Stack</h2>
         <p>To ensure rigorous comparability, Model B uses the <em>exact same algorithm configuration</em> as Model A:</p>
         <ol>
-            <li><strong>LightGBM B</strong>: Identical leaf-wise parameters (<code>num_leaves=63</code>, <code>scale_pos_weight=24.9</code>).</li>
+            <li><strong>LightGBM B</strong>: Identical leaf-wise parameters (<code>num_leaves=63</code>, <code>scale_pos_weight=26.07</code>).</li>
             <li><strong>CatBoost B (GPU)</strong>: Identical symmetric tree depth (<code>depth=7</code>, <code>l2_leaf_reg=6.0</code>).</li>
             <li><strong>XGBoost B</strong>: Identical depth-wise structure (<code>max_depth=6</code>, <code>subsample=0.80</code>).</li>
             <li><strong>Model B 3-Engine Stack</strong>: Identical ensemble weighting (0.50 &times; LGB + 0.30 &times; CB + 0.20 &times; XGB).</li>
@@ -762,6 +767,7 @@ li {
                     <th class="text-center">Optimal F1 🥈</th>
                     <th class="text-center">Precision</th>
                     <th class="text-center">Recall</th>
+                    <th class="text-center">Accuracy</th>
                 </tr>
             </thead>
             <tbody>
@@ -771,9 +777,10 @@ li {
                     <td class="text-center">0.55432</td>
                     <td class="text-center">0.53528</td>
                     <td class="text-center">0.8744</td>
-                    <td class="text-center">0.5207</td>
-                    <td class="text-center">94.08%</td>
-                    <td class="text-center">36.00%</td>
+                    <td class="text-center">0.53167</td>
+                    <td class="text-center">81.73%</td>
+                    <td class="text-center">39.40%</td>
+                    <td class="text-center">0.9753</td>
                 </tr>
                 <tr>
                     <td>XGBoost B (Single Booster)</td>
@@ -784,6 +791,7 @@ li {
                     <td class="text-center">0.5180</td>
                     <td class="text-center">93.50%</td>
                     <td class="text-center">35.90%</td>
+                    <td class="text-center">0.9763</td>
                 </tr>
                 <tr>
                     <td>CatBoost B (Single Booster)</td>
@@ -794,22 +802,24 @@ li {
                     <td class="text-center">0.5220</td>
                     <td class="text-center">93.90%</td>
                     <td class="text-center">36.20%</td>
+                    <td class="text-center">0.9765</td>
                 </tr>
                 <tr class="highlight-row">
                     <td><strong>Official Model B 3-Engine Stack</strong></td>
                     <td class="text-center"><strong>555</strong></td>
                     <td class="text-center"><strong>0.55740</strong></td>
                     <td class="text-center"><strong>0.54164</strong></td>
-                    <td class="text-center"><strong>0.8785</strong></td>
-                    <td class="text-center"><strong>0.5255</strong></td>
-                    <td class="text-center"><strong>93.75%</strong></td>
-                    <td class="text-center"><strong>36.55%</strong></td>
+                    <td class="text-center"><strong>0.87916</strong></td>
+                    <td class="text-center"><strong>0.53588</strong></td>
+                    <td class="text-center"><strong>80.09%</strong></td>
+                    <td class="text-center"><strong>40.26%</strong></td>
+                    <td class="text-center">0.9752</td>
                 </tr>
             </tbody>
         </table>
 
         <div class="callout callout-success">
-            <strong>Key Model B Takeaway:</strong> Fusing the 36 sub-die block reading features into Model B boosts Test AUC-PR from <strong>0.49362 to 0.54164 (+0.04802 lift)</strong> and ROC-AUC from <strong>0.8354 to 0.8785 (+0.0431 lift)</strong>. This confirms that the block signal adds substantial predictive power across all tree architectures.
+            <strong>Key Model B Takeaway:</strong> Fusing the 36 sub-die block reading features into Model B boosts Test AUC-PR from <strong>0.49362 to 0.54164 (+0.04802 lift)</strong> and ROC-AUC from <strong>0.84085 to 0.87916 (+0.03831 lift)</strong>. This confirms that the block signal adds substantial predictive power across all tree architectures.
         </div>
     </div>
     <div class="running-footer">
@@ -860,7 +870,7 @@ li {
                 </tr>
                 <tr>
                     <td><strong>Single Tree (CatBoost)</strong></td>
-                    <td class="text-center">Val: 0.48776<br>Test: 0.48150</td>
+                    <td class="text-center">Val: 0.48776<br>Test: 0.48697</td>
                     <td class="text-center">Val: 0.54920<br>Test: 0.53740</td>
                     <td class="text-center"><strong>+0.06144 Val</strong><br><strong>+0.05590 Test</strong></td>
                     <td class="text-center">+12.6% Val<br>+11.6% Test</td>
@@ -1175,6 +1185,7 @@ li {
                     <th class="text-center">Optimal F1 🥈</th>
                     <th class="text-center">Precision</th>
                     <th class="text-center">Recall</th>
+                    <th class="text-center">Accuracy</th>
                     <th class="text-center">False Alarms</th>
                 </tr>
             </thead>
@@ -1183,21 +1194,23 @@ li {
                     <td>Official Model A 3-Engine Stack</td>
                     <td class="text-center">519 Feats Baseline</td>
                     <td class="text-center">0.49362</td>
-                    <td class="text-center">0.83540</td>
-                    <td class="text-center">0.52250</td>
-                    <td class="text-center">94.10%</td>
-                    <td class="text-center">36.12%</td>
-                    <td class="text-center">151</td>
+                    <td class="text-center">0.84085</td>
+                    <td class="text-center">0.51989</td>
+                    <td class="text-center">95.34%</td>
+                    <td class="text-center">35.74%</td>
+                    <td class="text-center">0.9765</td>
+                    <td class="text-center">115</td>
                 </tr>
                 <tr>
                     <td>Official Model B 3-Engine Stack</td>
                     <td class="text-center">555 Feats Baseline</td>
                     <td class="text-center">0.54164</td>
-                    <td class="text-center">0.87850</td>
-                    <td class="text-center">0.52550</td>
-                    <td class="text-center">93.75%</td>
-                    <td class="text-center">36.55%</td>
-                    <td class="text-center">158</td>
+                    <td class="text-center">0.87916</td>
+                    <td class="text-center">0.53588</td>
+                    <td class="text-center">80.09%</td>
+                    <td class="text-center">40.26%</td>
+                    <td class="text-center">0.9752</td>
+                    <td class="text-center">659</td>
                 </tr>
                 <tr>
                     <td>Model C1 Standalone (Triple-Branch CNN)</td>
@@ -1207,6 +1220,7 @@ li {
                     <td class="text-center">0.54758</td>
                     <td class="text-center">78.50%</td>
                     <td class="text-center">42.04%</td>
+                    <td class="text-center">0.9753</td>
                     <td class="text-center">758</td>
                 </tr>
                 <tr>
@@ -1217,6 +1231,7 @@ li {
                     <td class="text-center">0.57395</td>
                     <td class="text-center">81.11%</td>
                     <td class="text-center">44.41%</td>
+                    <td class="text-center">0.9766</td>
                     <td class="text-center">681</td>
                 </tr>
                 <tr>
@@ -1227,6 +1242,7 @@ li {
                     <td class="text-center">0.57891</td>
                     <td class="text-center">78.99%</td>
                     <td class="text-center">45.69%</td>
+                    <td class="text-center">0.9764</td>
                     <td class="text-center">800</td>
                 </tr>
                 <tr class="highlight-row">
@@ -1237,6 +1253,7 @@ li {
                     <td class="text-center"><strong>0.58094</strong></td>
                     <td class="text-center"><strong>80.03%</strong></td>
                     <td class="text-center"><strong>45.60%</strong></td>
+                    <td class="text-center">0.9766</td>
                     <td class="text-center"><strong>749</strong></td>
                 </tr>
                 <tr class="highlight-row">
@@ -1247,6 +1264,7 @@ li {
                     <td class="text-center"><strong>0.58187</strong></td>
                     <td class="text-center"><strong>80.86%</strong></td>
                     <td class="text-center"><strong>45.44%</strong></td>
+                    <td class="text-center">0.9768</td>
                     <td class="text-center"><strong>708</strong></td>
                 </tr>
             </tbody>
@@ -1291,6 +1309,7 @@ li {
                     <th class="text-center">Tuned F1 🥈</th>
                     <th class="text-center">Precision</th>
                     <th class="text-center">Recall</th>
+                    <th class="text-center">Accuracy</th>
                     <th>Primary Project Role</th>
                 </tr>
             </thead>
@@ -1303,26 +1322,29 @@ li {
                     <td class="text-center">0.0000</td>
                     <td class="text-center">0.00%</td>
                     <td class="text-center">0.00%</td>
+                    <td class="text-center">0.9644</td>
                     <td>Theoretical baseline</td>
                 </tr>
                 <tr>
                     <td><strong>Official Model A (LightGBM)</strong></td>
                     <td>519 (Parametric + Spatial)</td>
                     <td class="text-center">0.4870</td>
-                    <td class="text-center">0.8318</td>
-                    <td class="text-center">0.5200</td>
-                    <td class="text-center">94.41%</td>
-                    <td class="text-center">35.89%</td>
+                    <td class="text-center">0.83465</td>
+                    <td class="text-center">0.51853</td>
+                    <td class="text-center">94.65%</td>
+                    <td class="text-center">35.71%</td>
+                    <td class="text-center">0.9764</td>
                     <td>Official baseline tree</td>
                 </tr>
                 <tr class="highlight-row">
                     <td><strong>Official Model A (3-Engine Stack)</strong></td>
                     <td><strong>519 (Parametric + Spatial)</strong></td>
                     <td class="text-center"><strong>0.4936</strong></td>
-                    <td class="text-center"><strong>0.8354</strong></td>
-                    <td class="text-center"><strong>0.5225</strong></td>
-                    <td class="text-center"><strong>94.10%</strong></td>
-                    <td class="text-center"><strong>36.12%</strong></td>
+                    <td class="text-center"><strong>0.84085</strong></td>
+                    <td class="text-center"><strong>0.51989</strong></td>
+                    <td class="text-center"><strong>95.34%</strong></td>
+                    <td class="text-center"><strong>35.74%</strong></td>
+                    <td class="text-center">0.9765</td>
                     <td><strong>Official Model A Deliverable</strong></td>
                 </tr>
                 <tr>
@@ -1330,19 +1352,21 @@ li {
                     <td>555 (A + 36 Block Stats)</td>
                     <td class="text-center">0.5353</td>
                     <td class="text-center">0.8744</td>
-                    <td class="text-center">0.5207</td>
-                    <td class="text-center">94.08%</td>
-                    <td class="text-center">36.00%</td>
+                    <td class="text-center">0.53167</td>
+                    <td class="text-center">81.73%</td>
+                    <td class="text-center">39.40%</td>
+                    <td class="text-center">0.9753</td>
                     <td>Official comparison tree</td>
                 </tr>
                 <tr class="highlight-row">
                     <td><strong>Official Model B (3-Engine Stack)</strong></td>
                     <td><strong>555 (A + 36 Block Stats)</strong></td>
                     <td class="text-center"><strong>0.5416</strong></td>
-                    <td class="text-center"><strong>0.8785</strong></td>
-                    <td class="text-center"><strong>0.5255</strong></td>
-                    <td class="text-center"><strong>93.75%</strong></td>
-                    <td class="text-center"><strong>36.55%</strong></td>
+                    <td class="text-center"><strong>0.87916</strong></td>
+                    <td class="text-center"><strong>0.53588</strong></td>
+                    <td class="text-center"><strong>80.09%</strong></td>
+                    <td class="text-center"><strong>40.26%</strong></td>
+                    <td class="text-center">0.9752</td>
                     <td><strong>Official Model B Deliverable</strong></td>
                 </tr>
                 <tr>
@@ -1353,6 +1377,7 @@ li {
                     <td class="text-center">0.5476</td>
                     <td class="text-center">78.50%</td>
                     <td class="text-center">42.04%</td>
+                    <td class="text-center">0.9753</td>
                     <td>Deep sequence representation</td>
                 </tr>
                 <tr>
@@ -1363,6 +1388,7 @@ li {
                     <td class="text-center">0.5505</td>
                     <td class="text-center">82.40%</td>
                     <td class="text-center">41.33%</td>
+                    <td class="text-center">0.9760</td>
                     <td>Early project champion</td>
                 </tr>
                 <tr>
@@ -1373,6 +1399,7 @@ li {
                     <td class="text-center">0.5740</td>
                     <td class="text-center">81.11%</td>
                     <td class="text-center">44.41%</td>
+                    <td class="text-center">0.9766</td>
                     <td>Multi-scale committee</td>
                 </tr>
                 <tr>
@@ -1383,6 +1410,7 @@ li {
                     <td class="text-center">0.5789</td>
                     <td class="text-center">78.99%</td>
                     <td class="text-center">45.69%</td>
+                    <td class="text-center">0.9764</td>
                     <td>GPU manifold detector</td>
                 </tr>
                 <tr class="highlight-row" style="background-color: #fefcbf !important;">
@@ -1393,6 +1421,7 @@ li {
                     <td class="text-center"><strong>0.5809</strong></td>
                     <td class="text-center"><strong>80.03%</strong></td>
                     <td class="text-center"><strong>45.60%</strong></td>
+                    <td class="text-center">0.9766</td>
                     <td><strong>Highest Overall AUC-PR Record</strong></td>
                 </tr>
                 <tr class="highlight-row" style="background-color: #c6f6d5 !important;">
@@ -1403,12 +1432,14 @@ li {
                     <td class="text-center"><strong>0.5819</strong></td>
                     <td class="text-center"><strong>80.86%</strong></td>
                     <td class="text-center"><strong>45.44%</strong></td>
+                    <td class="text-center">0.9768</td>
                     <td><strong>Highest F1 &amp; Lowest False Alarms (708)</strong></td>
                 </tr>
             </tbody>
         </table>
+        <p style="font-size: 8.5pt; color: #555;"><strong>On the Accuracy column.</strong> Accuracy is reported because the problem statement requests it, but it is near-uninformative at 3.556% prevalence: the No-Skill baseline scores <strong>0.9644 while detecting zero defects</strong>, within 1.2 points of the Grand Champion. Every model from the weakest baseline to the champion sits inside a 1.24-point band, and Model B is marginally <em>less</em> accurate than Model A despite being the clearly better screen. AUC-PR and positive-class F1 are the metrics that actually separate these architectures, which is why they lead this table. Values are derived from each row's precision and recall together with the fixed population of 185,126 eligible dies and 6,584 true failures; the four independently measured cases agree to within 1&times;10<sup>-5</sup>.</p>
 
-        <h2 class="sub-title">12.1 Confusion Matrix (Grand Champion Hybrid, T*=0.4900)</h2>
+        <h2 class="sub-title">12.1 Confusion Matrix (Model F + Model C1 Hybrid, T*=0.4900)</h2>
         <div style="background-color: #f7fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 8px; font-family: monospace; font-size: 8pt; line-height: 1.4;">
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PREDICTED PASS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PREDICTED DEFECT<br>
             ACTUAL PASS (178,542 dies):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;177,834 (TN)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>708 (FP)</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Specificity: 99.60%]<br>
@@ -1504,7 +1535,7 @@ li {
         </div>
         <h1 class="section-title">14. Global Feature Evidence Hierarchy (TreeSHAP Ranking)</h1>
 
-        <p>Global feature importance was evaluated across all 185,126 eligible unseen test dies by computing mean absolute SHAP values (Mean |SHAP<sub><i>j</i></sub>|). Cryptic technical names were translated into plain-English process engineering descriptions:</p>
+        <p>Global feature importance was evaluated across all 25,013 evaluated test dies (enriched diagnostic sample) by computing mean absolute SHAP values (Mean |SHAP<sub><i>j</i></sub>|). Cryptic technical names were translated into plain-English process engineering descriptions:</p>
 
         <div class="figure-container">
             <img src="__B64_GLOBAL_SHAP__" class="figure-img" style="max-height: 100mm;" alt="Global Feature Attribution Ranking">
@@ -1644,7 +1675,7 @@ li {
                 <tr>
                     <td><strong>6. Spatial Context</strong></td>
                     <td class="text-center"><strong>1.8%</strong> (1.83%)</td>
-                    <td>Wafer radius <code>r_norm</code>, perimeter flags, and neighborhood cluster densities provide macro risk adjustments.</td>
+                    <td>Wafer radius <code>radius</code>, perimeter flags, and neighborhood cluster densities provide macro risk adjustments.</td>
                 </tr>
                 <tr>
                     <td><strong>7. Coordinates &amp; Geometry</strong></td>
@@ -1686,7 +1717,7 @@ li {
         <h2 class="sub-title">16.1 Key Insights from Spatial Attribution Maps</h2>
         <ul>
             <li><strong>Continuous Physics Surface:</strong> In Panel 2, the model predicts a continuous, smooth risk topography matching the wafer's thermal/gas-flow gradient rather than producing noisy, disconnected die predictions.</li>
-            <li><strong>Signed Spatial Margin Shifts:</strong> In Panel 4, spatial context features (<code>r_norm</code>, <code>is_edge</code>, neighbor defect counts) adjust log-odds margins by &plusmn;0.65. Dies located in the outer edge ring on W_F_0074 receive strong positive risk attribution purely from their perimeter location.</li>
+            <li><strong>Signed Spatial Margin Shifts:</strong> In Panel 4, spatial context features (<code>radius</code>, <code>distance_to_edge</code>, neighbor defect counts) adjust log-odds margins by &plusmn;0.65. Dies located in the outer edge ring on W_F_0074 receive strong positive risk attribution purely from their perimeter location.</li>
             <li><strong>Cluster Yield Loss Capture:</strong> On W_F_0192, the model captures &gt;94% of true defect dies across the dense central cluster without generating excessive false alarms outside the cluster boundary.</li>
         </ul>
     </div>
@@ -1728,6 +1759,151 @@ li {
 </div>
 
 <!-- ========================================================================
+     PAGE 19: OFFICIAL MODEL A & B INTERPRETABILITY - METHOD AND METRICS
+     ======================================================================== -->
+<div class="page">
+    <div>
+        <div class="running-header">
+            <span>SanDisk Hackathon &bull; Final Technical Submission Report</span>
+            <span>Section 13 &bull; Interpretability &bull; Official Model A &amp; B</span>
+        </div>
+        <h1 class="section-title">17A. Interpretability of the Official Deliverables (Model A &amp; Model B)</h1>
+
+        <p>Sections 13&ndash;16 attribute <strong>Model F</strong>. The problem statement, however, asks for
+        interpretability of the two mandated deliverables specifically: <em>&ldquo;per-die feature importance +
+        spatial contribution visualization (Model A), plus block reading pattern analysis (Model B)&rdquo;</em>.
+        This section answers that by attributing Model A and Model B directly, using exact native TreeSHAP on all
+        six boosters of the two 3-engine stacks.</p>
+
+        <h2 class="sub-title">17A.1 Method and Verified Additivity</h2>
+        <p>Both official models are tree ensembles, so exact TreeSHAP applies with no sampling and no surrogate. Each
+        booster&rsquo;s decomposition is verified against its own raw log-odds margin rather than assumed. Dies are
+        selected by model score plus a uniformly random control sample &mdash; <strong>ground-truth labels are never
+        used to choose which dies to explain</strong>, so the zero label-peeking guarantee of Section 3.1 holds
+        without qualification.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 22%;">Engine</th>
+                    <th style="width: 13%;">Stack Weight</th>
+                    <th style="width: 20%;">Model A Additivity Error</th>
+                    <th style="width: 20%;">Model B Additivity Error</th>
+                    <th style="width: 25%;">Precision Regime</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>LightGBM</td><td>0.50</td><td>2.04 &times; 10<sup>-14</sup></td><td>2.31 &times; 10<sup>-14</sup></td><td>float64, exact</td></tr>
+                <tr><td>CatBoost</td><td>0.30</td><td>8.88 &times; 10<sup>-16</sup></td><td>1.78 &times; 10<sup>-15</sup></td><td>float64, exact</td></tr>
+                <tr><td>XGBoost</td><td>0.20</td><td>1.19 &times; 10<sup>-5</sup></td><td>8.81 &times; 10<sup>-6</sup></td><td>float32 accumulation limit</td></tr>
+            </tbody>
+        </table>
+        <p style="font-size: 8.5pt; color: #555;">XGBoost&rsquo;s larger residual is the single-precision limit, not a
+        decomposition error. The stacks blend in <em>probability</em> space while TreeSHAP is additive in
+        <em>log-odds margin</em> space; the sigmoid between them is non-linear, so the three engines&rsquo; SHAP
+        values are <strong>not</strong> summed. Each is decomposed independently, with per-die drivers from
+        LightGBM.</p>
+
+        <h2 class="sub-title">17A.2 Model A &rarr; Model B Comparison Including Accuracy</h2>
+        <p>Each model is quoted at <em>its own</em> F1-optimal threshold, since reporting one model at another&rsquo;s
+        operating point understates it. Accuracy is included because the problem statement requests it.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 26%;">Metric</th>
+                    <th style="width: 18%;">Model A Stack</th>
+                    <th style="width: 18%;">Model B Stack</th>
+                    <th style="width: 38%;">Change</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="highlight-row"><td><strong>AUC-PR</strong></td><td>0.49362</td><td><strong>0.54164</strong></td><td><strong>+0.04802 (+9.73%)</strong></td></tr>
+                <tr><td>ROC-AUC</td><td>0.84085</td><td>0.87916</td><td>+0.03831</td></tr>
+                <tr><td>Accuracy</td><td>0.97652</td><td>0.97520</td><td>&minus;0.00132 (see note below)</td></tr>
+                <tr class="highlight-row"><td><strong>F1 (positive class)</strong></td><td>0.51989</td><td><strong>0.53588</strong></td><td><strong>+0.01600</strong></td></tr>
+                <tr><td>Precision</td><td>95.34%</td><td>80.09%</td><td>&minus;15.25 pts</td></tr>
+                <tr class="highlight-row"><td><strong>Recall</strong></td><td>35.74%</td><td><strong>40.26%</strong></td><td><strong>+4.53 pts</strong></td></tr>
+                <tr><td>True / false positives</td><td>2,353 / 115</td><td>2,651 / 659</td><td><strong>+298 defects caught</strong></td></tr>
+            </tbody>
+        </table>
+        <p style="font-size: 8.5pt; color: #555;"><strong>Note on accuracy.</strong> At 3.556% prevalence accuracy is
+        near-uninformative: predicting PASS for every die scores <strong>0.96444 accuracy while detecting zero
+        defects</strong>. Model B is marginally <em>less</em> accurate than Model A yet is clearly the better screen,
+        trading precision for the recall that matters &mdash; direct evidence for the imbalance criterion, since
+        neither model collapses to the trivial solution.</p>
+    </div>
+    <div class="running-footer">
+        <span>SanDisk Hackathon &bull; Final Technical Submission Report</span>
+        <span>Page 19</span>
+    </div>
+</div>
+
+<!-- ========================================================================
+     PAGE 20: MODEL A SPATIAL CONTRIBUTION + MODEL B BLOCK ATTRIBUTION
+     ======================================================================== -->
+<div class="page">
+    <div>
+        <div class="running-header">
+            <span>SanDisk Hackathon &bull; Final Technical Submission Report</span>
+            <span>Section 13 &bull; Interpretability &bull; Official Model A &amp; B</span>
+        </div>
+        <h1 class="section-title">17B. Per-Die Spatial and Block Attribution of the Official Models</h1>
+
+        <h2 class="sub-title">17B.1 Model A &mdash; Spatial Contribution Visualization</h2>
+        <div class="figure-container">
+            <img src="__B64_MODEL_A_SPATIAL__" class="figure-img" style="max-height: 58mm;" alt="Model A Spatial Contribution Attribution">
+            <div class="figure-caption">Figure 10: Official Model A per-die spatial contribution, exact TreeSHAP over 519
+            features. Panel 1: eligible pre-test population. Panel 2: Model A failure probability. Panel 3:
+            post-test outcome (TP red, FP orange, FN blue, TN grey). Panel 4: <strong>summed spatial-channel
+            TreeSHAP per die</strong> in signed log-odds &mdash; the panel answering the criterion, showing where
+            geometry and old-failure neighbourhood moved each prediction.</div>
+        </div>
+
+        <h2 class="sub-title">17B.2 Model B &mdash; Block Reading Pattern Attribution</h2>
+        <div class="figure-container">
+            <img src="__B64_MODEL_B_BLOCK__" class="figure-img" style="max-height: 58mm;" alt="Model B Block Reading Pattern Attribution">
+            <div class="figure-caption">Figure 11: Official Model B sub-die block attribution, exact TreeSHAP over 555
+            features. Panel 1: the 36 block features by mean |SHAP|. Panel 2: block-channel evidence per die,
+            healthy against newly failed. Panel 3: Model A versus Model B probability, marking dies the block
+            channel rescues. Panel 4: block features driving those rescued dies.</div>
+        </div>
+
+        <h2 class="sub-title">17B.3 Three Independent Engines Converge on the Block Channel</h2>
+        <p>The engines are architecturally different &mdash; leaf-wise, symmetric oblivious, and depth-wise histogram
+        trees &mdash; and were fitted independently, yet their evidence hierarchies coincide. That is stronger
+        support for the block channel than any single model&rsquo;s ranking:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 28%;">Physical Channel (Model B)</th>
+                    <th style="width: 15%;">LightGBM</th>
+                    <th style="width: 15%;">CatBoost</th>
+                    <th style="width: 15%;">XGBoost</th>
+                    <th style="width: 27%;">Blend-Weighted</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Die parametric (500 feats)</td><td>90.6%</td><td>90.4%</td><td>90.7%</td><td>90.5%</td></tr>
+                <tr class="highlight-row"><td><strong>Sub-die block (36 feats)</strong></td><td><strong>7.0%</strong></td><td><strong>7.4%</strong></td><td><strong>7.3%</strong></td><td><strong>7.2%</strong></td></tr>
+                <tr><td>Spatial context (19 feats)</td><td>2.4%</td><td>2.2%</td><td>2.1%</td><td>2.3%</td></tr>
+            </tbody>
+        </table>
+        <p style="font-size: 8.5pt; color: #555;">Model B domain shares over 8,310 explained dies. All three engines
+        independently rank <code>max_rolling_mean_400</code> first (mean |SHAP| 0.355, 0.310, 0.373) and place the
+        same four block features in the top four; the block share agrees to within 0.4 points. The blend-weighted
+        column averages per-engine <em>shares</em> (scale-free ratios), so it aggregates three decompositions rather
+        than decomposing the stack. Model A splits 97.4% parametric / 2.6% spatial with no block channel &mdash;
+        precisely the gap Model B closes.</p>
+    </div>
+    <div class="running-footer">
+        <span>SanDisk Hackathon &bull; Final Technical Submission Report</span>
+        <span>Page 20</span>
+    </div>
+</div>
+
+<!-- ========================================================================
      PAGE 19: MASTER INTERPRETABILITY OVERVIEW (FULL PAGE DISPLAY)
      ======================================================================== -->
 <div class="page">
@@ -1747,7 +1923,7 @@ li {
     </div>
     <div class="running-footer">
         <span>SanDisk Hackathon &bull; Final Technical Submission Report</span>
-        <span>Page 19</span>
+        <span>Page 21</span>
     </div>
 </div>
 
@@ -1865,7 +2041,7 @@ li {
     </div>
     <div class="running-footer">
         <span>SanDisk Hackathon &bull; Final Technical Submission Report</span>
-        <span>Page 20</span>
+        <span>Page 22</span>
     </div>
 </div>
 
@@ -1974,7 +2150,7 @@ li {
     </div>
     <div class="running-footer">
         <span>SanDisk Hackathon &bull; Final Technical Submission Report</span>
-        <span>Page 21</span>
+        <span>Page 23</span>
     </div>
 </div>
 
@@ -2006,7 +2182,7 @@ li {
                 </tr>
                 <tr>
                     <td>&ldquo;Plasma etch chamber erosion created this defect.&rdquo;</td>
-                    <td>&ldquo;The die deviates significantly along the within-wafer radial gradient (r_norm &gt; 0.85).&rdquo;</td>
+                    <td>&ldquo;The die deviates significantly along the within-wafer radial gradient (radius &gt; 0.85).&rdquo;</td>
                 </tr>
                 <tr>
                     <td>&ldquo;SHAP values prove the physical root cause.&rdquo;</td>
@@ -2036,7 +2212,7 @@ li {
     </div>
     <div class="running-footer">
         <span>SanDisk Hackathon &bull; Final Technical Submission Report</span>
-        <span>Page 22</span>
+        <span>Page 24</span>
     </div>
 </div>
 
@@ -2072,14 +2248,14 @@ li {
                 <tr>
                     <td><strong>2. Handling of Imbalance</strong></td>
                     <td class="text-center"><strong>20%</strong></td>
-                    <td>Cost-sensitive class weighting (<code>scale_pos_weight=24.9</code>). Zero "predict-all-pass" collapse on 3.556% minority failures.<br>Precision: <strong>80.86%</strong> | Specificity: <strong>99.60%</strong>.</td>
+                    <td>Cost-sensitive class weighting (<code>scale_pos_weight=26.07</code>). Zero "predict-all-pass" collapse on 3.556% minority failures.<br>Precision: <strong>80.86%</strong> | Specificity: <strong>99.60%</strong>.</td>
                     <td>Silent defects with zero pre-stress electrical signature remain undetected.</td>
                 </tr>
                 <tr>
                     <td><strong>3. Model Interpretability</strong></td>
                     <td class="text-center"><strong>30%</strong></td>
-                    <td>Exact TreeSHAP on CatBoost GPU with verified margin additivity (error &lt; 10⁻¹⁴). Plain-English 7-domain dictionary, spatial heatmaps (Fig 7), block traces (Fig 8), and 4 diagnostic case studies.</td>
-                    <td>Direct TreeSHAP explains dominant tree engine; cannot be linearly summed across rank ensembles.</td>
+                    <td>Exact TreeSHAP on CatBoost GPU with verified margin additivity (error &lt; 10⁻¹⁴). <strong>Both official deliverables attributed directly (Sec 17A/17B): all six boosters of the Model A and Model B stacks, Model A spatial contribution (Fig 10), Model B block attribution (Fig 11).</strong> Plain-English 7-domain dictionary, spatial heatmaps (Fig 7), block traces (Fig 8), and 4 diagnostic case studies.</td>
+                    <td>Margin-space SHAP cannot be linearly summed across probability- or rank-blended ensembles, so each engine is decomposed independently and per-die drivers come from the highest-weighted engine.</td>
                 </tr>
                 <tr>
                     <td><strong>4. Creative Multi-Resolution Fusion &amp; A&rarr;B Delta</strong></td>
@@ -2099,7 +2275,7 @@ li {
     </div>
     <div class="running-footer">
         <span>SanDisk Hackathon &bull; Final Technical Submission Report</span>
-        <span>Page 23</span>
+        <span>Page 25</span>
     </div>
 </div>
 
@@ -2195,7 +2371,7 @@ li {
     </div>
     <div class="running-footer">
         <span>SanDisk Hackathon &bull; Final Technical Submission Report</span>
-        <span>Page 24</span>
+        <span>Page 26</span>
     </div>
 </div>
 

@@ -1,0 +1,284 @@
+{
+  "deliverable": "per-die interpretability for the Official Model A and Model B 3-engine stacks",
+  "stack_weights": {
+    "lightgbm": 0.5,
+    "catboost": 0.3,
+    "xgboost": 0.2
+  },
+  "blend_space": "probability",
+  "shap_method": "exact TreeSHAP, computed independently per engine in its own log-odds margin space",
+  "why_shap_is_not_summed_across_engines": "The stack averages PROBABILITIES. TreeSHAP is exactly additive in each engine's raw margin, and the sigmoid linking margin to probability is non-linear, so the three engines' margin-space SHAP values do not sum to a decomposition of the stack probability. Per-engine decompositions are reported separately; the blend-weighted figure below averages per-engine SHARES (scale-free ratios), not raw SHAP values.",
+  "per_die_driver_engine": "lightgbm (largest blend weight, 0.50)",
+  "models": {
+    "A": {
+      "n_features": 519,
+      "stack_threshold": 0.7904462258778145,
+      "n_flagged": 2468,
+      "n_explained": 7468,
+      "per_engine": {
+        "lightgbm": {
+          "weight": 0.5,
+          "additivity_max_abs_error_margin_space": 2.042810365310288e-14,
+          "domain_share_pct": {
+            "Die Parametric": 97.36,
+            "Spatial Context": 2.64
+          },
+          "top_features": [
+            {
+              "feature": "wafer_die_count",
+              "mean_abs_shap": 0.09439961070515557,
+              "domain": "Spatial Context"
+            },
+            {
+              "feature": "wafer_old_fail_rate",
+              "mean_abs_shap": 0.08344944677202339,
+              "domain": "Spatial Context"
+            },
+            {
+              "feature": "feature_312",
+              "mean_abs_shap": 0.07916627265325121,
+              "domain": "Die Parametric"
+            },
+            {
+              "feature": "feature_277",
+              "mean_abs_shap": 0.07561853661868859,
+              "domain": "Die Parametric"
+            },
+            {
+              "feature": "feature_163",
+              "mean_abs_shap": 0.07324497437240461,
+              "domain": "Die Parametric"
+            },
+            {
+              "feature": "feature_242",
+              "mean_abs_shap": 0.07005512100770768,
+              "domain": "Die Parametric"
+            }
+          ]
+        },
+        "catboost": {
+          "weight": 0.3,
+          "additivity_max_abs_error_margin_space": 8.881784197001252e-16,
+          "domain_share_pct": {
+            "Die Parametric": 97.19,
+            "Spatial Context": 2.81
+          },
+          "top_features": [
+            {
+              "feature": "wafer_die_count",
+              "mean_abs_shap": 0.06960902483516063,
+              "domain": "Spatial Context"
+            },
+            {
+              "feature": "feature_312",
+              "mean_abs_shap": 0.06839598877895386,
+              "domain": "Die Parametric"
+            },
+            {
+              "feature": "feature_365",
+              "mean_abs_shap": 0.0629249297742245,
+              "domain": "Die Parametric"
+            },
+            {
+              "feature": "feature_472",
+              "mean_abs_shap": 0.062015614807392684,
+              "domain": "Die Parametric"
+            },
+            {
+              "feature": "feature_65",
+              "mean_abs_shap": 0.06160356045138038,
+              "domain": "Die Parametric"
+            },
+            {
+              "feature": "feature_223",
+              "mean_abs_shap": 0.058572634215019334,
+              "domain": "Die Parametric"
+            }
+          ]
+        },
+        "xgboost": {
+          "weight": 0.2,
+          "additivity_max_abs_error_margin_space": 1.1930838809348643e-05,
+          "domain_share_pct": {
+            "Die Parametric": 97.71,
+            "Spatial Context": 2.29
+          },
+          "top_features": [
+            {
+              "feature": "wafer_old_fail_rate",
+              "mean_abs_shap": 0.09679866085972136,
+              "domain": "Spatial Context"
+            },
+            {
+              "feature": "feature_312",
+              "mean_abs_shap": 0.08353870717175389,
+              "domain": "Die Parametric"
+            },
+            {
+              "feature": "feature_163",
+              "mean_abs_shap": 0.07378607792184189,
+              "domain": "Die Parametric"
+            },
+            {
+              "feature": "feature_472",
+              "mean_abs_shap": 0.07322674298016005,
+              "domain": "Die Parametric"
+            },
+            {
+              "feature": "feature_65",
+              "mean_abs_shap": 0.0716799779148948,
+              "domain": "Die Parametric"
+            },
+            {
+              "feature": "feature_223",
+              "mean_abs_shap": 0.07152013640695493,
+              "domain": "Die Parametric"
+            }
+          ]
+        }
+      },
+      "blend_weighted_domain_share_pct": {
+        "Die Parametric": 97.38,
+        "Spatial Context": 2.62
+      },
+      "per_die_parquet": "model_a_stack_per_die_attribution.parquet"
+    },
+    "B": {
+      "n_features": 555,
+      "stack_threshold": 0.7934615771285891,
+      "n_flagged": 3310,
+      "n_explained": 8310,
+      "per_engine": {
+        "lightgbm": {
+          "weight": 0.5,
+          "additivity_max_abs_error_margin_space": 2.3092638912203256e-14,
+          "domain_share_pct": {
+            "Die Parametric": 90.59,
+            "Spatial Context": 2.41,
+            "Sub-Die Block": 7.0
+          },
+          "top_features": [
+            {
+              "feature": "max_rolling_mean_400",
+              "mean_abs_shap": 0.3552738959219129,
+              "domain": "Sub-Die Block"
+            },
+            {
+              "feature": "max_rolling_mean_200",
+              "mean_abs_shap": 0.19133428753495524,
+              "domain": "Sub-Die Block"
+            },
+            {
+              "feature": "block_mean_top200",
+              "mean_abs_shap": 0.17764726213259216,
+              "domain": "Sub-Die Block"
+            },
+            {
+              "feature": "block_mean",
+              "mean_abs_shap": 0.11597121338450597,
+              "domain": "Sub-Die Block"
+            },
+            {
+              "feature": "wafer_die_count",
+              "mean_abs_shap": 0.08708544411986312,
+              "domain": "Spatial Context"
+            },
+            {
+              "feature": "feature_312",
+              "mean_abs_shap": 0.07761651493358547,
+              "domain": "Die Parametric"
+            }
+          ]
+        },
+        "catboost": {
+          "weight": 0.3,
+          "additivity_max_abs_error_margin_space": 1.7763568394002505e-15,
+          "domain_share_pct": {
+            "Die Parametric": 90.38,
+            "Spatial Context": 2.25,
+            "Sub-Die Block": 7.37
+          },
+          "top_features": [
+            {
+              "feature": "max_rolling_mean_400",
+              "mean_abs_shap": 0.3096331045655099,
+              "domain": "Sub-Die Block"
+            },
+            {
+              "feature": "max_rolling_mean_200",
+              "mean_abs_shap": 0.18999648588925686,
+              "domain": "Sub-Die Block"
+            },
+            {
+              "feature": "block_mean_top200",
+              "mean_abs_shap": 0.18238367523179805,
+              "domain": "Sub-Die Block"
+            },
+            {
+              "feature": "block_mean",
+              "mean_abs_shap": 0.1137140147558335,
+              "domain": "Sub-Die Block"
+            },
+            {
+              "feature": "feature_312",
+              "mean_abs_shap": 0.0780566009565325,
+              "domain": "Die Parametric"
+            },
+            {
+              "feature": "wafer_die_count",
+              "mean_abs_shap": 0.07347591850574652,
+              "domain": "Spatial Context"
+            }
+          ]
+        },
+        "xgboost": {
+          "weight": 0.2,
+          "additivity_max_abs_error_margin_space": 8.814182365313172e-06,
+          "domain_share_pct": {
+            "Die Parametric": 90.66,
+            "Spatial Context": 2.08,
+            "Sub-Die Block": 7.26
+          },
+          "top_features": [
+            {
+              "feature": "max_rolling_mean_400",
+              "mean_abs_shap": 0.37268709005308787,
+              "domain": "Sub-Die Block"
+            },
+            {
+              "feature": "max_rolling_mean_200",
+              "mean_abs_shap": 0.18368891799058185,
+              "domain": "Sub-Die Block"
+            },
+            {
+              "feature": "block_mean_top200",
+              "mean_abs_shap": 0.16177044528275272,
+              "domain": "Sub-Die Block"
+            },
+            {
+              "feature": "block_mean",
+              "mean_abs_shap": 0.10583670020306359,
+              "domain": "Sub-Die Block"
+            },
+            {
+              "feature": "feature_312",
+              "mean_abs_shap": 0.07555407253454313,
+              "domain": "Die Parametric"
+            },
+            {
+              "feature": "feature_365",
+              "mean_abs_shap": 0.07028776818223018,
+              "domain": "Die Parametric"
+            }
+          ]
+        }
+      },
+      "blend_weighted_domain_share_pct": {
+        "Die Parametric": 90.54,
+        "Spatial Context": 2.3,
+        "Sub-Die Block": 7.16
+      },
+      "per_die_parquet": "model_b_stack_per_die_attribution.parquet"
+    }
+  }
+}

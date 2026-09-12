@@ -1,0 +1,396 @@
+{
+  "deliverable": "per-die interpretability for Official Model A and Official Model B",
+  "explained_models": {
+    "A": "LightGBM Model A (519 features), exact native TreeSHAP",
+    "B": "LightGBM Model B (555 features), exact native TreeSHAP"
+  },
+  "shap_method": "LightGBM predict(pred_contrib=True); exact, no sampling, no surrogate",
+  "selection_rule": "all 3309 dies flagged by Model A or Model B at their own F1-optimal thresholds, plus 5000 uniformly random unflagged controls. Ground-truth labels are NOT used to select dies.",
+  "n_eligible_test_dies": 185126,
+  "n_explained": 8309,
+  "comparison": {
+    "A": {
+      "threshold": 0.8260212555565659,
+      "auc_pr": 0.486953825136996,
+      "roc_auc": 0.8346491283051418,
+      "accuracy": 0.9764160625735985,
+      "f1_score": 0.5185266872518747,
+      "precision": 0.9464573268921095,
+      "recall": 0.35707776427703525,
+      "specificity": 0.9992550772367286,
+      "true_positives": 2351,
+      "false_positives": 133,
+      "false_negatives": 4233,
+      "true_negatives": 178409
+    },
+    "B": {
+      "threshold": 0.8224176161840325,
+      "auc_pr": 0.5352804615369748,
+      "roc_auc": 0.8744389064382209,
+      "accuracy": 0.9753141103896805,
+      "f1_score": 0.5316663250666119,
+      "precision": 0.8172652804032766,
+      "recall": 0.3939854191980559,
+      "specificity": 0.9967514646413729,
+      "true_positives": 2594,
+      "false_positives": 580,
+      "false_negatives": 3990,
+      "true_negatives": 177962
+    },
+    "predict_all_pass_baseline": {
+      "threshold": 0.5,
+      "auc_pr": 0.035564966563313635,
+      "roc_auc": 0.5,
+      "accuracy": 0.9644350334366864,
+      "f1_score": 0.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "specificity": 1.0,
+      "true_positives": 0,
+      "false_positives": 0,
+      "false_negatives": 6584,
+      "true_negatives": 178542
+    },
+    "lift_a_to_b": {
+      "auc_pr_delta": 0.04832663639997886,
+      "auc_pr_relative_pct": 9.92427493230657,
+      "f1_delta_at_own_optima": 0.01313963781473726,
+      "recall_delta_points": 3.690765492102066,
+      "extra_true_positives": 243
+    },
+    "note_on_accuracy": "Accuracy is reported because the problem statement asks for it, but it is close to uninformative at 3.556% prevalence: predicting PASS for every die scores 0.9644 accuracy while finding zero defects. AUC-PR and positive-class F1 are the metrics that separate these models."
+  },
+  "models": {
+    "A": {
+      "n_features": 519,
+      "additivity_max_abs_error_margin_space": 2.042810365310288e-14,
+      "domain_share_pct": {
+        "Die Parametric": 97.35,
+        "Spatial Context": 2.65
+      },
+      "top_features": [
+        {
+          "feature": "wafer_die_count",
+          "mean_abs_shap": 0.09481793310318627,
+          "domain": "Spatial Context",
+          "meaning": "how many dies this wafer carries"
+        },
+        {
+          "feature": "wafer_old_fail_rate",
+          "mean_abs_shap": 0.0835782819135426,
+          "domain": "Spatial Context",
+          "meaning": "share of this wafer already failing before test"
+        },
+        {
+          "feature": "feature_312",
+          "mean_abs_shap": 0.07908488118446409,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 312"
+        },
+        {
+          "feature": "feature_277",
+          "mean_abs_shap": 0.0750587471880798,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 277"
+        },
+        {
+          "feature": "feature_163",
+          "mean_abs_shap": 0.07251360247524663,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 163"
+        },
+        {
+          "feature": "feature_242",
+          "mean_abs_shap": 0.06996413459783112,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 242"
+        },
+        {
+          "feature": "feature_472",
+          "mean_abs_shap": 0.06723847676968664,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 472"
+        },
+        {
+          "feature": "feature_223",
+          "mean_abs_shap": 0.06603222403649117,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 223"
+        },
+        {
+          "feature": "feature_65",
+          "mean_abs_shap": 0.06566672156023376,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 65"
+        },
+        {
+          "feature": "feature_365",
+          "mean_abs_shap": 0.06558015920403688,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 365"
+        },
+        {
+          "feature": "feature_113",
+          "mean_abs_shap": 0.06481186264578581,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 113"
+        },
+        {
+          "feature": "feature_33",
+          "mean_abs_shap": 0.06321994677324654,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 33"
+        },
+        {
+          "feature": "feature_295",
+          "mean_abs_shap": 0.06309162135482908,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 295"
+        },
+        {
+          "feature": "feature_189",
+          "mean_abs_shap": 0.0628387977411579,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 189"
+        },
+        {
+          "feature": "feature_286",
+          "mean_abs_shap": 0.06272935506246845,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 286"
+        },
+        {
+          "feature": "feature_272",
+          "mean_abs_shap": 0.06256112105327814,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 272"
+        },
+        {
+          "feature": "feature_236",
+          "mean_abs_shap": 0.06172928231272221,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 236"
+        },
+        {
+          "feature": "feature_246",
+          "mean_abs_shap": 0.061374962603184056,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 246"
+        },
+        {
+          "feature": "feature_495",
+          "mean_abs_shap": 0.06129914852192506,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 495"
+        },
+        {
+          "feature": "feature_336",
+          "mean_abs_shap": 0.061170007711435506,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 336"
+        },
+        {
+          "feature": "feature_183",
+          "mean_abs_shap": 0.0608252936852379,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 183"
+        },
+        {
+          "feature": "feature_381",
+          "mean_abs_shap": 0.06030352535316601,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 381"
+        },
+        {
+          "feature": "feature_433",
+          "mean_abs_shap": 0.05982344701939395,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 433"
+        },
+        {
+          "feature": "feature_171",
+          "mean_abs_shap": 0.059634206798677515,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 171"
+        },
+        {
+          "feature": "feature_209",
+          "mean_abs_shap": 0.059212499388851626,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 209"
+        }
+      ],
+      "per_die_parquet": "model_a_per_die_attribution.parquet"
+    },
+    "B": {
+      "n_features": 555,
+      "additivity_max_abs_error_margin_space": 2.3092638912203256e-14,
+      "domain_share_pct": {
+        "Die Parametric": 90.65,
+        "Sub-Die Block": 6.94,
+        "Spatial Context": 2.41
+      },
+      "top_features": [
+        {
+          "feature": "max_rolling_mean_400",
+          "mean_abs_shap": 0.34917217365885594,
+          "domain": "Sub-Die Block",
+          "meaning": "strongest sustained sub-die burst over a 400-reading window"
+        },
+        {
+          "feature": "max_rolling_mean_200",
+          "mean_abs_shap": 0.1895316175309959,
+          "domain": "Sub-Die Block",
+          "meaning": "strongest sustained sub-die burst over a 200-reading window"
+        },
+        {
+          "feature": "block_mean_top200",
+          "mean_abs_shap": 0.17693372757046455,
+          "domain": "Sub-Die Block",
+          "meaning": "mean of the 200 most extreme sub-die readings"
+        },
+        {
+          "feature": "block_mean",
+          "mean_abs_shap": 0.11512922497055021,
+          "domain": "Sub-Die Block",
+          "meaning": "mean amplitude across all 2,000 sub-die readings"
+        },
+        {
+          "feature": "wafer_die_count",
+          "mean_abs_shap": 0.08743719207201245,
+          "domain": "Spatial Context",
+          "meaning": "how many dies this wafer carries"
+        },
+        {
+          "feature": "feature_312",
+          "mean_abs_shap": 0.0782368598518826,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 312"
+        },
+        {
+          "feature": "wafer_old_fail_rate",
+          "mean_abs_shap": 0.07494041060180803,
+          "domain": "Spatial Context",
+          "meaning": "share of this wafer already failing before test"
+        },
+        {
+          "feature": "feature_365",
+          "mean_abs_shap": 0.07165718223281259,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 365"
+        },
+        {
+          "feature": "feature_242",
+          "mean_abs_shap": 0.06798887604932677,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 242"
+        },
+        {
+          "feature": "feature_446",
+          "mean_abs_shap": 0.06704428203131872,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 446"
+        },
+        {
+          "feature": "feature_295",
+          "mean_abs_shap": 0.06659874015174283,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 295"
+        },
+        {
+          "feature": "feature_65",
+          "mean_abs_shap": 0.06646150934090556,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 65"
+        },
+        {
+          "feature": "feature_223",
+          "mean_abs_shap": 0.06591464933739812,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 223"
+        },
+        {
+          "feature": "feature_277",
+          "mean_abs_shap": 0.06499474380548008,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 277"
+        },
+        {
+          "feature": "feature_246",
+          "mean_abs_shap": 0.06471195772888966,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 246"
+        },
+        {
+          "feature": "feature_472",
+          "mean_abs_shap": 0.06466974292460309,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 472"
+        },
+        {
+          "feature": "feature_245",
+          "mean_abs_shap": 0.06325211393786194,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 245"
+        },
+        {
+          "feature": "feature_262",
+          "mean_abs_shap": 0.06294467706413728,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 262"
+        },
+        {
+          "feature": "feature_290",
+          "mean_abs_shap": 0.06222168160429711,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 290"
+        },
+        {
+          "feature": "feature_495",
+          "mean_abs_shap": 0.062142783679115694,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 495"
+        },
+        {
+          "feature": "feature_163",
+          "mean_abs_shap": 0.06189854293103231,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 163"
+        },
+        {
+          "feature": "feature_412",
+          "mean_abs_shap": 0.061542902195569155,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 412"
+        },
+        {
+          "feature": "feature_236",
+          "mean_abs_shap": 0.061223729399076686,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 236"
+        },
+        {
+          "feature": "feature_183",
+          "mean_abs_shap": 0.06119300683070572,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 183"
+        },
+        {
+          "feature": "feature_271",
+          "mean_abs_shap": 0.060822002606872615,
+          "domain": "Die Parametric",
+          "meaning": "die-level parametric test 271"
+        }
+      ],
+      "per_die_parquet": "model_b_per_die_attribution.parquet"
+    }
+  },
+  "model_a_spatial_figure": "40_model_a_spatial_contribution.png",
+  "model_b_block_figure": "41_model_b_block_attribution.png",
+  "model_b_rescued_dies_in_sample": 279,
+  "wafers_in_spatial_figure": [
+    "W_F_0176",
+    "W_N_0242",
+    "W_F_0192"
+  ]
+}
